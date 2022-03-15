@@ -82,7 +82,7 @@ class Patient
     /**
      * @ORM\OneToMany(targetEntity=AllergiesLog::class, mappedBy="patient", orphanRemoval=true)
      */
-    private $AllergiesLog;
+    private $AllergiesLogs;
 
     /**
      * @ORM\OneToMany(targetEntity=ServicesLog::class, mappedBy="patient", orphanRemoval=true)
@@ -114,7 +114,7 @@ class Patient
         $this->visits = new ArrayCollection();
         $this->documents = new ArrayCollection();
         $this->reminders = new ArrayCollection();
-        $this->AllergiesLog = new ArrayCollection();
+        $this->AllergiesLogs = new ArrayCollection();
         $this->servicesLogs = new ArrayCollection();
         $this->productsLogs = new ArrayCollection();
     }
@@ -325,15 +325,15 @@ class Patient
     /**
      * @return Collection<int, AllergiesLog>
      */
-    public function getAllergiesLog(): Collection
+    public function getAllergiesLogs(): Collection
     {
-        return $this->AllergiesLog;
+        return $this->AllergiesLogs;
     }
 
     public function addAllergiesLog(AllergiesLog $allergiesLog): self
     {
-        if (!$this->AllergiesLog->contains($allergiesLog)) {
-            $this->AllergiesLog[] = $allergiesLog;
+        if (!$this->AllergiesLogs->contains($allergiesLog)) {
+            $this->AllergiesLogs[] = $allergiesLog;
             $allergiesLog->setPatient($this);
         }
 

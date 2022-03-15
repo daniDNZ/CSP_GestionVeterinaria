@@ -12,6 +12,9 @@ INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (26002,'La
 INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (26000,'La Rioja','Varea','Spain');
 INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (26142,'La Rioja','Villamediana de Iregua','Spain');
 INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (26140,'La Rioja','Lardero','Spain');
+INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (28020,'Madrid','Madrid','Spain');
+INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (46210,'Valencia','Picaña','Spain');
+INSERT INTO `postal_code`(`id`, `province`, `city`, `country`) VALUES (39311,'Cantabria','Cartes','Spain');
 
 -- Creación de FAMILIAS (FAMILY)
 INSERT INTO `family`(`name`) VALUES ('ForbesFam');
@@ -71,3 +74,36 @@ insert into patient (responsible_id, family_id, chip, name, birthday, species, r
 insert into patient (responsible_id, family_id, chip, name, birthday, species, race, color, eyes, gender, sterilised, info) values (9, 8, '5509332557', 'Forito', '2012-04-01', 'Felis Catus', 'Común Europeo', 'Blanco y gris atigrado', 'Verdes', 'Male', '1', '');
 insert into patient (responsible_id, family_id, chip, name, birthday, species, race, color, eyes, gender, sterilised, info) values (10, 9, '8996348643', 'Malfoy', '2017-12-30', 'Pogona Vitticeps', 'Red', 'Rojo', 'Negro', 'Male', '0', 'Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.');
 insert into patient (responsible_id, family_id, chip, name, birthday, species, race, color, eyes, gender, sterilised, info) values (1, 2, '0061601942', 'Ringtone', '2019-11-26', 'Nymphicus Hollandicus', '', 'Blanca y Amarilla', 'Marrones', 'Female', '0', 'Morbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.');
+
+-- Creación de ALERGIAS (ALLERGIE)
+INSERT INTO `allergie`(`substance`) VALUES ('Ácaros del polvo');
+INSERT INTO `allergie`(`substance`) VALUES ('Soja');
+INSERT INTO `allergie`(`substance`) VALUES ('Saliva de la pulga');
+
+-- Creación del REGISTRO DE ALERGIAS (ALLERGIES_LOG)
+INSERT INTO `allergies_log`(`patient_id`, `allergie_id`, `date_time`, `description`) VALUES (2,1,'2022-02-26 10:41:19','Reacción leve');
+
+-- Creación de DIAGNÓSTICOS (DIAGNOSIS)
+INSERT INTO `diagnosis`(`name`) VALUES ('Gastroenteritis');
+INSERT INTO `diagnosis`(`name`) VALUES ('Parvovirus');
+INSERT INTO `diagnosis`(`name`) VALUES ('Otitis');
+INSERT INTO `diagnosis`(`name`) VALUES ('Alergia cutánea');
+INSERT INTO `diagnosis`(`name`) VALUES ('Parásitos Externos: Pulgas');
+
+-- Creación de PROVEEDORES (SUPPLIER)
+INSERT INTO `supplier`(`postal_code_id`, `code`, `category`, `name`, `email`, `phone`, `address`, `info`, `tax`) VALUES (28020, 'ROYALCANIN_ESP','Nutrición','Royal Canin España S.A.',null,'+34 900 504 673','Plaza de Carlos Trias Bertrán, 4','','0');
+INSERT INTO `supplier`(`postal_code_id`, `code`, `category`, `name`, `email`, `phone`, `address`, `info`, `tax`) VALUES (46210, 'PIENSOSMARI','Varios','Piensos Marí S.L.','administracion@piensosmari.es','+34 961 590 114','Carrer de la Creu, 5','','0');
+INSERT INTO `supplier`(`postal_code_id`, `code`, `category`, `name`, `email`, `phone`, `address`, `info`, `tax`) VALUES (39311, 'CEMAVE','Varios','CEMAVE Sanidad Animal S.L.','pedidosonline@cemave.com','+34 942 82 31 36','Poligono Mies de Molladar Nave C4','','0');
+
+-- Creación de PRODUCTOS (PRODUCT)
+INSERT INTO `product`(`supplier_id`, `code`, `category`, `subcategory`, `name`, `dose`, `price`, `species`, `stock`, `lot`, `expiration`, `life`) VALUES ('1','ROYAL_KITTEN_STR_2.5','Alimento Seco', 'Cachorro','Royal Canin Kitten Sterilised 2.5kg','2.5kg','26.99','Felis Catus','30','L456','2030-08-02',null);
+INSERT INTO `product`(`supplier_id`, `code`, `category`, `subcategory`, `name`, `dose`, `price`, `species`, `stock`, `lot`, `expiration`, `life`) VALUES ('2','ADVANTIX_4PIP_0-4KG','Antiparasitario Externo', 'Pequeños','Advantix Box 0-4kg 4x0.4ml','0.4ml','17.06','Canis Familiaris','15','4856B8','2030-08-02','365');
+INSERT INTO `product`(`supplier_id`, `code`, `category`, `subcategory`, `name`, `dose`, `price`, `species`, `stock`, `lot`, `expiration`, `life`) VALUES ('3','NOBIVAC_RABIA','Vacuna', 'Rabia','Novibac Rabia 1ml','1ml','10.00','Varios','85','84hh383','2030-08-02','365');
+
+-- Creación de SERVICIOS (SERVICE)
+INSERT INTO `service`(`category`, `name`, `price`) VALUES ('Exploración','Exploración Geriátrica','15.34');
+INSERT INTO `service`(`category`, `name`, `price`) VALUES ('Cirujía','Esterilización','85.57');
+INSERT INTO `service`(`category`, `name`, `price`) VALUES ('Laboratorio','Bioquímica','9.98');
+INSERT INTO `service`(`category`, `name`, `price`) VALUES ('Imagen','Radiografía','73.94');
+
+

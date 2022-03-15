@@ -73,6 +73,11 @@ class Product
      */
     private $supplier;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $subcategory;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -206,6 +211,18 @@ class Product
     public function setSupplier(?Supplier $supplier): self
     {
         $this->supplier = $supplier;
+
+        return $this;
+    }
+
+    public function getSubcategory(): ?string
+    {
+        return $this->subcategory;
+    }
+
+    public function setSubcategory(?string $subcategory): self
+    {
+        $this->subcategory = $subcategory;
 
         return $this;
     }
