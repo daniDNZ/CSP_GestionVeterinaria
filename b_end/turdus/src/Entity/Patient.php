@@ -94,6 +94,21 @@ class Patient
      */
     private $productsLogs;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $gender;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $sterilised;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
@@ -393,6 +408,42 @@ class Patient
                 $productsLog->setPatient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSterilised(): ?bool
+    {
+        return $this->sterilised;
+    }
+
+    public function setSterilised(bool $sterilised): self
+    {
+        $this->sterilised = $sterilised;
 
         return $this;
     }

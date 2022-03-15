@@ -58,9 +58,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $salary;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
     private $phone;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $dni;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -71,6 +76,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Visit::class, mappedBy="user")
      */
     private $visits;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $area;
 
     public function __construct()
     {
@@ -209,14 +219,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhone(): ?int
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
 
-    public function setPhone(int $phone): self
+    public function setPhone(string $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getDni(): ?string
+    {
+        return $this->dni;
+    }
+
+    public function setDni(string $phone): self
+    {
+        $this->dni = $dni;
 
         return $this;
     }
@@ -259,6 +281,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $visit->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getArea(): ?string
+    {
+        return $this->area;
+    }
+
+    public function setArea(string $area): self
+    {
+        $this->area = $area;
 
         return $this;
     }
