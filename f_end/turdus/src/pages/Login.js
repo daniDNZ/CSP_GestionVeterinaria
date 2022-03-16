@@ -27,6 +27,7 @@ function Login() {
           localStorage.setItem('token', response.token);
 
           const decoded = jwt_decode(response.token);
+          localStorage
           console.log(decoded.roles);
         }
       )
