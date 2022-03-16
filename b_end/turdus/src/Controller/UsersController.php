@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
 
-class UserController extends AbstractController
+class UsersController extends AbstractController
 {
     /**
-     * @Route("/user", name="app_user")
+     * @Route("/api/users", name="app_users")
      */
     public function index(UserRepository $userRepository): Response
     {   
