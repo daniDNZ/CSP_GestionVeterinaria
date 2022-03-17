@@ -1,17 +1,24 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Login from "./pages/Login";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { useState } from "react";
+import { TokenContext } from "./context/Context.js"
+import { Login, Logout } from "./pages/Login";
 import Home from "./pages/Home";
-import Navigation from "./components/Navigation";
 
 function App() {
+
+  const [tokenDecrypt, setTokenDecrypt] = useState({});
+
   return (
-    <BrowserRouter>
-      <Navigation />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="home" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <TokenContext.Provider value={{ tokenDecrypt, setTokenDecrypt }}>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="turdus/" element={localStorage.token ? <Navigate to="dashboard" /> : <Navigate to="login" />} />
+          <Route path="turdus/login" element={<Login />} />
+          <Route path="turdus/logout" element={<Logout />} />
+          <Route path="turdus/dashboard" element={localStorage.token ? <Home /> : <Navigate to="/turdus/login" />} />
+        </Routes>
+      </BrowserRouter>
+    </TokenContext.Provider>
   );
 }
 

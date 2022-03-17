@@ -1,6 +1,16 @@
 import jwt_decode from "jwt-decode";
+import { useState } from 'react';
+import "./login.css";
+
+function Logout() {
+  localStorage.removeItem("token");
+
+  return window.location = "/turdus/login";
+}
 
 function Login() {
+
+  if (localStorage.getItem("token")) window.location = "/turdus/dashboard";
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -19,44 +29,48 @@ function Login() {
       body: JSON.stringify(data)
     }
 
-    const request = new Request('http://localhost:8888/api/login_check', config);
+    const request = new Request('http://192.168.1.81:8888/api/login_check', config);
     fetch(request)
       .then(response => response.json())
       .then(
         response => {
-          localStorage.setItem('token', response.token);
+          localStorage.setItem("token", response.token);
 
           const decoded = jwt_decode(response.token);
-          localStorage
-          console.log(decoded.roles);
+          if (localStorage.getItem("token")) window.location = "/turdus/dashboard";
         }
+
       )
       .catch(e => console.log('Error: ', e))
 
-    e.target.username.value = "";
-    e.target.password.value = "";
+    e.target.username.value = '';
+    e.target.password.value = '';
+
   }
 
 
   return (
     <>
-
-      <div className="d-flex justify-content-around mx-5 mt-5">
-
-        <form onSubmit={handleLogin} className='form-group'>
-          <h3>Bienvenid@</h3>
-          <br />
-          <input type='text' name='username' placeholder="user" className="form-control"></input>
-          <br />
-          <input type='password' name='password' placeholder="password" className="form-control"></input>
-          <br />
-          <button type='submit' className="btn btn-primary btn-success">Login</button>
+    <div id="login-div" className="text-center">
+      <main className="form-signin">
+        <form onSubmit={handleLogin}>
+          <h1 class="h3 mb-3 fw-normal">Bienvenid@</h1>
+          <div className="form-floating">
+          <input type='text' id="floatingInput" name='username' placeholder='Username' className='form-control'></input>
+          <label for="floatingInput">Username</label>
+          </div>
+          <div className="form-floating">
+          <input type='password' id="floatingPassword" name='password' placeholder='Password' className='form-control' required></input>
+          <label for="floatingPassword">Password</label>
+          </div>
+          <button type='submit' className='w-100 btn btn-lg btn-primary'>Login</button>
+          <p class="mt-5 mb-3 text-muted">&copy; 2022 Turdus</p>
         </form>
-
+      </main>
       </div>
     </>
 
   );
 }
 
-export default Login;
+export { Login, Logout };
