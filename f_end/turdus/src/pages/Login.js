@@ -1,6 +1,5 @@
 import jwt_decode from "jwt-decode";
-import { useState } from 'react';
-import "./login.css";
+import "../css/login.css";
 
 function Logout() {
   localStorage.removeItem("token");
@@ -10,8 +9,10 @@ function Logout() {
 
 function Login() {
 
+  // Comprobamos si el usuario tiene sesión y le redirigimos
   if (localStorage.getItem("token")) window.location = "/turdus/dashboard";
 
+  // Manejador del Login
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -29,7 +30,7 @@ function Login() {
       body: JSON.stringify(data)
     }
 
-    const request = new Request('http://192.168.1.81:8888/api/login_check', config);
+    const request = new Request("http://192.168.1.81:8888/api/login_check", config);
     fetch(request)
       .then(response => response.json())
       .then(
@@ -48,11 +49,13 @@ function Login() {
 
   }
 
+  // Añadimos clases al body y html
+  
+  document.body.classList.add("body-signin", "text-center");
+  document.getElementById("root").classList.add("form-signin");
 
   return (
     <>
-    <div id="login-div" className="text-center">
-      <main className="form-signin">
         <form onSubmit={handleLogin}>
           <h1 class="h3 mb-3 fw-normal">Bienvenid@</h1>
           <div className="form-floating">
@@ -66,8 +69,6 @@ function Login() {
           <button type='submit' className='w-100 btn btn-lg btn-primary'>Login</button>
           <p class="mt-5 mb-3 text-muted">&copy; 2022 Turdus</p>
         </form>
-      </main>
-      </div>
     </>
 
   );
