@@ -1,6 +1,6 @@
 import NavLandPage from "../components/NavLandPage";
 import ContactForm from "../components/ContactForm";
-import Staff from "../components/Staff";
+import SubHeadlines from "../components/SubHeadlines";
 import Headline from "../components/Headline";
 import "../css/landPage.css"
 
@@ -13,7 +13,7 @@ function LandPage() {
             <NavLandPage />
             <main className="d-flex flex-column">
                 <Headline />
-                <Staff />
+                <SubHeadlines />
                 <ContactForm />
             </main>
             <footer className="footer-land-page mt-auto py-3 text-white-50 text-center">
