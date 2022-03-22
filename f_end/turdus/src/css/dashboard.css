@@ -17,3 +17,8 @@
 .nav-item {
     background-clip: content-box;
 }
+.make-me-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0; 
+}

@@ -71,6 +71,11 @@ class Visit
      */
     private $documents;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $Duration;
+
     public function __construct()
     {
         $this->diagnosis = new ArrayCollection();
@@ -228,6 +233,18 @@ class Visit
                 $document->setVisit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->Duration;
+    }
+
+    public function setDuration(int $Duration): self
+    {
+        $this->Duration = $Duration;
 
         return $this;
     }

@@ -32,7 +32,6 @@ const HandleLogin = (e) => {
             response => {
                 localStorage.setItem("token", response.token);
 
-
                 if (jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_STAFF")) window.location = "/turdus/dashboard";
                 else if (jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_USER")) window.location = "/";
 

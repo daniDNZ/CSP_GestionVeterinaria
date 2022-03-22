@@ -26,10 +26,10 @@ function Dashboard({comp}) {
         <Navigation />
       </header>
       <div className="container-fluid flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
-        <div className="row flex-grow-sm-1 flex-grow-0">
+        <div className="row flex-grow-sm-1 flex-grow-0 vw-100">
           <Sidebar />
           <main id="main-dashboard" className="col overflow-auto">
-            <div className=" rounded-3 p-3">
+            <div className="rounded-3 p-3">
               {switchingComponents()}
             </div>
           </main>
