@@ -2,10 +2,12 @@ import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
 function Schedule() {
     useEffect(() => {
-        const bodyData = {
-            user: jwt_decode(localStorage.getItem('token')).id
-        }
 
+        const bodyData = {
+            username: jwt_decode(localStorage.getItem('token')).username,
+            week: String(getWeek())
+        }
+        
         const config = {
             method: 'POST',
             mode: 'cors',
@@ -23,24 +25,25 @@ function Schedule() {
             )
             .catch(e => console.log('Error: ', e))
 
-
+        // Construimos el Horario
         function buildingSchedule(data) {
             let rows = '';
             let timer = '';
+            let cellNum = 0;
             for (let h = 10; h <= 20; h++) {
 
                 if (h == 15 || h == 16) {
 
                 } else {
                     if (h == 14 || h == 20) {
-                        timer = `${h}:00`;
-                        rows += makingRow(timer);
+                        timer = `${h}00`;
+                        rows += makingRow(timer, cellNum);
+                        cellNum++;
                     } else {
                         for (let m = 0; m <= 45; m += 15) {
-                            // SE puede cambiar por el padStart de más abajo
-                            m == 0 ? timer = `${h}:00` : timer = `${h}:${m}`;
-
-                            rows += makingRow(timer);
+                            timer = `${h}${String(m).padStart(2, '0')}`;
+                            rows += makingRow(timer, cellNum);
+                            cellNum++;
                         }
                     }
 
@@ -55,6 +58,7 @@ function Schedule() {
                 let newDate = curr.split('.');
                 newDate.push(newDate[0].split(' '))
                 let date = new Date(newDate[2][0] + 'T' + newDate[2][1]);
+                
 
                 const timer = `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
 
@@ -77,13 +81,24 @@ function Schedule() {
                     col += html
                 }
 
-                
-                console.log(timer)
-                document.getElementById(`day${date.getDay()-1}${timer}`).setAttribute('rowSpan', `${visit.duration}`);
-                //Cambiar color según categoría
-                document.getElementById(`day${date.getDay()-1}${timer}`).classList.add('bg-yellow');
+                const timerId = `${date.getHours()}${String(date.getMinutes()).padStart(2, '0')}`;
 
-                document.getElementById(`day${date.getDay()-1}${timer}`).innerHTML = 
+                document.getElementById(`day${date.getDay()-1}${timerId}`).setAttribute('rowSpan', `${visit.duration}`);
+
+                // BORRAMOS LAS CELDAS QUE SOBRAN PERO NO FUNCIONA CUANDO CAMBIA DE HORA, SE PUEDE ARREGLAR CON UN CASE PERO QUÉ FEO... 
+                for (let index = 1; index < visit.duration; index++) {
+                    if (index != 1) {
+                        const e = document.getElementById(`day${date.getDay()-1}${parseInt(timerId)+((index-1)*15)}`);
+                        console.log(parseInt(timerId)+((index-1)*15))
+                        e.parentElement.removeChild(e);
+                    }
+                    
+                }
+
+                //Cambiar color según categoría
+                document.getElementById(`day${date.getDay()-1}${timerId}`).classList.add('bg-yellow');
+
+                document.getElementById(`day${date.getDay()-1}${timerId}`).innerHTML = 
                 `
                 ${col}
                 `
@@ -93,17 +108,18 @@ function Schedule() {
 
         }
 
-        function makingRow(timer) {
+        function makingRow(timer, cellNum) {
+
             const html =
                 `
                 <tr id=${timer}>
-                    <td className="align-middle">${timer}</td> 
-                    <td id="day0${timer}"></td>
-                    <td id="day1${timer}"></td>
-                    <td id="day2${timer}"></td>
-                    <td id="day3${timer}"></td>
-                    <td id="day4${timer}"></td>
-                    <td id="day5${timer}"></td>
+                    <td className="align-middle">${timer.substr(0, 2)+':'+timer.substr(2, 2)}</td> 
+                    <td id="day0${timer}" class=${cellNum}></td>
+                    <td id="day1${timer}" class=${cellNum}></td>
+                    <td id="day2${timer}" class=${cellNum}></td>
+                    <td id="day3${timer}" class=${cellNum}></td>
+                    <td id="day4${timer}" class=${cellNum}></td>
+                    <td id="day5${timer}" class=${cellNum}></td>
                 </tr>
             `
             return html;
