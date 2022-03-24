@@ -106,3 +106,11 @@
     vertical-align: top;
     border-top: 1px solid #dee2e6;
 }
+
+/* Colores background*/
+.bg-consulta {
+    background-color: #02c2c7 !important
+}
+.bg-cirugía {
+    background-color: #f0d001 !important
+}

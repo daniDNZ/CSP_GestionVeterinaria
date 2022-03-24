@@ -15,14 +15,14 @@ function Sidebar() {
                         <li className="nav-item">
                             <NavLink to="/turdus/schedule" className="nav-link px-2 text-truncate">
                                 <i className="bi bi-calendar-week fs-5 me-2 me-2"></i>
-                                <span className="d-none d-sm-inline">Schedule</span>
+                                <span className="d-none d-sm-inline">Horario</span>
                             </NavLink>
                         </li>
                         <li>
-                            <a href="#" className="nav-link px-2 text-truncate">
+                        <NavLink to="/turdus/visits" className="nav-link px-2 text-truncate">
                                 <i className="bi bi-card-text fs-5 me-2"></i>
-                                <span className="d-none d-sm-inline">Orders</span>
-                            </a>
+                                <span className="d-none d-sm-inline">Visitas</span>
+                        </NavLink>
                         </li>
                         <li>
                             <a href="#" className="nav-link px-2 text-truncate">
@@ -33,7 +33,7 @@ function Sidebar() {
                         <li>
                             <a href="#" className="nav-link px-2 text-truncate">
                                 <i className="bi bi-people fs-5 me-2"></i>
-                                <span className="d-none d-sm-inline">Customers</span>
+                                <span className="d-none d-sm-inline">Clientes</span>
                             </a>
                         </li>
                     </ul>

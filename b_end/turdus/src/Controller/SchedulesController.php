@@ -37,6 +37,46 @@ class SchedulesController extends AbstractController
                 $visit = [];
                 $visit['id'] = $singleVisit->getId();
                 $visit['patient'] = $singleVisit->getPatient()->getName();
+                $visit['species'] = $singleVisit->getPatient()->getSpecies();
+                $visit['category'] = $singleVisit->getCategory();
+                $visit['date_time'] = $singleVisit->getDateTime();
+                $visit['done'] = $singleVisit->getDone();
+                $visit['duration'] = $singleVisit->getDuration();
+                $visits[] = $visit;
+            }
+            
+        }
+
+        return $this->json($visits);
+    }
+
+    /**
+     * @Route("/api/day_schedule", name="app_day_schedule", methods="POST" )
+     */
+    public function day(VisitRepository $visitRepository, Request $request, UserRepository $userRepository): Response
+    {
+        $visits = [];
+        $data = $request->toArray();
+        // Recogermos el usuario
+        $userEntities = $userRepository->findBy(array('username' => $data['username']));
+
+        // Pasamos el String de días de la semana a un Array
+        $day = $data['day'];
+
+        $dayEntities = [];
+
+        // Buscamos las visitas por día y las añadimos a un Array
+        
+        $dayEntities[] = $visitRepository->findByDateTime($day.'%', $userEntities[0]->getId());
+        
+
+        // Recorremos el array de días y recorremos cada día para sacar cada visita
+        foreach ($dayEntities as $dayEntity) { 
+            foreach ($dayEntity as $singleVisit){
+                $visit = [];
+                $visit['id'] = $singleVisit->getId();
+                $visit['patient'] = $singleVisit->getPatient()->getName();
+                $visit['species'] = $singleVisit->getPatient()->getSpecies();
                 $visit['category'] = $singleVisit->getCategory();
                 $visit['date_time'] = $singleVisit->getDateTime();
                 $visit['done'] = $singleVisit->getDone();
