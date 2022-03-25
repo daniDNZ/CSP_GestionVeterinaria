@@ -1,19 +1,19 @@
 import DayVisits from "./DayVisits";
+import VisitForm from "./VisitForm";
 import { useState } from "react";
 function Visits() {
-    // Con el useState se rompen los días de DayVisits !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    const [visit, setVisit] = useState([]);
-    console.log(visit)
 
+
+    
     return (
         <div className="container">
-            <div className="d-flex flex-row">
+            <div className="d-flex flex-row justify-content-between">
 
                 <div className="d-flex flex-column">
-                    <DayVisits  setVisit={setVisit}/>
+                    <DayVisits/>
                 </div>
                 <div className="d-flex flex-column">
-                    {/* <h3>{visit[0].patient}</h3> */}
+                    <VisitForm />
                 </div>
             </div>
         </div>
