@@ -78,6 +78,7 @@ class SchedulesController extends AbstractController
                 $visit['patient'] = $singleVisit->getPatient()->getName();
                 $visit['species'] = $singleVisit->getPatient()->getSpecies();
                 $visit['category'] = $singleVisit->getCategory();
+                $visit['vet'] = $singleVisit->getUser()->getName();
                 $visit['date_time'] = $singleVisit->getDateTime();
                 $visit['done'] = $singleVisit->getDone();
                 $visit['duration'] = $singleVisit->getDuration();
