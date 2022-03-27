@@ -1,30 +1,37 @@
 import jwt_decode from "jwt-decode";
+import { useEffect } from "react";
 import '../css/visits.css';
 function Visits() {
     let arrData;
+    let arrVets;
+    let day;
+    let username;
+    
+
+    useEffect(() => {
+        // Obtenemos el día actual
+    
+        let curr = new Date
+        day = curr.toISOString().slice(0, 10)
+        console.log(day)
+
+        // Obtenemos el usuario actual
+        username = jwt_decode(localStorage.getItem('token')).username
+        console.log(username)
+
+        fetchVisit(day, username);
+        fetchVets();
+    
+    },[])
+
     const handleVisit = (e) => {
         e.preventDefault();
         // Enviar datos y hacer update o insert
     }
 
-    const handleData = (data) => {
-        let datalist;
-        arrData = data;
-        data.forEach(visit => {
-            const option = 
-            `
-                <option value="${visit.id} ${visit.patient}" />
-            `
-            datalist += option;
-        });
-        document.getElementById("visit-list-options").innerHTML = datalist;
-    }
-
-    const captureDate = (e) => {
-        e.preventDefault();
-        const day = e.target.value;
+    const fetchVisit = (day, username) => {
         const bodyData = {
-            username: jwt_decode(localStorage.getItem('token')).username,
+            username: username,
             day: day
         }
 
@@ -46,17 +53,84 @@ function Visits() {
                 // localStorage.clear();
                 // window.location = '/turdus/login'
             })
+    }
+
+    const fetchVets = () => {
+        const config = {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        }
+        const request = new Request("http://192.168.1.81:8888/api/vets", config);
+        fetch(request)
+            .then(response => response.json())
+            .then(data => { handleVets(data)} )
+            .catch(e => {
+                console.log(e)
+                // localStorage.clear();
+            });
 
     }
+    const handleVets = (data) => {
+        arrVets = data;
+        let datalist = '';
+        arrVets.forEach(vet => {
+            const option = 
+            `
+                <option value="${vet.id}">${vet.name}</ option>
+            `
+            datalist += option;
+        });
+        document.getElementById("vet-picker").innerHTML = datalist;
+        
+    }
+
+    const handleData = (data) => {
+        let datalist = '';
+        arrData = data;
+        data.forEach(visit => {
+            const option = 
+            `
+                <option value="${visit.id}">${visit.patient}</ option>
+            `
+            datalist += option;
+        });
+        document.getElementById("visit-picker").innerHTML = datalist;
+    }
+    
+    const captureDate = (e) => {
+        e.preventDefault();
+        const day = e.target.value;
+
+        fetchVisit(day, username);
+
+    }
+
     const handleVisitInfo = (e) => {
         e.preventDefault();
         let visit;
         arrData.forEach(v => {
-            if (v.id == e.target.value.split(' ')[0]) visit = v;
+            if (v.id == e.target.value) visit = v;
         });
+
         document.getElementById("patient-vet").value = visit.vet;
         // CONTINUAR RELLENANDO CAMPOS
     }
+
+    const handleUser = (e) => {
+        e.preventDefault();
+        arrVets.forEach(v => {
+            if (v.id == e.target.value) username = v.username;
+            
+        })
+        fetchVisit(day, username)
+
+    }
+
+    /////// NO REACCIONA BIEN, A HACER PRUEBAS
     return (
         <div className="container">
             <div className="d-flex flex-row justify-content-between">
@@ -68,19 +142,18 @@ function Visits() {
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="visit-picker" className="form-label">Visita:</label>
-                            <input list="visit-list-options" name="visit-picker" className="form-control" onChange={handleVisitInfo}></input>
-                            <datalist id="visit-list-options">
+                            <select id="visit-picker" className="form-select" onFocus={handleVisitInfo}>
                                 {/* <option value="34 Romo" />
                                 <option value="35 Palo" />
                                 <option value="36 Pipo" />
                                 <option value="37 pepo" />
                                 <option value="38 yupu" /> */}
-                            </datalist>
+                            </select>
                         </div>
                         
                         <div className="mb-3 col-auto">
-                            <label htmlFor="patient-vet" className="form-label">Veterinaria/o:</label>
-                            <input type="text" id="patient-vet" className="form-control" />
+                            <label htmlFor="vet-picker" className="form-label">Veterinaria/o:</label>
+                            <select type="text" id="vet-picker" className="form-select" onChange={handleUser}></select>
                         </div>
                         <div className="mb-3 col-auto form-check-inline">
                             <div className="form-check form-switch my-auto">
