@@ -14,7 +14,7 @@ function WeekSchedule() {
             username: jwt_decode(localStorage.getItem('token')).username,
             week: week
         }
-
+        console.log(bodyData)
         const config = {
             method: 'POST',
             mode: 'cors',
@@ -29,8 +29,9 @@ function WeekSchedule() {
             .then(response => response.json())
             .then(data => { buildingSchedule(data) })
             .catch(e => {
-                localStorage.clear();
-                window.location = '/turdus/login'
+                // localStorage.clear();
+                // window.location = '/turdus/login'
+                console.log(e)
             })
 
         // Construimos el Horario

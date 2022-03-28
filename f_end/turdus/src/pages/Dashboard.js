@@ -3,7 +3,9 @@ import Sidebar from '../components/Sidebar';
 import Home from '../components/Home';
 import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
-import Visits from '../components/Visits';
+import VisitsList from '../components/VisitsList';
+import Visit from '../components/Visit';
+
 
 function Dashboard({comp}) {
   document.getElementById('root').classList.add("d-flex", "flex-column", "vh-100", "overflow-hidden");
@@ -16,7 +18,9 @@ function Dashboard({comp}) {
       case 3:
         return <Schedule />
       case 4:
-        return <Visits />
+        return <VisitsList />
+      case 5:
+        return <Visit />
       default:
         break;
     }

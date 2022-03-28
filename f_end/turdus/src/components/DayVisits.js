@@ -1,15 +1,11 @@
 import jwt_decode from "jwt-decode";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-function VisitsList(data){
-    return (
-        <>
-        
-        </>
-    )
-}
 
-function DayVisits(  ) {
+function DayVisits() {
+    let { id } = useParams();
+    console.log(id)
     // useEffect(() => {
     //     dataFetch(0)
     // }, [])

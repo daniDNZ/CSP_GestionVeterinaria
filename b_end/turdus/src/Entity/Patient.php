@@ -109,6 +109,12 @@ class Patient
      */
     private $sterilised;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="patients")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $vet;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
@@ -444,6 +450,18 @@ class Patient
     public function setSterilised(bool $sterilised): self
     {
         $this->sterilised = $sterilised;
+
+        return $this;
+    }
+
+    public function getVet(): ?User
+    {
+        return $this->vet;
+    }
+
+    public function setVet(?User $vet): self
+    {
+        $this->vet = $vet;
 
         return $this;
     }

@@ -82,9 +82,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $area;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Patient::class, mappedBy="vet")
+     */
+    private $patients;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
+        $this->patients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -293,6 +299,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setArea(string $area): self
     {
         $this->area = $area;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Patient>
+     */
+    public function getPatients(): Collection
+    {
+        return $this->patients;
+    }
+
+    public function addPatient(Patient $patient): self
+    {
+        if (!$this->patients->contains($patient)) {
+            $this->patients[] = $patient;
+            $patient->setVet($this);
+        }
+
+        return $this;
+    }
+
+    public function removePatient(Patient $patient): self
+    {
+        if ($this->patients->removeElement($patient)) {
+            // set the owning side to null (unless already changed)
+            if ($patient->getVet() === $this) {
+                $patient->setVet(null);
+            }
+        }
 
         return $this;
     }

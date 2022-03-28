@@ -48,19 +48,17 @@ class PatientRepository extends ServiceEntityRepository
     // /**
     //  * @return Patient[] Returns an array of Patient objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function findByVets($value)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
+            ->andWhere('p.vet IN (:val)')
             ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Patient

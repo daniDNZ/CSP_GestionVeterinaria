@@ -48,14 +48,44 @@ class VisitRepository extends ServiceEntityRepository
     // /**
     //  * @return Visit[] Returns an array of Visit objects
     //  */
-    
-    public function findByDateTime($value, $user)
+    public function findByDate($value)
+    {
+        return $this->createQueryBuilder('v')
+        ->andWhere('v.date_time LIKE :val')
+        ->setParameter('val', $value)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function findByDateAndUser($value, $user)
     {
         return $this->createQueryBuilder('v')
         ->andWhere('v.user = :usr')
         ->andWhere('v.date_time LIKE :val')
         ->setParameter('usr', $user)
         ->setParameter('val', $value)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function findByDateAndPatient($date, $patient)
+    {
+        return $this->createQueryBuilder('v')
+        ->andWhere('v.date_time LIKE :date')
+        ->andWhere('v.patient = :pat')
+        ->setParameter('date', $date)
+        ->setParameter('pat', $patient)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function findByDateAndVet($date, $vet)
+    {
+        return $this->createQueryBuilder('v')
+        ->andWhere('v.date_time LIKE :date')
+        ->andWhere('v.user = :vet')
+        ->setParameter('date', $date)
+        ->setParameter('vet', $vet)
         ->getQuery()
         ->getResult();
     }
