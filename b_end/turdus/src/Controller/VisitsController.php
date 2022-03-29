@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +12,7 @@ use App\Repository\UserRepository;
 use App\Repository\PatientRepository;
 
 
-class SchedulesController extends AbstractController
+class VisitsController extends AbstractController
 {
     /**
      * @Route("/api/visit", name="app_visit", methods="POST" )
@@ -24,7 +25,7 @@ class SchedulesController extends AbstractController
     
         $visit = [];
         $visit['id'] = $visitEntity->getId();
-        $visit['vet'] = $visitEntity->getUser();
+        $visit['vet'] = $visitEntity->getUser()->getId();
         $visit['patient'] = $visitEntity->getPatient()->getName();
         $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
         $visit['species'] = $visitEntity->getPatient()->getSpecies();
@@ -39,6 +40,33 @@ class SchedulesController extends AbstractController
             
 
         return $this->json($visit);
+    }
+
+    /**
+     * @Route("/api/visit/update", name="app_visit_update", methods="POST" )
+     */
+    public function update(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = $request->toArray();
+        $visit = $visitRepository->find($data['id']);
+        $visit->setUser($userRepository->find($data['vet']));
+        $visit->getPatient()->setSpecies($data['patientSpecies']);
+        $visit->getPatient()->setRace($data['patientRace']);
+        $visit->setWeight($data['patientWeight']);
+        $visit->setCategory($data['category']);
+        $visit->setDone($data['done']);
+        $visit->setDescription($data['description']);
+        $visit->setTreatment($data['treatment']);
+
+        $dateString = $data['date_time'];
+        $dateReconverted = \DateTime::createFromFormat('Y-m-d h:i:s', $dateString);
+        $visit->setDateTime($dateReconverted);
+
+        $entityManager->persist($visit);
+        $entityManager->flush();
+    
+        return $this->json(['response' => 'Visita actualizada']);
+        
     }
 
     /**

@@ -32,36 +32,42 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/api/vets", name="app_vets", methods="POST")
+     * @Route("/api/vets", name="app_vets", methods={"GET", "POST"})
      */
     public function vets(UserRepository $userRepository, PatientRepository $patientRepository, CustomerRepository $customerRepository, Request $request): Response
     {   
         $users = [];
-        $data = $request->toArray();
-        
-        if ($data['patient'] != '') {
-            $patientEntities = $patientRepository->findBy(array('id' => $data['patient']));
-            $patient = $patientEntities[0];
-            $vetId = $patient->getVet();
-            
-            $userEntities = $userRepository->findBy(array('id' => $vetId));
-        } else if ($data['customer'] != '') {
-            $customerEntities = $customerRepository->findBy(array('id' => $data['customer']));
-            $customerId = $customerEntities[0]['id'];
 
-            $patientEntities = $patientRepository->findBy(array('responsible' => $customerId));
-            $vetIds = [];
-            $userEntities = [];
-            foreach ($patientEntities as $patientEntity) {
-                $vetIds[] = $patientEntity->getVet();
-            }
-            for ($i=0; $i < count($vetIds); $i++) { 
-                $userEntities[] = $userRepository->findBy(array('id' => $vetIds[$i])); 
-            }           
-        } else {
+        if ($request->isMethod('GET')){
             $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
+        } else {
+            $data = $request->toArray();
+        
+            if ($data['patient'] != '') {
+                $patientEntities = $patientRepository->findBy(array('id' => $data['patient']));
+                $patient = $patientEntities[0];
+                $vetId = $patient->getVet();
+                
+                $userEntities = $userRepository->findBy(array('id' => $vetId));
+            } else if ($data['customer'] != '') {
+                $customerEntities = $customerRepository->findBy(array('id' => $data['customer']));
+                $customerId = $customerEntities[0]['id'];
+    
+                $patientEntities = $patientRepository->findBy(array('responsible' => $customerId));
+                $vetIds = [];
+                $userEntities = [];
+                foreach ($patientEntities as $patientEntity) {
+                    $vetIds[] = $patientEntity->getVet();
+                }
+                for ($i=0; $i < count($vetIds); $i++) { 
+                    $userEntities[] = $userRepository->findBy(array('id' => $vetIds[$i])); 
+                }           
+            } else {
+                $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
+            }
         }
 
+        
         foreach ($userEntities as $userEntity) {
             $user = [];
             $user['id'] = $userEntity->getId();

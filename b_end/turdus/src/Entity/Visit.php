@@ -123,12 +123,12 @@ class Visit
         return $this;
     }
 
-    public function getDateTime(): ?\DateTimeInterface
+    public function getDateTime(): ?\DateTime
     {
         return $this->date_time;
     }
 
-    public function setDateTime(\DateTimeInterface $date_time): self
+    public function setDateTime(\DateTime $date_time): self
     {
         $this->date_time = $date_time;
 

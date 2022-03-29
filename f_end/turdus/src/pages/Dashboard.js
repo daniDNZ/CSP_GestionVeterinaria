@@ -5,11 +5,13 @@ import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
 import VisitsList from '../components/VisitsList';
 import Visit from '../components/Visit';
+import PatientsAndCustomers from '../components/PatientsAndCustomers';
 
 
-function Dashboard({comp}) {
+
+function Dashboard({ comp }) {
   document.getElementById('root').classList.add("d-flex", "flex-column", "vh-100", "overflow-hidden");
- function switchingComponents() {
+  function switchingComponents() {
     switch (comp) {
       case 1:
         return <Home />
@@ -21,11 +23,13 @@ function Dashboard({comp}) {
         return <VisitsList />
       case 5:
         return <Visit />
+      case 6:
+        return <PatientsAndCustomers />
       default:
         break;
     }
   }
-  
+
 
   return (
     <>

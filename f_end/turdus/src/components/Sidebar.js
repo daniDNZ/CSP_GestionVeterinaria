@@ -19,10 +19,10 @@ function Sidebar() {
                             </NavLink>
                         </li>
                         <li>
-                        <NavLink to="/turdus/visits" className="nav-link px-2 text-truncate">
+                            <NavLink to="/turdus/visits" className="nav-link px-2 text-truncate">
                                 <i className="bi bi-card-text fs-5 me-2"></i>
                                 <span className="d-none d-sm-inline">Visitas</span>
-                        </NavLink>
+                            </NavLink>
                         </li>
                         <li>
                             <a href="#" className="nav-link px-2 text-truncate">
@@ -31,10 +31,10 @@ function Sidebar() {
                             </a>
                         </li>
                         <li>
-                            <a href="#" className="nav-link px-2 text-truncate">
+                            <NavLink to="/turdus/patients" className="nav-link px-2 text-truncate">
                                 <i className="bi bi-people fs-5 me-2"></i>
-                                <span className="d-none d-sm-inline">Clientes</span>
-                            </a>
+                                <span className="d-none d-sm-inline">Pacientes</span>
+                            </NavLink>
                         </li>
                     </ul>
                 </div>
