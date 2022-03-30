@@ -3,10 +3,11 @@ import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
 function Visits() {
-    let day = getDay();
+    let day = '';
     let userId = '';
     let customer = '';
     let patient = '';
+    let completed = false;
     let arrVets;
     let arrCustomers;
     let arrPatients;
@@ -17,18 +18,18 @@ function Visits() {
         fetchVets();
         fetchCustomers();
         fetchPatients();
-        fetchVisit();
+        fetchVisits();
 
-        day = '';
-    
-    },[])
 
-    const fetchVisit = () => {
+    }, [])
+
+    const fetchVisits = () => {
         const bodyData = {
             day: day,
             userid: userId,
             customer: customer,
-            patient: patient
+            patient: patient,
+            completed: completed
         }
 
         const config = {
@@ -40,11 +41,11 @@ function Visits() {
             },
             body: JSON.stringify(bodyData)
         }
-        const request = new Request("http://192.168.1.81:8888/api/day_schedule", config);
+        const request = new Request("http://192.168.1.81:8888/api/list_visits", config);
         console.log(bodyData)
         fetch(request)
             .then(response => response.json())
-            .then(data => { handleVisits(data) } )
+            .then(data => { handleVisits(data) })
             .catch(e => {
                 console.log(e)
                 // localStorage.clear();
@@ -69,7 +70,7 @@ function Visits() {
         const request = new Request("http://192.168.1.81:8888/api/vets", config);
         fetch(request)
             .then(response => response.json())
-            .then(data => { handleVets(data)} )
+            .then(data => { handleVets(data) })
             .catch(e => {
                 console.log(e)
                 // localStorage.clear();
@@ -93,7 +94,7 @@ function Visits() {
         const request = new Request("http://192.168.1.81:8888/api/customers", config);
         fetch(request)
             .then(response => response.json())
-            .then(data => { handleCustomers(data)} )
+            .then(data => { handleCustomers(data) })
             .catch(e => {
                 console.log(e)
                 // localStorage.clear();
@@ -117,7 +118,7 @@ function Visits() {
         const request = new Request(`http://192.168.1.81:8888/api/patients`, config);
         fetch(request)
             .then(response => response.json())
-            .then(data => { handlePatients(data)} )
+            .then(data => { handlePatients(data) })
             .catch(e => {
                 console.log(e)
                 // localStorage.clear();
@@ -128,51 +129,51 @@ function Visits() {
         arrVets = data;
         let datalist = `<option value='' selected>Select...</option>`;
         arrVets.forEach(vet => {
-            const option = 
-            `
+            const option =
+                `
                 <option value="${vet.id}">${vet.name}</ option>
             `
             datalist += option;
         });
         document.getElementById("vet-picker").innerHTML = datalist;
-        
+
     }
 
     const handleCustomers = (data) => {
         arrCustomers = data;
         let datalist = '';
         arrCustomers.forEach(c => {
-            const option = 
-            `
+            const option =
+                `
                 <option value="${c.id} ${c.name}">${c.name}</ option>
             `
             datalist += option;
         });
         document.getElementById("datalist-customers").innerHTML = datalist;
-        
+
     }
 
     const handlePatients = (data) => {
         arrPatients = data;
         let datalist = '';
         arrPatients.forEach(p => {
-            const option = 
-            `
+            const option =
+                `
                 <option value="${p.id} ${p.name}">${p.name}</ option>
             `
             datalist += option;
         });
         document.getElementById("datalist-patients").innerHTML = datalist;
-        
+
     }
 
     const handleVisits = (data) => {
         arrVisits = data;
         arrVisits.sort(function (a, b) {
-            if (a.date_time.date > b.date_time.date){
+            if (a.date_time.date > b.date_time.date) {
                 return 1;
             }
-            if (a.date_time.date < b.date_time.date){
+            if (a.date_time.date < b.date_time.date) {
                 return -1;
             }
             return 0;
@@ -180,8 +181,8 @@ function Visits() {
         console.log(arrVisits)
         let datalist = '<tr>';
         arrVisits.forEach(v => {
-            const li = 
-            `
+            const li =
+                `
                 <td>${v.date_time.date.split('.')[0]}</ td>
                 <td>${v.category}</ td>
                 <td>${v.patient}</ td>
@@ -205,14 +206,17 @@ function Visits() {
         customer = '';
         patient = '';
         userId = '';
+        completed = false;
         document.getElementById("patient-picker").value = '';
         document.getElementById("customer-picker").value = '';
         document.getElementById("vet-picker").value = '';
         document.getElementById("date-picker").value = '';
         document.getElementById('visits-table-tbody').innerHTML = '';
+        document.getElementById('visits-completed').checked = false;
         fetchVets();
         fetchPatients();
         fetchCustomers();
+        fetchVisits();
     }
 
     const captureDate = (e) => {
@@ -221,7 +225,7 @@ function Visits() {
         console.log(day)
         fetchPatients()
         fetchCustomers()
-        fetchVisit()
+        fetchVisits()
     }
 
     const captureUser = (e) => {
@@ -230,7 +234,7 @@ function Visits() {
         console.log(userId)
         fetchPatients()
         fetchCustomers()
-        fetchVisit()
+        fetchVisits()
     }
 
     const captureCustomer = (e) => {
@@ -238,7 +242,7 @@ function Visits() {
         customer = e.target.value.split(' ')[0];
         console.log(customer)
         fetchPatients()
-        fetchVisit()
+        fetchVisits()
     }
 
     const capturePatient = (e) => {
@@ -247,9 +251,14 @@ function Visits() {
         console.log(patient)
         fetchCustomers()
         fetchVets()
-        fetchVisit()
+        fetchVisits()
     }
 
+    const captureCompleted = (e) => {
+        e.preventDefault();
+        completed = e.target.checked;
+        fetchVisits();
+    }
     // Obtenemos el día actual
     function getDay() {
         let curr = new Date
@@ -282,6 +291,14 @@ function Visits() {
                             <label htmlFor="patient-picker" className="form-label">Paciente:</label>
                             <input id="patient-picker" className="form-control" list="datalist-patients" placeholder="Buscar..." onInput={capturePatient}></input>
                             <datalist id="datalist-patients"></datalist>
+                        </div>
+                        <div className="mb-3 col-auto d-flex flex-column">
+                            <div>
+                                <label htmlFor="visit-completed" className="form-label row">Completada: </label>
+                            </div>
+                            <div className=" my-auto d-flex flex-row justify-content-center">
+                                <input type="checkbox" id="visits-completed" name="completed" className="form-check-input row" onInput={captureCompleted} />
+                            </div>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">
                             <button type="button" className="btn btn-light" onClick={handleClean}>Limpiar...</button>

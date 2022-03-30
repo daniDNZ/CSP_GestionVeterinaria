@@ -59,13 +59,13 @@ class VisitsController extends AbstractController
         $visit->setTreatment($data['treatment']);
 
         $dateString = $data['date_time'];
-        $dateReconverted = \DateTime::createFromFormat('Y-m-d h:i:s', $dateString);
+        $dateReconverted = \DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
         $visit->setDateTime($dateReconverted);
 
         $entityManager->persist($visit);
         $entityManager->flush();
     
-        return $this->json(['response' => 'Visita actualizada']);
+        return $this->json(['response' => 'Actualizada']);
         
     }
 
@@ -109,7 +109,7 @@ class VisitsController extends AbstractController
     }
 
     /**
-     * @Route("/api/day_schedule", name="app_day_schedule", methods="POST" )
+     * @Route("/api/list_visits", name="app_day_schedule", methods="POST" )
      */
     public function day(VisitRepository $visitRepository, UserRepository $userRepository, PatientRepository $patientRepository, Request $request): Response
     {
@@ -119,6 +119,7 @@ class VisitsController extends AbstractController
         $patient = $data['patient'];
         $customer = $data['customer'];
         $vet = $data['userid'];
+        $completed = $data['completed'];
 
         if ($customer == '' || $patient != '') {
 
@@ -151,7 +152,12 @@ class VisitsController extends AbstractController
                 $visit['date_time'] = $singleVisit->getDateTime();
                 $visit['done'] = $singleVisit->getDone();
                 $visit['duration'] = $singleVisit->getDuration();
-                $visits[] = $visit;
+                $visit['completed'] = $singleVisit->getDone();
+
+                if ($visit['completed'] == $completed) {
+                    $visits[] = $visit;
+                }
+                
             }
 
         } else if ($customer != '') {
@@ -183,7 +189,12 @@ class VisitsController extends AbstractController
                     $visit['date_time'] = $singleVisit->getDateTime();
                     $visit['done'] = $singleVisit->getDone();
                     $visit['duration'] = $singleVisit->getDuration();
-                    $visits[] = $visit;
+                    $visit['completed'] = $singleVisit->getDone();
+
+                    if ($visit['completed'] == $completed) {
+                        $visits[] = $visit;
+                    }
+                    
                 }
              }
 

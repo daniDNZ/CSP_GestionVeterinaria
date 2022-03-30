@@ -3,7 +3,7 @@
 }
 
 #main-dashboard {
-    min-height: 80vh;
+    /* min-height: 80vh; */
 }
 
 [class*='container'] {
@@ -12,6 +12,11 @@
 
 .row [class*='col'] {
     background-clip: content-box;
+}
+
+#dashboard-sidebar {
+    min-width: 180px;
+    max-width: 210px;
 }
 
 .nav-item {

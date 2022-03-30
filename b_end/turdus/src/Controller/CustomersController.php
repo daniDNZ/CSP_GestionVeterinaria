@@ -11,6 +11,7 @@ use App\Repository\PatientRepository;
 
 class CustomersController extends AbstractController
 {
+
     /**
      * @Route("/api/customers", name="app_customers", methods="POST")
      */
@@ -18,47 +19,38 @@ class CustomersController extends AbstractController
     {   
         $customers = [];
         $data = $request->toArray();
-        if ($data['userid'] != '') {
+        
+        function maker($customerEntity, $patientRepository){
+            $customer = [];
+            $customer['id'] = $customerEntity->getId();
+            $customer['name'] = $customerEntity->getName();
+            $customer['lastname'] = $customerEntity->getLastName();
+            $customer['phone'] = $customerEntity->getPhone();
+            $customer['email'] = $customerEntity->getEmail();
+            $customer['address'] = $customerEntity->getAddress();
+            $customer['postalcode'] = $customerEntity->getPostalCode()->getId();
+            $customer['city'] = $customerEntity->getPostalCode()->getCity();
+            $customer['province'] = $customerEntity->getPostalCode()->getProvince();
+            $customer['family'] = $customerEntity->getFamily()->getId();
+            $customer['info'] = $customerEntity->getInfo();
 
-            $patientEntities = $patientRepository->findBy(array('vet' => $data['userid']));
+            $patients = [];
+            $id = $customerEntity->getId();
+            $patientEntities = $patientRepository->findBy(array('responsible' => $id));
             foreach ($patientEntities as $patientEntity) {
-                $customer = $patientEntity->getResponsible();
-                $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
-            }
-            foreach ($arrCustomerEntities as $customerEntities) {
-                foreach ($customerEntities as $customerEntity) {
-                    $customer = [];
-                    $customer['id'] = $customerEntity->getId();
-                    $customer['name'] = $customerEntity->getName();
-                    $customer['lastname'] = $customerEntity->getLastName();
-                    $customer['phone'] = $customerEntity->getPhone();
-                    $customer['email'] = $customerEntity->getEmail();
-                    $customer['address'] = $customerEntity->getAddress();
-                    $customer['postalcode'] = $customerEntity->getPostalCode()->getId();
-                    $customer['city'] = $customerEntity->getPostalCode()->getCity();
-                    $customer['province'] = $customerEntity->getPostalCode()->getProvince();
-                    $customer['family'] = $customerEntity->getFamily()->getId();
-                    $customer['info'] = $customerEntity->getInfo();
-        
-                    $patients = [];
-                    $id = $customerEntity->getId();
-                    $patientEntities = $patientRepository->findBy(array('responsible' => $id));
-                    foreach ($patientEntities as $patientEntity) {
-                        $patient = [];
-                        $patient['id'] = $patientEntity->getId();
-                        $patient['name'] = $patientEntity->getName();
-                        $patients[] = $patient;
-                    }
-        
-                    $customer['patients'] = $patients;
-        
-                    $customers[] = $customer;
-                }
+                $patient = [];
+                $patient['id'] = $patientEntity->getId();
+                $patient['name'] = $patientEntity->getName();
+                $patients[] = $patient;
             }
 
+            $customer['patients'] = $patients;
 
-        } else {
-
+            return $customer;
+        }
+        
+        
+        if ($data['userid'] === '' || $data['patient'] != '') {
             if ($data['patient'] != '') {
                 $patient = $patientRepository->findBy(array('id' => $data['patient']))[0];
                 $customerEntities = $customerRepository->findBy(array('id' => $patient->getResponsible()));
@@ -68,32 +60,20 @@ class CustomersController extends AbstractController
             }
 
             foreach ($customerEntities as $customerEntity) {
-                $customer = [];
-                $customer['id'] = $customerEntity->getId();
-                $customer['name'] = $customerEntity->getName();
-                $customer['lastname'] = $customerEntity->getLastName();
-                $customer['phone'] = $customerEntity->getPhone();
-                $customer['email'] = $customerEntity->getEmail();
-                $customer['address'] = $customerEntity->getAddress();
-                $customer['postalcode'] = $customerEntity->getPostalCode()->getId();
-                $customer['city'] = $customerEntity->getPostalCode()->getCity();
-                $customer['province'] = $customerEntity->getPostalCode()->getProvince();
-                $customer['family'] = $customerEntity->getFamily()->getId();
-                $customer['info'] = $customerEntity->getInfo();
-    
-                $patients = [];
-                $id = $customerEntity->getId();
-                $patientEntities = $patientRepository->findBy(array('responsible' => $id));
-                foreach ($patientEntities as $patientEntity) {
-                    $patient = [];
-                    $patient['id'] = $patientEntity->getId();
-                    $patient['name'] = $patientEntity->getName();
-                    $patients[] = $patient;
+                $customers[] = maker($customerEntity, $patientRepository);
+            }
+
+        } else {
+
+            $patientEntities = $patientRepository->findBy(array('vet' => $data['userid']));
+            foreach ($patientEntities as $patientEntity) {
+                $customer = $patientEntity->getResponsible();
+                $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
+            }
+            foreach ($arrCustomerEntities as $customerEntities) {
+                foreach ($customerEntities as $customerEntity) {
+                    $customers[] = maker($customerEntity, $patientRepository);
                 }
-    
-                $customer['patients'] = $patients;
-    
-                $customers[] = $customer;
             }
 
         }

@@ -1,11 +1,11 @@
-import Navigation from '../components/Navigation';
-import Sidebar from '../components/Sidebar';
+import DashboardNavigation from '../components/DashboardNavigation';
 import Home from '../components/Home';
 import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
 import VisitsList from '../components/VisitsList';
 import Visit from '../components/Visit';
 import PatientsAndCustomers from '../components/PatientsAndCustomers';
+import DashboardSidebar from '../components/DashboardSidebar';
 
 
 
@@ -33,12 +33,12 @@ function Dashboard({ comp }) {
 
   return (
     <>
-      <header id="header-dashboard" className="py-3 border-bottom">
-        <Navigation />
+      <header id="header-dashboard" className="border-bottom">
+        <DashboardNavigation />
       </header>
       <div className="container-fluid flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
         <div className="row flex-grow-sm-1 flex-grow-0 vw-100">
-          <Sidebar />
+          <DashboardSidebar />
           <main id="main-dashboard" className="col overflow-auto">
             <div className="rounded-3 p-3">
               {switchingComponents()}

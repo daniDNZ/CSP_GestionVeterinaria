@@ -1,0 +1,76 @@
+import { NavLink } from "react-router-dom";
+function DashboardNavContent() {
+    return (
+        <ul className="nav nav-pills flex-column">
+            <li className="mx-0 nav-item">
+                <NavLink to="/turdus/dashboard" className="nav-link px-2">
+
+                    <i className="bi bi-speedometer fs-5 me-2"></i>
+                    <span className="d-inline">Dashboard</span>
+
+                </NavLink>
+            </li>
+            <li className="mx-0 nav-item">
+                <NavLink to="/turdus/schedule" className="nav-link px-2">
+                    <i className="bi bi-calendar-week fs-5 me-2"></i>
+                    <span className="d-inline">Horario</span>
+                </NavLink>
+            </li>
+            <li className="mx-0 nav-item">
+                <NavLink to="/turdus/visits" className="nav-link px-2">
+                    <i className="bi bi-card-text fs-5 me-2"></i>
+                    <span className="d-inline">Visitas</span>
+                </NavLink>
+            </li>
+            <li className="mx-0 nav-item">
+                <a href="#" className="nav-link px-2">
+                    <i className="bi bi-bricks fs-5 me-2 "></i>
+                    <span className="d-inline">Products</span>
+                </a>
+            </li>
+            <li className="nav-item mx-0 nav-item">
+                <a href="#" className="nav-link px-2 dropdown-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#patients-collapse" aria-controls="#patients-collapse" aria-expanded="false">
+                    <i className="bi bi-people fs-5 me-2"></i>
+                    <span className="d-inline">Pacientes</span>
+                </a>
+                <div id="patients-collapse" className="collapse navbar-collapse">
+                    <hr className="m-0" />
+                    <ul className="nav flex-column">
+                        <li className="nav-item">
+                            <NavLink to="/turdus/patients" className="nav-link px-2 text-reset">
+                                <span className="d-inline">Lista</span>
+                            </NavLink>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link px-2 text-reset" href="#">Nuevo Paciente</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </li>
+            <li className="nav-item mx-0 nav-item d-md-none">
+                <a href="#" className="nav-link px-2 dropdown-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-controls="#user-collapse" aria-expanded="false">
+                    <img src="https://via.placeholder.com/28?text=!" alt="user" width="24" height="24" className="rounded-circle me-1" />
+                    <span className="d-inline">Chellmer0</span>
+                </a>
+                <div id="user-collapse" className="collapse navbar-collapse">
+                    <hr className="m-0" />
+                    <ul className="nav nav-pills flex-column">
+                        <li><a className="dropdown-item" href="#">New project...</a></li>
+                        <li><a className="dropdown-item" href="#">Settings</a></li>
+                        <li><a className="dropdown-item" href="#">Profile</a></li>
+                        <li>
+                            <hr className="dropdown-divider" />
+                        </li>
+                        <li>
+                            <NavLink to="/turdus/logout" className="dropdown-item">Sign out</NavLink>
+                        </li>
+                    </ul>
+                </div>
+
+            </li>
+        </ul>
+    )
+}
+
+export default DashboardNavContent;

@@ -31,7 +31,7 @@ function Visit() {
             customer: fData.customer.value,
             category: fData.category.value,
             date_time: datetime,
-            done: fData.completed.value,
+            done: fData.completed.checked,
             description: fData.description.value,
             treatment: fData.treatment.value
         }
@@ -153,7 +153,7 @@ console.log(bodyData)
 
     }
 
-    const handleAlert = (e) => {
+    const handleAlert = () => {
       
         const alert = document.getElementById("completedAlert");
         alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none')

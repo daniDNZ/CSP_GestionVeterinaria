@@ -1,96 +1,40 @@
 import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import '../css/visits.css';
-function Visit() {
-    const { id } = useParams();
-    let arrData;
+import { NavLink } from "react-router-dom";
 
+function Visits() {
+    let userId = '';
+    let customer = '';
+    let patient = '';
+    let species = '';
+    let sterilised = '';
+    let arrVets;
+    let arrCustomers;
+    let arrPatients;
 
     useEffect(() => {
 
         fetchVets();
+        fetchCustomers();
+        fetchPatients();
 
 
     }, [])
 
-    const handleVisit = (e) => {
-        e.preventDefault();
-        handleAlert();
-        const fData = e.target;
-        const datetime = `${fData.datetime.value.split('T')[0]} ${fData.datetime.value.split('T')[1]}:00`
-
-        // Enviar datos y hacer update o insert
-        const bodyData = {
-            id: id,
-            vet: fData.vet.value,
-            patientName: fData.patientName.value,
-            patientSpecies: fData.patientSpecies.value,
-            patientRace: fData.patientRace.value,
-            patientWeight: fData.patientWeight.value,
-            customer: fData.customer.value,
-            category: fData.category.value,
-            date_time: datetime,
-            done: fData.completed.value,
-            description: fData.description.value,
-            treatment: fData.treatment.value
-        }
-console.log(bodyData)
-        const config = {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bodyData)
-        }
-        const request = new Request("http://192.168.1.81:8888/api/visit/update", config);
-        fetch(request)
-            .then(response => response.json())
-            .then(data => { console.log(data) })
-            .catch(e => {
-                console.log(e, 'Esto es un error')
-                // localStorage.clear();
-                // window.location = '/turdus/login'
-            })
-
-    }
-
-    const fetchVisit = () => {
-        const bodyData = {
-            id: id
-        }
-
-        const config = {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bodyData)
-        }
-        const request = new Request("http://192.168.1.81:8888/api/visit", config);
-        fetch(request)
-            .then(response => response.json())
-            .then(data => { handleData(data) })
-            .catch(e => {
-                console.log(e)
-                // localStorage.clear();
-                // window.location = '/turdus/login'
-            })
-    }
 
     const fetchVets = () => {
-
+        const bodyData = {
+            patient: patient,
+            customer: customer
+        }
         const config = {
-            method: 'GET',
+            method: 'POST',
             mode: 'cors',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(bodyData)
         }
         const request = new Request("http://192.168.1.81:8888/api/vets", config);
         fetch(request)
@@ -102,154 +46,247 @@ console.log(bodyData)
             });
     }
 
-    const handleData = (data) => {
-        let curr = data.date_time.date       
-        let date = curr.slice(0, 16).replace(' ', 'T')
-        document.getElementById("visit-datetime").value = date;
+    const fetchCustomers = () => {
+        const bodyData = {
+            patient: patient,
+            species: species,
+            userid: userId,
+        }
+        const config = {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyData)
+        }
+        const request = new Request("http://192.168.1.81:8888/api/customers", config);
+        fetch(request)
+            .then(response => response.json())
+            .then(data => { handleCustomers(data) })
+            .catch(e => {
+                console.log(e)
+                // localStorage.clear();
+            });
+    }
 
-        const checkbox = document.getElementById("visit-completed")
-        data.done == true ? checkbox.checked = true : checkbox.checked = false
-
-        document.getElementById("visit-customer").value = data.customer;
-        document.getElementById("visit-category").value = data.category;
-        document.getElementById("visit-patient-name").value = data.patient;
-        document.getElementById("visit-patient-species").value = data.species;
-        document.getElementById("visit-patient-race").value = data.race;
-        let weight;
-        data.weight === null ? weight = '0' : weight = data.weight;
-        document.getElementById("visit-patient-weight").value = weight;
-        document.getElementById("visit-description").value = data.description;
-        document.getElementById("visit-treatment").value = data.treatment;
-
-        document.getElementById(`${data.vet}`).selected = true;
-
+    const fetchPatients = () => {
+        const bodyData = {
+            patient: patient,
+            userid: userId,
+            customer: customer,
+            species: species,
+            sterilised: sterilised
+        }
+        const config = {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyData)
+        }
+        const request = new Request(`http://192.168.1.81:8888/api/patients`, config);
+        fetch(request)
+            .then(response => response.json())
+            .then(data => { handlePatients(data); handleData(data); })
+            .catch(e => {
+                console.log(e)
+                // localStorage.clear();
+            });
     }
 
     const handleVets = (data) => {
-        
-        let datalist = '<option>Select...</option>';
-        data.forEach(v => {
-            const op =
+        arrVets = data;
+        let datalist = `<option value='' selected>Select...</option>`;
+        arrVets.forEach(vet => {
+            const option =
                 `
-                <option id="${v.id}" value="${v.id}">${v.name}</ option>
-
+                <option value="${vet.id}">${vet.name}</ option>
             `
-            datalist += op;
+            datalist += option;
         });
         document.getElementById("vet-picker").innerHTML = datalist;
-        fetchVisit();
-
 
     }
 
-    const captureDate = (e) => {
+    const handleCustomers = (data) => {
+        arrCustomers = data;
+        let datalist = '';
+        arrCustomers.forEach(c => {
+            const option =
+                `
+                <option value="${c.id} ${c.name}">${c.name}</ option>
+            `
+            datalist += option;
+        });
+        document.getElementById("datalist-customers").innerHTML = datalist;
+
+    }
+
+    const handlePatients = (data) => {
+        arrPatients = data;
+        let datalist = '';
+        arrPatients.forEach(p => {
+            const option =
+                `
+                <option value="${p.id} ${p.name}">${p.name}</ option>
+            `
+            datalist += option;
+        });
+        document.getElementById("datalist-patients").innerHTML = datalist;
+
+    }
+
+    const handleData = (data) => {
+        arrPatients = data;
+        console.log(arrPatients)
+        let datalist = '<tr>';
+        arrPatients.forEach(p => {
+            let birthday = new Date(p.birthday.date)
+            const li =
+                `
+                <td>${p.name}</ td>
+                <td>${p.species}</ td>
+                <td>${p.race}</ td>
+                <td>${birthday.toISOString().split('T')[0]}</ td>
+                <td>${p.gender}</ td>
+                <td>${p.sterilised}</ td>
+                <td>${p.vet}</ td>
+                <td>${p.responsible}</ td>
+
+                <td><a href="/turdus/visits/${p.id}" class="nav-link px-2 text-truncate">
+                            <i class="bi bi-card-text fs-5 me-2"></i>
+                    </a>
+                </ td>
+                </tr>
+            `
+            datalist += li;
+        })
+        document.getElementById('visits-table-tbody').innerHTML = datalist;
+    }
+
+    const handleClean = (e) => {
         e.preventDefault();
-        console.log(e.target.value)
+
+        customer = '';
+        patient = '';
+        userId = '';
+        sterilised = '';
+        document.getElementById("patient-picker").value = '';
+        document.getElementById("customer-picker").value = '';
+        document.getElementById("vet-picker").value = '';
+        document.getElementById('visits-table-tbody').innerHTML = '';
+        document.getElementById('visits-completed').checked = false;
+        fetchVets();
+        fetchPatients();
+        fetchCustomers();
     }
 
-    const captureCompleted = (e) => {
+
+    const captureUser = (e) => {
         e.preventDefault();
-        console.log(e.target.checked)
-
+        userId = e.target.value;
+        console.log(userId)
+        fetchPatients()
+        fetchCustomers()
     }
 
-    const handleAlert = (e) => {
-      
-        const alert = document.getElementById("completedAlert");
-        alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none')
-        
+    const captureCustomer = (e) => {
+        e.preventDefault();
+        customer = e.target.value.split(' ')[0];
+        console.log(customer)
+        fetchPatients()
     }
+
+    const capturePatient = (e) => {
+        e.preventDefault();
+        patient = e.target.value.split(' ')[0];
+        console.log(patient)
+        fetchPatients()
+        fetchCustomers()
+        fetchVets()
+    }
+    const captureSpecies = (e) => {
+        e.preventDefault();
+        species = e.target.value;
+        console.log(species)
+        fetchPatients()
+        // FALTA MODIFICAR LISTAS DE VETERINARIOS Y CLIENTES SEGÚN LA ESPECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        fetchCustomers()
+    }
+    const captureSterilised = (e) => {
+        e.preventDefault();
+        sterilised = e.target.checked;
+        fetchPatients();
+    }
+ 
 
     return (
         <div className="container">
-            <div className="alert alert-success alert-dismissible fade d-none show" tabIndex="-1" id="completedAlert" role="alert" aria-hidden="true">
-
-                <strong>Visita actualizada</strong>
-                <button type="button" className="btn-close" onClick={handleAlert} aria-label="Close"></button>
-
-            </div>
             <div className="d-flex flex-row justify-content-between">
-                <form onSubmit={handleVisit}>
+                <form>
                     <div className="row">
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-datetime" className="form-label">Fecha/Hora:</label>
-                            <input type="datetime-local" id="visit-datetime" name="datetime" className="form-control date-input" onChange={captureDate} />
-                        </div>
-
                         <div className="mb-3 col-auto">
                             <label htmlFor="vet-picker" className="form-label">Veterinaria/o:</label>
-                            <select type="text" id="vet-picker" name="vet" className="form-select" ></select>
+                            <select type="text" id="vet-picker" className="form-select" onInput={captureUser}></select>
                         </div>
-                        <div className="mb-3 col-auto form-check-inline">
-                            <div className="form-check my-auto">
-                                <label htmlFor="visit-completed" className="form-check-label">Completada</label>
-                                <input type="checkbox" id="visit-completed" name="completed" className="form-check-input" onInput={captureCompleted} />
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-picker" className="form-label">Cliente:</label>
+                            <input id="customer-picker" className="form-control" list="datalist-customers" placeholder="Buscar..." onInput={captureCustomer}></input>
+                            <datalist id="datalist-customers"></datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="patient-picker" className="form-label">Paciente:</label>
+                            <input id="patient-picker" className="form-control" list="datalist-patients" placeholder="Buscar..." onInput={capturePatient}></input>
+                            <datalist id="datalist-patients"></datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="species-picker" className="form-label">Especie:</label>
+                            <select type="text" id="species-picker" className="form-select" onInput={captureSpecies}>
+                                <option>Canis Familiaris</option>
+                                <option>Felis Catus</option>
+                                <option>Pogona Vitticeps</option>
+                                <option>Nymphicus Hollandicus</option>
+                            </select>
+                        </div>
+                        <div className="mb-3 col-auto d-flex flex-column">
+                            <div>
+                                <label htmlFor="visit-completed" className="form-label row">Esterilizado: </label>
+                            </div>
+                            <div className=" my-auto d-flex flex-row justify-content-center">
+                                <input type="checkbox" id="visits-completed" name="completed" className="form-check-input row" onInput={captureSterilised} />
                             </div>
                         </div>
-                    </div>
-                    <hr />
-                    <div className="row">
-
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-customer" className="form-label">Cliente:</label>
-                            <input type="text" id="visit-customer" name="customer" className="form-control" disabled readOnly/>
-                        </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-category" className="form-label">Categoría:</label>
-                            <input type="text" id="visit-category" name="category" className="form-control" />
-                        </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-patient-name" className="form-label">Paciente:</label>
-                            <input type="text" id="visit-patient-name" name="patientName" className="form-control" disabled readOnly/>
-                        </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-patient-species" className="form-label">Especie:</label>
-                            <input type="text" id="visit-patient-species" name="patientSpecies" className="form-control" />
-                        </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-patient-race" className="form-label">Raza:</label>
-                            <input type="text" id="visit-patient-race" name="patientRace" className="form-control" />
-                        </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="visit-patient-weight" className="form-label">Peso:</label>
-                            <input type="text" id="visit-patient-weight" name="patientWeight" className="form-control"/>
+                        <div className="mb-3 col-auto flex-column d-flex justify-content-end">
+                            <button type="button" className="btn btn-light" onClick={handleClean}>Limpiar...</button>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="mb-3">
-                            <label htmlFor="visit-description" className="form-label">Descripción:</label>
-                            <textarea rows="5" id="visit-description" name="description" className="form-control" />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="visit-treatment" className="form-label">Tratamiento:</label>
-                            <textarea rows="5" id="visit-treatment" name="treatment" className="form-control" />
-                        </div>
-                    </div>
-                    {/* Button trigger modal  */}
-                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Actualizar</button>
-                    {/* Modal  */}
-                    <div className="modal fade" id="warningModal" tabIndex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
-                        <div className="modal-dialog modal-dialog-centered">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="warningModalLabel">¿Actualizar la visita?</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div className="modal-body">
-                                    Esta acción no se puede deshacer
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Actualizar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </form>
             </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="visits-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Especie</th>
+                            <th scope="col">Raza</th>
+                            <th scope="col">Edad</th>
+                            <th scope="col">Género</th>
+                            <th scope="col">Esterilizado</th>
+                            <th scope="col">Veterinari@</th>
+                            <th scope="col">Responsable</th>
+                            <th scope="col">Vista</th>
+                        </tr>
+                    </thead>
+                    <tbody id="visits-table-tbody">
 
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 }
-export default Visit;
+export default Visits;
