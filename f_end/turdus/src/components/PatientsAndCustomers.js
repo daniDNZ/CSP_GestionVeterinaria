@@ -25,6 +25,8 @@ function Visits() {
     const fetchVets = () => {
         const bodyData = {
             patient: patient,
+            sterilised: sterilised,
+            species: species,
             customer: customer
         }
         const config = {
@@ -39,7 +41,10 @@ function Visits() {
         const request = new Request("http://192.168.1.81:8888/api/vets", config);
         fetch(request)
             .then(response => response.json())
-            .then(data => { handleVets(data) })
+            .then(data => { 
+            console.log(data)    
+                handleVets(data) 
+            })
             .catch(e => {
                 console.log(e)
                 // localStorage.clear();
@@ -50,6 +55,7 @@ function Visits() {
         const bodyData = {
             patient: patient,
             species: species,
+            sterilised: sterilised,
             userid: userId,
         }
         const config = {
@@ -157,15 +163,16 @@ function Visits() {
                 <td>${p.vet}</ td>
                 <td>${p.responsible}</ td>
 
-                <td><a href="/turdus/visits/${p.id}" class="nav-link px-2 text-truncate">
-                            <i class="bi bi-card-text fs-5 me-2"></i>
+                <td>
+                    <a href="/turdus/patients/${p.id}" class="nav-link px-2 text-truncate">
+                        <i class="bi bi-card-text fs-5 me-2"></i>
                     </a>
                 </ td>
                 </tr>
             `
             datalist += li;
         })
-        document.getElementById('visits-table-tbody').innerHTML = datalist;
+        document.getElementById('patients-table-tbody').innerHTML = datalist;
     }
 
     const handleClean = (e) => {
@@ -175,11 +182,13 @@ function Visits() {
         patient = '';
         userId = '';
         sterilised = '';
+        species = '';
         document.getElementById("patient-picker").value = '';
         document.getElementById("customer-picker").value = '';
         document.getElementById("vet-picker").value = '';
-        document.getElementById('visits-table-tbody').innerHTML = '';
-        document.getElementById('visits-completed').checked = false;
+        document.getElementById('patients-table-tbody').innerHTML = '';
+        document.getElementById('checkbox-sterilised').checked = false;
+        document.getElementById('species-picker').value = '';
         fetchVets();
         fetchPatients();
         fetchCustomers();
@@ -199,6 +208,7 @@ function Visits() {
         customer = e.target.value.split(' ')[0];
         console.log(customer)
         fetchPatients()
+        fetchVets()
     }
 
     const capturePatient = (e) => {
@@ -214,13 +224,15 @@ function Visits() {
         species = e.target.value;
         console.log(species)
         fetchPatients()
-        // FALTA MODIFICAR LISTAS DE VETERINARIOS Y CLIENTES SEGÚN LA ESPECIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         fetchCustomers()
+        fetchVets()
     }
     const captureSterilised = (e) => {
         e.preventDefault();
         sterilised = e.target.checked;
         fetchPatients();
+        fetchVets();
+        fetchCustomers();
     }
  
 
@@ -246,6 +258,7 @@ function Visits() {
                         <div className="mb-3 col-auto">
                             <label htmlFor="species-picker" className="form-label">Especie:</label>
                             <select type="text" id="species-picker" className="form-select" onInput={captureSpecies}>
+                                <option value=''>Select...</option>
                                 <option>Canis Familiaris</option>
                                 <option>Felis Catus</option>
                                 <option>Pogona Vitticeps</option>
@@ -254,10 +267,10 @@ function Visits() {
                         </div>
                         <div className="mb-3 col-auto d-flex flex-column">
                             <div>
-                                <label htmlFor="visit-completed" className="form-label row">Esterilizado: </label>
+                                <label htmlFor="checkbox-sterilised" className="form-label row">Esterilizado: </label>
                             </div>
                             <div className=" my-auto d-flex flex-row justify-content-center">
-                                <input type="checkbox" id="visits-completed" name="completed" className="form-check-input row" onInput={captureSterilised} />
+                                <input type="checkbox" id="checkbox-sterilised" name="completed" className="form-check-input row" onInput={captureSterilised} />
                             </div>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">
@@ -267,7 +280,7 @@ function Visits() {
                 </form>
             </div>
             <div className="d-flex flex-row table-responsive">
-                <table className="table table-striped table-hover" id="visits-table">
+                <table className="table table-striped table-hover" id="patients-table">
                     <thead>
                         <tr>
                             <th scope="col">Nombre</th>
@@ -281,7 +294,7 @@ function Visits() {
                             <th scope="col">Vista</th>
                         </tr>
                     </thead>
-                    <tbody id="visits-table-tbody">
+                    <tbody id="patients-table-tbody">
 
                     </tbody>
                 </table>

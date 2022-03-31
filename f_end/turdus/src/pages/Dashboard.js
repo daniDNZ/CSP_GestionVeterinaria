@@ -1,11 +1,12 @@
 import DashboardNavigation from '../components/DashboardNavigation';
+import DashboardSidebar from '../components/DashboardSidebar';
 import Home from '../components/Home';
 import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
 import VisitsList from '../components/VisitsList';
 import Visit from '../components/Visit';
 import PatientsAndCustomers from '../components/PatientsAndCustomers';
-import DashboardSidebar from '../components/DashboardSidebar';
+import Patient from '../components/Patient';
 
 
 
@@ -25,6 +26,8 @@ function Dashboard({ comp }) {
         return <Visit />
       case 6:
         return <PatientsAndCustomers />
+      case 7:
+          return <Patient />
       default:
         break;
     }

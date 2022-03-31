@@ -30,7 +30,7 @@ class Patient
     private $birthday;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity=Species::class, inversedBy="patients")
      */
     private $species;
 
@@ -115,6 +115,11 @@ class Patient
      */
     private $vet;
 
+    /**
+     * @ORM\Column(type="string", length=128, nullable=true)
+     */
+    private $weight;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
@@ -154,12 +159,12 @@ class Patient
         return $this;
     }
 
-    public function getSpecies(): ?string
+    public function getSpecies(): ?Species
     {
         return $this->species;
     }
 
-    public function setSpecies(string $species): self
+    public function setSpecies(?Species $species): self
     {
         $this->species = $species;
 
@@ -462,6 +467,18 @@ class Patient
     public function setVet(?User $vet): self
     {
         $this->vet = $vet;
+
+        return $this;
+    }
+
+    public function getWeight(): ?string
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(?string $weight): self
+    {
+        $this->weight = $weight;
 
         return $this;
     }

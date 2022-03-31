@@ -7,6 +7,8 @@ function Visits() {
     let userId = '';
     let customer = '';
     let patient = '';
+    let species = '';
+    let sterilised = '';
     let completed = false;
     let arrVets;
     let arrCustomers;
@@ -56,6 +58,8 @@ function Visits() {
     const fetchVets = () => {
         const bodyData = {
             patient: patient,
+            species: species,
+            sterilised: sterilised,
             customer: customer
         }
         const config = {
@@ -80,6 +84,8 @@ function Visits() {
     const fetchCustomers = () => {
         const bodyData = {
             patient: patient,
+            species: species,
+            sterilised: sterilised,
             userid: userId,
         }
         const config = {
@@ -104,6 +110,9 @@ function Visits() {
     const fetchPatients = () => {
         const bodyData = {
             userid: userId,
+            patient: patient,
+            species: species,
+            sterilised: sterilised,
             customer: customer,
         }
         const config = {
@@ -155,6 +164,7 @@ function Visits() {
 
     const handlePatients = (data) => {
         arrPatients = data;
+        console.log(arrPatients)
         let datalist = '';
         arrPatients.forEach(p => {
             const option =
@@ -178,7 +188,6 @@ function Visits() {
             }
             return 0;
         })
-        console.log(arrVisits)
         let datalist = '<tr>';
         arrVisits.forEach(v => {
             const li =
@@ -188,8 +197,9 @@ function Visits() {
                 <td>${v.patient}</ td>
                 <td>${v.vet}</ td>
                 <td>${v.customer}</ td>
-                <td><a href="/turdus/visits/${v.id}" class="nav-link px-2 text-truncate">
-                            <i class="bi bi-card-text fs-5 me-2"></i>
+                <td>
+                    <a href="/turdus/visits/${v.id}" class="nav-link px-2 text-truncate">
+                        <i class="bi bi-card-text fs-5 me-2"></i>
                     </a>
                 </ td>
                 </tr>
@@ -222,7 +232,8 @@ function Visits() {
     const captureDate = (e) => {
         e.preventDefault();
         day = e.target.value;
-        console.log(day)
+        console.log(arrPatients)
+        console.log(arrVisits)
         fetchPatients()
         fetchCustomers()
         fetchVisits()
@@ -231,7 +242,6 @@ function Visits() {
     const captureUser = (e) => {
         e.preventDefault();
         userId = e.target.value;
-        console.log(userId)
         fetchPatients()
         fetchCustomers()
         fetchVisits()
@@ -240,7 +250,6 @@ function Visits() {
     const captureCustomer = (e) => {
         e.preventDefault();
         customer = e.target.value.split(' ')[0];
-        console.log(customer)
         fetchPatients()
         fetchVisits()
     }
@@ -248,7 +257,6 @@ function Visits() {
     const capturePatient = (e) => {
         e.preventDefault();
         patient = e.target.value.split(' ')[0];
-        console.log(patient)
         fetchCustomers()
         fetchVets()
         fetchVisits()

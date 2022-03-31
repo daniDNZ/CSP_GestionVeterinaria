@@ -3,12 +3,12 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\UserRepository;
-use App\Repository\PatientRepository;
 use App\Repository\CustomerRepository;
+use App\Repository\PatientRepository;
+use App\Repository\UserRepository;
 
 class UsersController extends AbstractController
 {
@@ -18,8 +18,8 @@ class UsersController extends AbstractController
     public function index(UserRepository $userRepository): Response
     {   
         $users = [];
-
         $userEntities = $userRepository->findAll();
+
         foreach ($userEntities as $userEntity) {
             $user = [];
             $user['id'] = $userEntity->getId();
@@ -37,43 +37,64 @@ class UsersController extends AbstractController
     public function vets(UserRepository $userRepository, PatientRepository $patientRepository, CustomerRepository $customerRepository, Request $request): Response
     {   
         $users = [];
-
-        if ($request->isMethod('GET')){
-            $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
-        } else {
-            $data = $request->toArray();
+        $vetIds = [];
         
-            if ($data['patient'] != '') {
-                $patientEntities = $patientRepository->findBy(array('id' => $data['patient']));
-                $patient = $patientEntities[0];
-                $vetId = $patient->getVet();
-                
-                $userEntities = $userRepository->findBy(array('id' => $vetId));
-            } else if ($data['customer'] != '') {
-                $customerEntities = $customerRepository->findBy(array('id' => $data['customer']));
-                $customerId = $customerEntities[0]['id'];
-    
-                $patientEntities = $patientRepository->findBy(array('responsible' => $customerId));
+
+        if ($request->isMethod('GET'))
+        {
+            $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
+        } 
+        else 
+        {
+            $query = array();
+            $data = $request->toArray();
+
+            // Construimos la query
+            if ($data['patient'] !== '')    { $query['id'] = $data['patient']; }
+            if ($data['species'] !== '')    { $query['species'] = $data['species']; }
+            if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }
+            if ($data['customer'] !== '')   
+            {
+                $customerEntities = $customerRepository->findOneBy(array('id' => $data['customer']));
+                $customerId = $customerEntities->getId();
+
+                $query['responsible'] = $customerId;
+            }
+            // Hacemos la búsqueda por QUERY o por ROL
+            if (!empty($query)) 
+            {
                 $vetIds = [];
+                $entradaIds = [];
                 $userEntities = [];
-                foreach ($patientEntities as $patientEntity) {
-                    $vetIds[] = $patientEntity->getVet();
+                $patientEntities = $patientRepository->findBy($query);
+
+                foreach ($patientEntities as $patientEntity) 
+                {
+                    $entradaIds[] = $patientEntity->getVet();
                 }
-                for ($i=0; $i < count($vetIds); $i++) { 
-                    $userEntities[] = $userRepository->findBy(array('id' => $vetIds[$i])); 
-                }           
-            } else {
+
+                // Eliminamos los ids repetidos
+                $vetIds = array_unique($entradaIds, $sort_flags = SORT_REGULAR);
+
+                foreach ($vetIds as $id) 
+                {
+                    $userEntities[] = $userRepository->findOneBy(array('id' => $id));
+                }          
+            } 
+            else 
+            {
                 $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
             }
         }
-
         
-        foreach ($userEntities as $userEntity) {
+        
+        foreach ($userEntities as $userEntity) 
+        {
             $user = [];
             $user['id'] = $userEntity->getId();
-            $user['username'] = $userEntity->getUsername();
             $user['name'] = $userEntity->getName();
             $user['area'] = $userEntity->getArea();
+            $user['username'] = $userEntity->getUsername();
             $users[] = $user;
         }
 
