@@ -5,12 +5,16 @@ import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
 import VisitsList from '../components/VisitsList';
 import Visit from '../components/Visit';
-import PatientsAndCustomers from '../components/PatientsAndCustomers';
+import PatientsList from '../components/PatientsList';
 import Patient from '../components/Patient';
+import NewPatient from '../components/NewPatient';
+import CustomersList from '../components/CustomersList';
 
 
 
 function Dashboard({ comp }) {
+  document.body.removeAttribute('data-bs-spy');
+  document.body.removeAttribute(' data-bs-target');
   document.getElementById('root').classList.add("d-flex", "flex-column", "vh-100", "overflow-hidden");
   function switchingComponents() {
     switch (comp) {
@@ -25,9 +29,13 @@ function Dashboard({ comp }) {
       case 5:
         return <Visit />
       case 6:
-        return <PatientsAndCustomers />
+        return <PatientsList />
       case 7:
           return <Patient />
+      case 8:
+        return <NewPatient />
+      case 9:
+        return <CustomersList />
       default:
         break;
     }

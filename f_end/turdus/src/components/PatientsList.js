@@ -1,8 +1,6 @@
-import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
-import { NavLink } from "react-router-dom";
 
-function Visits() {
+function PatientsList() {
     let userId = '';
     let customer = '';
     let patient = '';
@@ -302,4 +300,4 @@ function Visits() {
         </div>
     )
 }
-export default Visits;
+export default PatientsList;

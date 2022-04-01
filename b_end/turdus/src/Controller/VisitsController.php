@@ -29,7 +29,7 @@ class VisitsController extends AbstractController
         $visit['race'] = $visitEntity->getPatient()->getRace();
         $visit['weight'] = $visitEntity->getWeight();
         $visit['patient'] = $visitEntity->getPatient()->getName();
-        $visit['species'] = $visitEntity->getPatient()->getSpecies();
+        $visit['species'] = $visitEntity->getPatient()->getSpecies()->getName();
         $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
         $visit['category'] = $visitEntity->getCategory();
         $visit['duration'] = $visitEntity->getDuration();
@@ -132,7 +132,7 @@ class VisitsController extends AbstractController
             $visit['id'] = $singleVisit->getId();
             $visit['vet'] = $singleVisit->getUser()->getName();
             $visit['patient'] = $singleVisit->getPatient()->getName();
-            $visit['species'] = $singleVisit->getPatient()->getSpecies();
+            $visit['species'] = $singleVisit->getPatient()->getSpecies()->getName();
             $visit['customer'] = $singleVisit->getPatient()->getResponsible()->getName();
             $visit['category'] = $singleVisit->getCategory();
             $visit['duration'] = $singleVisit->getDuration();
@@ -201,75 +201,6 @@ class VisitsController extends AbstractController
                 }
             }
         }
-        // if ($customer == '' || $patient != '') {
-
-
-            
-
-        // } else if ($customer != '') {
-        //     $patientEntities = $patientRepository->findBy(array('responsible' => $customer));
-        //         foreach ($patientEntities as $patientEntity) {
-        //             $patientIds[] = $patientEntity->getId();
-        //         }
-        //     if ($day != '') {
-        //         foreach ($patientIds as $patient) {
-        //             $patientVisitEntities[] = $visitRepository->findByDateAndPatient($day.'%', $patient);
-        //         }
-        //     } else if ($patient != ''){
-                
-        //     } else {
-        //         foreach ($patientIds as $patient) {
-        //             $patientVisitEntities[] = $visitRepository->findBy(array('patient' => $patient));
-        //         }
-        //     } 
-
-        //     foreach ($patientVisitEntities as $visitEntities) { 
-        //         foreach ($visitEntities as $singleVisit){
-        //             $visit = [];
-        //             $visit['id'] = $singleVisit->getId();
-        //             $visit['patient'] = $singleVisit->getPatient()->getName();
-        //             $visit['species'] = $singleVisit->getPatient()->getSpecies();
-        //             $visit['customer'] = $singleVisit->getPatient()->getResponsible()->getName();
-        //             $visit['vet'] = $singleVisit->getUser()->getName();
-        //             $visit['category'] = $singleVisit->getCategory();
-        //             $visit['date_time'] = $singleVisit->getDateTime();
-        //             $visit['done'] = $singleVisit->getDone();
-        //             $visit['duration'] = $singleVisit->getDuration();
-        //             $visit['completed'] = $singleVisit->getDone();
-
-        //             if ($visit['completed'] == $completed) {
-        //                 $visits[] = $visit;
-        //             }
-                    
-        //         }
-        //      }
-
-        // }  
-
-            
-
-        
-
-        
-
-        // // Recogermos el usuario
-        // $userEntities = $userRepository->findBy(array('username' => $data['username']));
-
-        // // Pasamos el String de días de la semana a un Array
-        // $day = $data['day'];
-
-        // $dayEntities = [];
-
-        // // Buscamos las visitas por día y las añadimos a un Array
-        
-        // // $dayEntities[] = $visitRepository->findByDateAndUser($day.'%', $userEntities[0]->getId());
-        // $dayEntities[] = $visitRepository->findByDate($day.'%');
-
-        // Recorremos el array de días y recorremos cada día para sacar cada visita
-        // foreach ($dayEntities as $dayEntity) { 
-            
-            
-        // }
 
         return $this->json($visits);
     }

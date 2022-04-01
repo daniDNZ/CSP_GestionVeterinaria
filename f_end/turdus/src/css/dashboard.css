@@ -2,10 +2,6 @@
     z-index: 1050;
 }
 
-#main-dashboard {
-    /* min-height: 80vh; */
-}
-
 [class*='container'] {
     background-clip: content-box;
 }

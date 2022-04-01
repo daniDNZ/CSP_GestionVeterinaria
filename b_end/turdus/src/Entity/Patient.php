@@ -20,7 +20,7 @@ class Patient
     private $id;
 
     /**
-     * @ORM\Column(type="bigint", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $chip;
 
@@ -35,7 +35,7 @@ class Patient
     private $species;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\ManyToOne(targetEntity=Race::class, inversedBy="patients")
      */
     private $race;
 
@@ -147,12 +147,12 @@ class Patient
         return $this;
     }
 
-    public function getBirthday(): ?\DateTimeInterface
+    public function getBirthday(): ?\DateTime
     {
         return $this->birthday;
     }
 
-    public function setBirthday(\DateTimeInterface $birthday): self
+    public function setBirthday(\DateTime $birthday): self
     {
         $this->birthday = $birthday;
 
@@ -171,12 +171,12 @@ class Patient
         return $this;
     }
 
-    public function getRace(): ?string
+    public function getRace(): ?Race
     {
         return $this->race;
     }
 
-    public function setRace(?string $race): self
+    public function setRace(?Race $race): self
     {
         $this->race = $race;
 

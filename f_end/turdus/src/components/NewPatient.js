@@ -1,9 +1,8 @@
-import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 
-function Patient() {
+function NewPatient() {
     const { id } = useParams();
     let arrData;
 
@@ -13,17 +12,26 @@ function Patient() {
         fetchSpecies();
         fetchRaces();
         fetchVets();
+        fetchCustomers();
 
 
     }, [])
 
     const handlePatient = (e) => {
         e.preventDefault();
-        handleAlert();
         const fData = e.target;
+        let data;
+
+        fData.customer.value == "new" ? addCustomer(fData) : addPatient(fData, data);
+        
+    }
+    
+    const addPatient = (fData, id) => {
+        let customer;
         const birthday = `${fData.birthday.value.split('T')[0]}`
 
-        // Enviar datos y hacer update o insert
+        id ? customer = id : customer = fData.customer.value.split(' ')[0]
+
         const bodyData = {
             id: id,
             name: fData.name.value,
@@ -37,10 +45,9 @@ function Patient() {
             vet: fData.vet.value,
             race: fData.race.value,
             species: fData.species.value,
-            customer: fData.customer.value.split(' ')[0],
+            customer: customer,
             birthday: birthday
         }
-console.log(bodyData)
         const config = {
             method: 'POST',
             mode: 'cors',
@@ -50,23 +57,34 @@ console.log(bodyData)
             },
             body: JSON.stringify(bodyData)
         }
-        const request = new Request("http://192.168.1.81:8888/api/patient/update", config);
+        const request = new Request("http://192.168.1.81:8888/api/patient/add", config);
         fetch(request)
             .then(response => response.json())
-            .then(data => { console.log(data) })
+            .then(data => { 
+                handleAlert(true) 
+                handleClean(fData);
+            })
             .catch(e => {
+                handleAlert(false)
                 console.log(e, 'Esto es un error')
                 // localStorage.clear();
                 // window.location = '/turdus/login'
             })
-
     }
 
-    const fetchPatient = () => {
+    const addCustomer = (fData) => {
         const bodyData = {
-            id: id
-        }
+            email: fData.cEmail.value,
+            dni: fData.cDni.value,
+            name: fData.cName.value,
+            last_name: fData.cLastName.value,
+            postal_code: fData.cPc.value,
+            address: fData.cAddress.value,
+            phone: fData.cPhone.value,
+            info: fData.cInfo.value
 
+        }
+        console.log(bodyData)
         const config = {
             method: 'POST',
             mode: 'cors',
@@ -76,12 +94,15 @@ console.log(bodyData)
             },
             body: JSON.stringify(bodyData)
         }
-        const request = new Request("http://192.168.1.81:8888/api/patient", config);
+        const request = new Request("http://192.168.1.81:8888/api/customer/add", config);
         fetch(request)
             .then(response => response.json())
-            .then(data => { handleData(data) })
+            .then(data => { 
+                addPatient(fData, data.id) 
+            })
             .catch(e => {
-                console.log(e)
+                handleAlert(false);
+                console.log(e, 'Esto es un error')
                 // localStorage.clear();
                 // window.location = '/turdus/login'
             })
@@ -101,6 +122,26 @@ console.log(bodyData)
         fetch(request)
             .then(response => response.json())
             .then(data => { handleVets(data) })
+            .catch(e => {
+                console.log(e)
+                // localStorage.clear();
+            });
+    }
+
+    const fetchCustomers = () => {
+
+        const config = {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        }
+        const request = new Request("http://192.168.1.81:8888/api/customers_all", config);
+        fetch(request)
+            .then(response => response.json())
+            .then(data => { handleCustomers(data) })
             .catch(e => {
                 console.log(e)
                 // localStorage.clear();
@@ -146,30 +187,9 @@ console.log(bodyData)
                 // localStorage.clear();
             });
     }
-    
-    const handleData = (data) => {
-    
-        document.getElementById("patient-customer").value = `${data.responsibleId} ${data.responsible}`;
-        document.getElementById("patient-name").value = data.name;
-        let weight;
-        data.weight === null ? weight = '0' : weight = data.weight;
-        document.getElementById("patient-weight").value = weight;
-        document.getElementById("patient-info").value = data.info;
-        document.getElementById("patient-birthday").value = data.birthday.date.split(' ')[0];
-        document.getElementById("patient-chip").value = data.chip;
-        document.getElementById("patient-color").value = data.color;
-        document.getElementById("patient-eyes").value = data.eyes;
-
-        document.getElementById(`${data.gender}`).selected = true;       
-        document.getElementById(`vet-${data.vet}`).selected = true;       
-        document.getElementById(`spe-${data.species}`).selected = true;
-        document.getElementById(`ste-${data.sterilised}`).selected = true;
-        if (data.race) document.getElementById(`race-${data.race}`).selected = true;
-
-    }
 
     const handleVets = (data) => {
-        
+
         let datalist = '<option selected>Select...</option>';
         data.forEach(v => {
             const op =
@@ -179,13 +199,27 @@ console.log(bodyData)
             datalist += op;
         });
         document.getElementById("vet-picker").innerHTML = datalist;
-        fetchPatient();
+    }
 
+    const handleCustomers = (data) => {
 
+        let datalist = 
+            `
+                <option selected>Select...</option>
+                <option id="cus-new" value="new" class="fw-bold bg-light">Nuevo Cliente</option>
+            `;
+        data.forEach(c => {
+            const op =
+                `
+                    <option id="cus-${c.id}" value="${c.id}">${c.name}</ option>
+                `
+            datalist += op;
+        });
+        document.getElementById("customer-picker").innerHTML = datalist;
     }
 
     const handleSpecies = (data) => {
-        
+
         let datalist = '<option>Select...</option>';
         data.forEach(s => {
             const op =
@@ -199,41 +233,87 @@ console.log(bodyData)
     }
 
     const handleRaces = (data) => {
-        
+
         let datalist = '<option selected>Select...</option>';
         data.forEach(r => {
             const op =
                 `
                     <option id="race-${r.id}" value="${r.id}">${r.name}</ option>
-                `   
+                `
             datalist += op;
         });
         document.getElementById("race-picker").innerHTML = datalist;
 
     }
 
-    const handleAlert = () => {
-      
-        const alert = document.getElementById("completedAlert");
+    const handleAlert = (success) => {
+        let alert;
+        if (success) {
+            alert = document.getElementById("completedAlert");
+        } else {
+            alert = document.getElementById("failedAlert");
+        }
         alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none')
+
         
+    }
+
+    const closeAlert = (e) => {
+        e.preventDefault();
+        
+        // const alert = e.target.parentElement;
+        // alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none');
+
+    }
+
+    const handleClean = (fData) => {
+        let elements = fData.elements;
+        // console.log(elements)
+        [...elements].forEach(e => {
+            e.value = '';
+            console.log(e.value)
+        });
+    }
+
+    const captureCustomer = (e) => {
+        e.preventDefault();
+
+        if (e.target.value == "new") {
+            document.getElementById("newCustomerForm").classList.remove('d-none');
+        } else {
+            document.getElementById("newCustomerForm").classList.add('d-none');
+        }
     }
 
     return (
         <div className="container">
             <div className="alert alert-success alert-dismissible fade d-none show" tabIndex="-1" id="completedAlert" role="alert" aria-hidden="true">
 
-                <strong>Visita actualizada</strong>
-                <button type="button" className="btn-close" onClick={handleAlert} aria-label="Close"></button>
+                <strong>Creado con éxito!</strong>
+                <button type="button" className="btn-close" onClick={closeAlert} aria-label="Close"></button>
+
+            </div>
+            <div className="alert alert-danger alert-dismissible fade d-none show" tabIndex="-1" id="failedAlert" role="alert" aria-hidden="true">
+
+                <strong>Error al crear, compruebe los campos</strong>
+                <button type="button" className="btn-close" onClick={closeAlert} aria-label="Close"></button>
 
             </div>
             <div className="d-flex flex-row justify-content-between">
-                <form onSubmit={handlePatient}>
+                <form id="newPatientForm" onSubmit={handlePatient}>
                     <div className="row">
-                        
+                        <h3>Nuevo Paciente</h3>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="vet-picker" className="form-label">Veterinaria/o:</label>
+                            <select type="text" id="vet-picker" name="vet" className="form-select" ></select>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-picker" className="form-label">Cliente:</label>
+                            <select type="text" id="customer-picker" name="customer" className="form-select" onInput={captureCustomer}></select>
+                        </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="patient-name" className="form-label">Nombre:</label>
-                            <input type="text" id="patient-name" name="name" className="form-control"/>
+                            <input type="text" id="patient-name" name="name" className="form-control" />
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="species-picker" className="form-label">Especie:</label>
@@ -259,38 +339,31 @@ console.log(bodyData)
                             </select>
                         </div>
                     </div>
-                    <hr /> 
+
                     <div className="row">
-                        
-                        
+
+
                         <div className="mb-3 col-auto">
                             <label htmlFor="patient-birthday" className="form-label">Nacimiento:</label>
                             <input type="date" id="patient-birthday" name="birthday" className="form-control" />
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="patient-weight" className="form-label">Peso:</label>
-                            <input type="text" id="patient-weight" name="weight" className="form-control"/>
+                            <input type="text" id="patient-weight" name="weight" className="form-control" />
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="patient-chip" className="form-label">CHIP:</label>
-                            <input type="text" id="patient-chip" name="chip" className="form-control"/>
+                            <input type="text" id="patient-chip" name="chip" className="form-control" />
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="patient-color" className="form-label">Color:</label>
-                            <input type="text" id="patient-color" name="color" className="form-control"/>
+                            <input type="text" id="patient-color" name="color" className="form-control" />
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="patient-eyes" className="form-label">Ojos:</label>
-                            <input type="text" id="patient-eyes" name="eyes" className="form-control"/>
+                            <input type="text" id="patient-eyes" name="eyes" className="form-control" />
                         </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="patient-customer" className="form-label">Cliente:</label>
-                            <input type="text" id="patient-customer" name="customer" className="form-control"/>
-                        </div>
-                        <div className="mb-3 col-auto">
-                            <label htmlFor="vet-picker" className="form-label">Veterinaria/o:</label>
-                            <select type="text" id="vet-picker" name="vet" className="form-select" ></select>
-                        </div>
+                        
                     </div>
                     <div className="row">
                         <div className="mb-3">
@@ -298,8 +371,46 @@ console.log(bodyData)
                             <textarea rows="5" id="patient-info" name="info" className="form-control" />
                         </div>
                     </div>
+                    <hr />
+                    <div id="newCustomerForm" className="row d-none">
+                        <h3>Nuevo Cliente</h3>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-name" className="form-label">Nombre:</label>
+                            <input type="text" id="customer-name" name="cName" className="form-control" />
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-lastname" className="form-label">Apellidos:</label>
+                            <input type="text" id="customer-surname" name="cLastName" className="form-control" />
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-phone" className="form-label">Teléfono:</label>
+                            <input type="text" id="customer-phone" name="cPhone" className="form-control" />
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-email" className="form-label">Email:</label>
+                            <input type="email" id="customer-email" name="cEmail" className="form-control" />
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-dni" className="form-label">DNI:</label>
+                            <input type="text" id="customer-dni" name="cDni" className="form-control" />
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-PC" className="form-label">CP:</label>
+                            <input type="text" id="customer-PC" name="cPc" className="form-control" />
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="customer-address" className="form-label">Dirección:</label>
+                            <input type="text" id="customer-address" name="cAddress" className="form-control" />
+                        </div>
+                        <div className="row">
+                            <div className="mb-3">
+                                <label htmlFor="customer-info" className="form-label">Info:</label>
+                                <textarea rows="5" id="customer-info" name="cInfo" className="form-control" />
+                            </div>
+                        </div>
+                    </div>
                     {/* Button trigger modal  */}
-                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Actualizar</button>
+                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Añadir</button>
                     {/* Modal  */}
                     <div className="modal fade" id="warningModal" tabIndex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
                         <div className="modal-dialog modal-dialog-centered">
@@ -313,7 +424,7 @@ console.log(bodyData)
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Actualizar</button>
+                                    <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Añadir</button>
                                 </div>
                             </div>
                         </div>
@@ -322,7 +433,8 @@ console.log(bodyData)
                 </form>
             </div>
 
+
         </div>
     )
 }
-export default Patient;
+export default NewPatient;

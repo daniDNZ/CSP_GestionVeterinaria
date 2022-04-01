@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SpeciesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,6 +28,16 @@ class Species
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $scientificName;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Race::class, mappedBy="species", orphanRemoval=true)
+     */
+    private $races;
+
+    public function __construct()
+    {
+        $this->races = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -52,6 +64,36 @@ class Species
     public function setScientificName(?string $scientificName): self
     {
         $this->scientificName = $scientificName;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Race>
+     */
+    public function getRaces(): Collection
+    {
+        return $this->races;
+    }
+
+    public function addRace(Race $race): self
+    {
+        if (!$this->races->contains($race)) {
+            $this->races[] = $race;
+            $race->setSpecies($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRace(Race $race): self
+    {
+        if ($this->races->removeElement($race)) {
+            // set the owning side to null (unless already changed)
+            if ($race->getSpecies() === $this) {
+                $race->setSpecies(null);
+            }
+        }
 
         return $this;
     }
