@@ -25,8 +25,8 @@ class PatientsController extends AbstractController
         $query = array();
         $data = $request->toArray();
 
+        if ($data['id'] !== '')         { $query['id'] = $data['id']; }
         if ($data['userid'] !== '')     { $query['vet'] = $data['userid']; }
-        if ($data['patient'] !== '')    { $query['id'] = $data['patient']; }
         if ($data['species'] !== '')    { $query['species'] = $data['species']; }
         if ($data['customer'] !== '')   { $query['responsible'] = $data['customer']; }
         if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }

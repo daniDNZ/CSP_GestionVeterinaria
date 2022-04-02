@@ -2,6 +2,7 @@ import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
+import { FormAlerts, FormModal } from "./FormsController";
 function Visit() {
     const { id } = useParams();
     let arrData;
@@ -162,12 +163,7 @@ console.log(bodyData)
 
     return (
         <div className="container">
-            <div className="alert alert-success alert-dismissible fade d-none show" tabIndex="-1" id="completedAlert" role="alert" aria-hidden="true">
-
-                <strong>Visita actualizada</strong>
-                <button type="button" className="btn-close" onClick={handleAlert} aria-label="Close"></button>
-
-            </div>
+            <FormAlerts />
             <div className="d-flex flex-row justify-content-between">
                 <form onSubmit={handleVisit}>
                     <div className="row">
@@ -225,26 +221,7 @@ console.log(bodyData)
                             <textarea rows="5" id="visit-treatment" name="treatment" className="form-control" />
                         </div>
                     </div>
-                    {/* Button trigger modal  */}
-                    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Actualizar</button>
-                    {/* Modal  */}
-                    <div className="modal fade" id="warningModal" tabIndex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
-                        <div className="modal-dialog modal-dialog-centered">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title" id="warningModalLabel">¿Actualizar la visita?</h5>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div className="modal-body">
-                                    Esta acción no se puede deshacer
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Actualizar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <FormModal />
 
                 </form>
             </div>

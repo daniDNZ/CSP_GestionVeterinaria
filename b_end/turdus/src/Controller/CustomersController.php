@@ -73,47 +73,101 @@ class CustomersController extends AbstractController
 
             return $customer;
         }
-        
-        $query = array();
 
-        if ($data['userid'] != '')      { $query['vet'] = $data['userid']; }
-        if ($data['patient'] != '')     { $query['id'] = $data['patient']; }
-        if ($data['species'] != '')     { $query['species'] = $data['species']; }
-        if ($data['sterilised'] != '')  { $query['sterilised'] = $data['sterilised']; }
-        
-        if (!empty($query)) 
+        if ($data['customer'] != '')
         {
-            $arrCustomerEntities = [];
-            $patientEntities = $patientRepository->findBy($query);
+            $customerEntity = $customerRepository->find($data['customer']);
+            $customers[] = maker($customerEntity, $patientRepository);
+        }
+        else
+        {
+            $query = array();
 
-            foreach ($patientEntities as $patientEntity) 
+            if ($data['userid'] != '')      { $query['vet'] = $data['userid']; }
+            if ($data['patient'] != '')     { $query['id'] = $data['patient']; }
+            if ($data['species'] != '')     { $query['species'] = $data['species']; }
+            if ($data['sterilised'] != '')  { $query['sterilised'] = $data['sterilised']; }
+            
+            if (!empty($query)) 
             {
-                $customer = $patientEntity->getResponsible();
-                $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
-            }
+                $arrCustomerEntities = [];
+                $patientEntities = $patientRepository->findBy($query);
 
-            $entry = array_unique($arrCustomerEntities, $sort_flags = SORT_REGULAR);
+                foreach ($patientEntities as $patientEntity) 
+                {
+                    $customer = $patientEntity->getResponsible();
+                    $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
+                }
 
-            foreach ($entry as $customerEntities) 
+                $entry = array_unique($arrCustomerEntities, $sort_flags = SORT_REGULAR);
+
+                foreach ($entry as $customerEntities) 
+                {
+                    foreach ($customerEntities as $customerEntity) 
+                    {
+                        $customers[] = maker($customerEntity, $patientRepository);
+                    }
+                }
+            } 
+            else 
             {
+                $customerEntities = $customerRepository->findAll();
+
                 foreach ($customerEntities as $customerEntity) 
                 {
                     $customers[] = maker($customerEntity, $patientRepository);
                 }
             }
-
-        } 
-        else 
-        {
-            $customerEntities = $customerRepository->findAll();
-
-            foreach ($customerEntities as $customerEntity) 
-            {
-                $customers[] = maker($customerEntity, $patientRepository);
-            }
         }
-        
         return $this->json($customers);
+    }
+
+   /**
+     * @Route("/api/customer", name="app_one_customer", methods="POST")
+     */
+    public function singleCustomer(PatientRepository $patientRepository, CustomerRepository $customerRepository, Request $request): Response
+    {
+        $data = $request->toArray();
+
+        $customerEntity = $customerRepository->findOneBy(array('id' => $data['id']));
+    
+        $customer = [];
+        $customer['id'] = $customerEntity->getId();
+        $customer['dni'] = $customerEntity->getDni();
+        $customer['name'] = $customerEntity->getName();
+        $customer['info'] = $customerEntity->getInfo();
+        $customer['phone'] = $customerEntity->getPhone();
+        $customer['email'] = $customerEntity->getEmail();
+        $customer['address'] = $customerEntity->getAddress();
+        $customer['lastName'] = $customerEntity->getLastName();
+        $customer['postalCode'] = $customerEntity->getPostalCode()->getId();
+
+        return $this->json($customer);
+    }
+
+    /**
+     * @Route("/api/customer/update", name="app_customer_update", methods="POST" )
+     */
+    public function update(CustomerRepository $customerRepository, PostalCodeRepository $postalCodeRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = $request->toArray();
+        $customer = $customerRepository->find($data['id']);
+
+        $customer->setRoles([]);
+        $customer->setDni($data['dni']);
+        $customer->setName($data['name']);
+        $customer->setInfo($data['info']);
+        $customer->setPhone($data['phone']);
+        $customer->setEmail($data['email']);
+        $customer->setAddress($data['address']);
+        $customer->setLastName($data['last_name']);
+        $customer->setPostalCode($postalCodeRepository->find($data['postal_code']));
+
+        $entityManager->persist($customer);
+        $entityManager->flush();
+    
+        return $this->json(['response' => 'Actualizado']);
+        
     }
 
     /**

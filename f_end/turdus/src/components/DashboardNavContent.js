@@ -59,12 +59,12 @@ function DashboardNavContent() {
                     <hr className="m-0" />
                     <ul className="nav navbar-nav flex-column">
                         <li className="nav-item">
-                            <NavLink to="/turdus/patients" className="nav-link px-2 text-reset">
+                            <NavLink to="/turdus/customers" className="nav-link px-2 text-reset">
                                 <span className="d-inline">Lista Clientes</span>
                             </NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/turdus/patients/new" className="nav-link px-2 text-reset">
+                            <NavLink to="/turdus/customers/new" className="nav-link px-2 text-reset">
                                 <span className="d-inline">Nuevo Cliente</span>
                             </NavLink>
                         </li>
