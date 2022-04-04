@@ -4,9 +4,6 @@ import '../css/visits.css';
 import { CustomerForm, FormAlerts, FormModal, PatientForm } from "./FormsController";
 
 function NewPatient() {
-    const { id } = useParams();
-    let arrData;
-
 
     useEffect(() => {
 
@@ -201,7 +198,7 @@ function NewPatient() {
                 `
             datalist += op;
         });
-        document.getElementById("vet-picker").innerHTML = datalist;
+        document.getElementById("vet-picker-list").innerHTML = datalist;
     }
 
     const handleCustomers = (data) => {

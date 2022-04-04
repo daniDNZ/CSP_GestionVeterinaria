@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { fetchVets } from "./ApiFetch"
 
 function FormModal() {
     return (
@@ -111,8 +112,9 @@ function PatientForm() {
 
                 <div className="mb-3 col-auto">
                     <label htmlFor="vet-picker" className="form-label">Veterinaria/o:</label>
-                    <select type="text" id="vet-picker" name="vet" className="form-select" ></select>
-                </div>
+                    <input type="search" list="vet-picker-list" id="vet-picker" name="vet" className="form-control" ></input>
+                    <datalist id="vet-picker-list"></datalist>
+               </div>
                 <div className="mb-3 col-auto">
                     <label htmlFor="customer-picker" className="form-label">Cliente:</label>
                     <select type="text" id="customer-picker" name="customer" className="form-select"></select>
@@ -179,4 +181,335 @@ function PatientForm() {
         </>
     )
 }
-export { FormModal, FormAlerts, CustomerForm, PatientForm };
+
+function FormArray 
+( 
+    selector, 
+    { 
+        cName = '', 
+        cLastname = '', 
+        cPhone = '', 
+        cEmail = '', 
+        cDni = '',
+        cPc = '',
+        cAddress = '',
+        cInfo = '',
+        pVet = '',
+        cId = '',
+        pName = '',
+        pSpecies = '',
+        pRace = '',
+        pGender = '',
+        pSterilised = '',
+        pBirthday = '',
+        pWeight = '',
+        pChip = '',
+        pColor = '',
+        pEyes = '',
+        pInfo = '',
+    } = {},
+) {
+    let arrSpecies = ['Perro', 'Gato', 'ninfa', 'Pogona', 'tortuga', 'erizo', 'camaleón'];
+    let arrGender = ['Female', 'Male'];
+    let arrVets = ['Vet1', 'Vet2', 'Vet3'];
+    let arrCustomers = ['Customer1', 'Customer2', 'Customer3'];
+    let arrRaces = ['Race1', 'Race2', 'Race3'];
+
+   
+    
+    let arrForm;
+
+    
+    const patientForm = [
+        {
+            label: '',
+            id: '',
+            tag: 'h3',
+            type: '',
+            value: 'Paciente',
+        },
+        {
+            label: 'Veterinaria/o',
+            id: 'vet-picker',
+            tag: 'input',
+            type: 'search',
+            value: pVet,
+            datalist: arrVets
+        },
+        {
+            label: 'Cliente',
+            id: 'customer-picker',
+            tag: 'input',
+            type: 'search',
+            value: cId,
+            datalist: arrCustomers
+        },
+        {
+            label: 'Nombre paciente',
+            id: 'patient-name',
+            tag: 'input',
+            type: 'text',
+            value: pName
+        },
+        {
+            label: 'Especie',
+            id: 'species-picker',
+            tag: 'input',
+            type: 'search',
+            value: pSpecies,
+            datalist: arrSpecies
+        },
+        {
+            label: 'Raza',
+            id: 'race-picker',
+            tag: 'input',
+            type: 'search',
+            value: pRace,
+            datalist: arrRaces
+        },
+        {
+            label: 'Género',
+            id: 'gender-picker',
+            tag: 'input',
+            type: 'search',
+            value: pGender,
+            datalist: arrGender
+        },
+        {
+            label: 'Esterilizad@',
+            id: 'sterilised-picker',
+            tag: 'input',
+            type: 'search',
+            value: pSterilised,
+            datalist: ["false", "true"]
+        },
+        {
+            label: 'Cumpleaños',
+            id: 'patient-birthday',
+            tag: 'input',
+            type: 'date',
+            value: pBirthday
+        },
+        {
+            label: 'Peso',
+            id: 'patient-weight',
+            tag: 'input',
+            type: 'text',
+            value: pWeight
+        },
+        {
+            label: 'CHIP',
+            id: 'patient-chip',
+            tag: 'input',
+            type: 'text',
+            value: pChip
+        },
+        {
+            label: 'Color',
+            id: 'patient-color',
+            tag: 'input',
+            type: 'text',
+            value: pColor
+        },
+        {
+            label: 'Ojos',
+            id: 'patient-eyes',
+            tag: 'input',
+            type: 'text',
+            value: pEyes
+        },
+        {
+            label: 'Información paciente',
+            id: 'patient-info',
+            tag: 'textarea',
+            type: '',
+            value: pInfo,
+        },
+    ]
+
+    const customerForm = [
+        {
+            label: '',
+            id: '',
+            tag: 'h3',
+            type: '',
+            value: 'Cliente'
+        },
+        {
+            label: 'Nombre cliente',
+            id: 'customer-name',
+            tag: 'input',
+            type: 'text',
+            value: cName
+        },
+        {
+            label: 'Apellidos cliente',
+            id: 'customer-lastname',
+            tag: 'input',
+            type: 'text',
+            value: cLastname
+        },
+        {
+            label: 'Teléfono cliente',
+            id: 'customer-phone',
+            tag: 'input',
+            type: 'text',
+            value: cPhone
+        },
+        {
+            label: 'Email',
+            id: 'customer-email',
+            tag: 'input',
+            type: 'email',
+            value: cEmail
+        },
+        {
+            label: 'DNI',
+            id: 'customer-dni',
+            tag: 'input',
+            type: 'text',
+            value: cDni
+        },
+        {
+            label: 'CP',
+            id: 'customer-cp',
+            tag: 'input',
+            type: 'text',
+            value: cPc
+        },
+        {
+            label: 'Dirección',
+            id: 'customer-address',
+            tag: 'input',
+            type: 'text',
+            value: cAddress
+        },
+        {
+            label: 'Información cliente',
+            id: 'customer-info',
+            tag: 'textarea',
+            type: '',
+            value: cInfo,
+        },
+    ]
+
+    let separator = [
+        {
+            label: '',
+            id: '',
+            tag: 'hr',
+            type: '',
+            value: '',
+        }
+    ]
+
+
+    switch (selector) {
+        case 'patient':
+            arrForm = patientForm;
+            break;
+        case 'customer':
+            arrForm = customerForm;
+            break;
+        default:
+            arrForm = patientForm;
+            arrForm = arrForm.concat(separator).concat(customerForm);
+            console.log(arrForm)
+            break;
+    }
+    return arrForm;
+
+}
+
+function datalistGenerator (id, data) {
+    let datalist;
+    data.forEach(v => {
+
+        datalist += 
+        `
+            <option id="${id.slice(0,2)}-${v}" value='${v}'>${v}</option> 
+        `;
+
+    });
+    return datalist;
+}
+
+function FormGenerator ({ arrForm }) {
+    useEffect( () => {
+        dataWalker();
+    }, [])
+
+    const dataWalker = () => {
+        arrForm.forEach(e => {
+            let cell = '';
+            let input = '';
+            let datalist = '';
+            let attributes = '';
+            
+            if (e.tag !== 'hr' && e.tag !== 'h3') attributes = `type=${e.type} id="${e.id}" class="form-control" value="${e.value}"`;
+
+            if (e.type == 'search') {
+
+                
+                datalist = `<datalist id="${e.id}-datalist">`;
+                datalist += datalistGenerator(e.id, e.datalist);
+                datalist += `</datalist>`;
+                attributes += `list="${e.id}-datalist" placeholder="Buscar..."`;
+                
+            } else if (e.tag == 'textarea'){
+                attributes += `rows="5"`;
+            }
+
+            input = 
+            `
+                <${e.tag} ${attributes}>
+            `;
+
+            if (datalist) input += datalist;
+
+            if (e.tag == 'textarea') {
+                
+                cell += 
+                `
+                    <div class=row>
+                        <div class="mb-3">
+                        <label htmlFor="${e.id}" class="form-label">${e.label}:</label>
+                        ${input}</${e.tag}>
+                    </div> 
+                `;
+
+            } else if (e.tag == 'hr' || e.tag == 'h3') {
+
+                cell += `${input}${e.value}</${e.tag}>`;
+
+            } else {
+
+                cell += 
+                `
+                    <div class="mb-3 col-auto">
+                        <label htmlFor="${e.id}" class="form-label">${e.label}:</label>
+                        ${input}</${e.tag}>
+                    </div> 
+                `;
+
+            }
+            
+            document.getElementById('form-row-1').insertAdjacentHTML('beforeend', cell);
+        
+        });
+    }
+
+    return (
+        <>
+            <FormAlerts />
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+
+
+                </div>
+                <FormModal />
+            </form>
+        </>
+    )
+}
+export { FormModal, FormAlerts, CustomerForm, PatientForm, FormGenerator, FormArray, datalistGenerator };

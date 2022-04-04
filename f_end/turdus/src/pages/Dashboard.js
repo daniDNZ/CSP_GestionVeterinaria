@@ -10,6 +10,7 @@ import Patient from '../components/Patient';
 import NewPatient from '../components/NewPatient';
 import CustomersList from '../components/CustomersList';
 import Customer from '../components/Customer';
+import NewCustomer from '../components/NewCustomer';
 
 
 function Dashboard({ comp }) {
@@ -38,6 +39,8 @@ function Dashboard({ comp }) {
         return <CustomersList />
       case 10:
         return <Customer />
+      case 11:
+        return <NewCustomer />  
       default:
         break;
     }

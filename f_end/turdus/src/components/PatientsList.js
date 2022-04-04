@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { fetchPatient } from "./ApiFetch";
+// import { fetchPatient } from "./ApiFetch";
 
 function PatientsList() {
     let userId = '';
@@ -17,7 +17,8 @@ function PatientsList() {
         fetchCustomers();
 
         // LAS FUNCIONES TIENEN QUE IR EN EL FETCH, A VER CÓMO LO HACES
-        getPatients();
+        // getPatients();
+        fetchPatients();
 
     }, [])
 
@@ -78,37 +79,37 @@ function PatientsList() {
             });
     }
 
-    // const fetchPatients = () => {
-    //     const bodyData = {
-    //         patient: patient,
-    //         userid: userId,
-    //         customer: customer,
-    //         species: species,
-    //         sterilised: sterilised
-    //     }
-    //     const config = {
-    //         method: 'POST',
-    //         mode: 'cors',
-    //         headers: {
-    //             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(bodyData)
-    //     }
-    //     const request = new Request(`http://192.168.1.81:8888/api/patients`, config);
-    //     fetch(request)
-    //         .then(response => response.json())
-    //         .then(data => { handlePatients(data); handleData(data); })
-    //         .catch(e => {
-    //             console.log(e)
-    //             // localStorage.clear();
-    //         });
-    // }
-    const getPatients = (arrPatients) => {
-        arrPatients = fetchPatient(patient, userId, customer, species, sterilised);
-        handlePatients(arrPatients); 
-        handleData(arrPatients);
+    const fetchPatients = () => {
+        const bodyData = {
+            id: patient,
+            userid: userId,
+            customer: customer,
+            species: species,
+            sterilised: sterilised
+        }
+        const config = {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyData)
+        }
+        const request = new Request(`http://192.168.1.81:8888/api/patients`, config);
+        fetch(request)
+            .then(response => response.json())
+            .then(data => { handlePatients(data); handleData(data); })
+            .catch(e => {
+                console.log(e)
+                // localStorage.clear();
+            });
     }
+    // const getPatients = (arrPatients) => {
+    //     arrPatients = fetchPatient(patient, userId, customer, species, sterilised);
+    //     handlePatients(arrPatients); 
+    //     handleData(arrPatients);
+    // }
 
     const handleVets = (data) => {
         arrVets = data;
@@ -196,7 +197,7 @@ function PatientsList() {
         document.getElementById('checkbox-sterilised').checked = false;
         document.getElementById('species-picker').value = '';
         fetchVets();
-        getPatients();
+        fetchPatients();
         fetchCustomers();
     }
 
@@ -205,7 +206,7 @@ function PatientsList() {
         e.preventDefault();
         userId = e.target.value;
         console.log(userId)
-        getPatients()
+        fetchPatients()
         fetchCustomers()
     }
 
@@ -213,7 +214,7 @@ function PatientsList() {
         e.preventDefault();
         customer = e.target.value.split(' ')[0];
         console.log(customer)
-        getPatients()
+        fetchPatients()
         fetchVets()
     }
 
@@ -221,7 +222,7 @@ function PatientsList() {
         e.preventDefault();
         patient = e.target.value.split(' ')[0];
         console.log(patient)
-        getPatients()
+        fetchPatients()
         fetchCustomers()
         fetchVets()
     }
@@ -229,14 +230,14 @@ function PatientsList() {
         e.preventDefault();
         species = e.target.value;
         console.log(species)
-        getPatients()
+        fetchPatients()
         fetchCustomers()
         fetchVets()
     }
     const captureSterilised = (e) => {
         e.preventDefault();
         sterilised = e.target.checked;
-        getPatients();
+        fetchPatients();
         fetchVets();
         fetchCustomers();
     }
