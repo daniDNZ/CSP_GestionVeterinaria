@@ -59,6 +59,25 @@ function FormAlerts() {
     )
 }
 
+const handleAlert = (success) => {
+
+    let alert;
+    if (success) {
+        alert = document.getElementById("completedAlert");
+    } else {
+        alert = document.getElementById("failedAlert");
+    }
+    alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none')
+
+}
+
+const handleClean = (fData) => {
+    let elements = fData.elements;
+    // console.log(elements)
+    [...elements].forEach(e => {
+        e.value = '';
+    });
+}
 
 
 function CustomerForm() {
@@ -230,7 +249,7 @@ function FormArray
         },
         {
             label: 'Veterinaria/o',
-            id: 'vet-picker',
+            id: 'vetPicker',
             tag: 'input',
             type: 'search',
             value: pVet,
@@ -238,7 +257,7 @@ function FormArray
         },
         {
             label: 'Cliente',
-            id: 'customer-picker',
+            id: 'customerPicker',
             tag: 'input',
             type: 'search',
             value: cId,
@@ -246,14 +265,14 @@ function FormArray
         },
         {
             label: 'Nombre paciente',
-            id: 'patient-name',
+            id: 'patientName',
             tag: 'input',
             type: 'text',
             value: pName
         },
         {
             label: 'Especie',
-            id: 'species-picker',
+            id: 'speciesPicker',
             tag: 'input',
             type: 'search',
             value: pSpecies,
@@ -261,7 +280,7 @@ function FormArray
         },
         {
             label: 'Raza',
-            id: 'race-picker',
+            id: 'racePicker',
             tag: 'input',
             type: 'search',
             value: pRace,
@@ -269,58 +288,58 @@ function FormArray
         },
         {
             label: 'Género',
-            id: 'gender-picker',
+            id: 'genderPicker',
             tag: 'input',
             type: 'search',
             value: pGender,
-            datalist: arrGender
+            datalist: [{username: "Male", name: "Macho"}, {username: "Female", name: "Hembra"}]
         },
         {
             label: 'Esterilizad@',
-            id: 'sterilised-picker',
+            id: 'sterilisedPicker',
             tag: 'input',
             type: 'search',
             value: pSterilised,
-            datalist: ["false", "true"]
+            datalist: [{username: "false", name:"No"}, {username: "true", name: "Sí"}]
         },
         {
             label: 'Cumpleaños',
-            id: 'patient-birthday',
+            id: 'patientBirthday',
             tag: 'input',
             type: 'date',
             value: pBirthday
         },
         {
             label: 'Peso',
-            id: 'patient-weight',
+            id: 'patientWeight',
             tag: 'input',
             type: 'text',
             value: pWeight
         },
         {
             label: 'CHIP',
-            id: 'patient-chip',
+            id: 'patientChip',
             tag: 'input',
             type: 'text',
             value: pChip
         },
         {
             label: 'Color',
-            id: 'patient-color',
+            id: 'patientColor',
             tag: 'input',
             type: 'text',
             value: pColor
         },
         {
             label: 'Ojos',
-            id: 'patient-eyes',
+            id: 'patientEyes',
             tag: 'input',
             type: 'text',
             value: pEyes
         },
         {
             label: 'Información paciente',
-            id: 'patient-info',
+            id: 'patientInfo',
             tag: 'textarea',
             type: '',
             value: pInfo,
@@ -337,56 +356,56 @@ function FormArray
         },
         {
             label: 'Nombre cliente',
-            id: 'customer-name',
+            id: 'customerName',
             tag: 'input',
             type: 'text',
             value: cName
         },
         {
             label: 'Apellidos cliente',
-            id: 'customer-lastname',
+            id: 'customerLastname',
             tag: 'input',
             type: 'text',
             value: cLastname
         },
         {
             label: 'Teléfono cliente',
-            id: 'customer-phone',
+            id: 'customerPhone',
             tag: 'input',
             type: 'text',
             value: cPhone
         },
         {
             label: 'Email',
-            id: 'customer-email',
+            id: 'customerEmail',
             tag: 'input',
             type: 'email',
             value: cEmail
         },
         {
             label: 'DNI',
-            id: 'customer-dni',
+            id: 'customerDni',
             tag: 'input',
             type: 'text',
             value: cDni
         },
         {
             label: 'CP',
-            id: 'customer-cp',
+            id: 'customerPc',
             tag: 'input',
             type: 'text',
             value: cPc
         },
         {
             label: 'Dirección',
-            id: 'customer-address',
+            id: 'customerAddress',
             tag: 'input',
             type: 'text',
             value: cAddress
         },
         {
             label: 'Información cliente',
-            id: 'customer-info',
+            id: 'customerInfo',
             tag: 'textarea',
             type: '',
             value: cInfo,
@@ -427,7 +446,7 @@ function datalistGenerator (id, data) {
 
         datalist += 
         `
-            <option id="${id.slice(0,2)}-${v}" value='${v}'>${v}</option> 
+            <option id="${id.slice(0,2)}-${v.username}" value='${v.username}'>${v.name}</option> 
         `;
 
     });
@@ -446,7 +465,7 @@ function FormGenerator ({ arrForm }) {
             let datalist = '';
             let attributes = '';
             
-            if (e.tag !== 'hr' && e.tag !== 'h3') attributes = `type=${e.type} id="${e.id}" class="form-control" value="${e.value}"`;
+            if (e.tag !== 'hr' && e.tag !== 'h3') attributes = `type="${e.type}" id="${e.id}" class="form-control" value="${e.value}"`;
 
             if (e.type == 'search') {
 
@@ -512,4 +531,4 @@ function FormGenerator ({ arrForm }) {
         </>
     )
 }
-export { FormModal, FormAlerts, CustomerForm, PatientForm, FormGenerator, FormArray, datalistGenerator };
+export { FormModal, FormAlerts, handleAlert, handleClean, CustomerForm, PatientForm, FormGenerator, FormArray, datalistGenerator };

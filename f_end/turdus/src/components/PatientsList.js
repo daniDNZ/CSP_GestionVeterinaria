@@ -56,7 +56,7 @@ function PatientsList() {
         const bodyData = {
             patient: patient,
             species: species,
-            customer: customer,
+            customerId: customer,
             sterilised: sterilised,
             userid: userId,
         }

@@ -1,3 +1,6 @@
+import bcrypt from "bcryptjs/dist/bcrypt";
+import { handleAlert, handleClean } from "./FormsController";
+
 const fetchPatient = (id = '', userId = '', customer = '', species = '', sterilised = '') => {
     let arrPatients;
     const bodyData = {
@@ -30,9 +33,29 @@ const fetchPatient = (id = '', userId = '', customer = '', species = '', sterili
     return arrPatients;
 }
 
-const fetchVets = (callback) => {
+const getPatients = (callback, id) => {
 
-    let arrVets;
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request("http://192.168.1.81:8888/api/patients", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+
+}
+
+const getVets = (callback, id) => {
+
 
     const config = {
         method: 'GET',
@@ -45,35 +68,16 @@ const fetchVets = (callback) => {
     const request = new Request("http://192.168.1.81:8888/api/vets", config);
     fetch(request)
         .then(response => response.json())
-        .then(data => {callback(data) })
+        .then(data => { callback(data, id) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
         });
 
 }
-// async function fetchVets() {
-//     let arrVets;
 
-//     const config = {
-//         method: 'GET',
-//         mode: 'cors',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//             'Content-Type': 'application/json'
-//         }
-//     }
-//     const request = new Request("http://192.168.1.81:8888/api/vets", config);
-//     const response = await fetch(request);
-//     const response2 = await response.json();
-//     arrVets = response2;
-//     console.log(arrVets)
-//     return arrVets;
-// }
+const getSpecies = (callback, id) => {
 
-const fetchSpecies = () => {
-
-    let arrSpecies;
 
     const config = {
         method: 'GET',
@@ -86,18 +90,15 @@ const fetchSpecies = () => {
     const request = new Request("http://192.168.1.81:8888/api/species", config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { arrSpecies = data })
+        .then(data => { callback(data, id) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
         });
     
-        return arrSpecies;
 }
 
-const fetchRaces = () => {
-
-    let arrRaces;
+const getRaces = (callback, id) => {
 
     const config = {
         method: 'GET',
@@ -110,18 +111,38 @@ const fetchRaces = () => {
     const request = new Request("http://192.168.1.81:8888/api/races", config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { arrRaces = data })
+        .then(data => { callback(data, id) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
         });
     
-    return arrRaces;
 }
 
-const fetchCustomers = () => {
+const findRaces = (callback, id, value) => {
+    const bodyData = {
+        species: value
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/races", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
 
-    let arrCustomers;
+const getCustomers = (callback, id) => {
 
     const config = {
         method: 'GET',
@@ -129,18 +150,142 @@ const fetchCustomers = () => {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'
-        }
+        },
     }
-    const request = new Request("http://192.168.1.81:8888/api/customers_all", config);
+    const request = new Request("http://192.168.1.81:8888/api/customers", config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { arrCustomers = data })
+        .then(data => { callback(data, id) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
         });
-    
-    return arrCustomers;
 }
 
-export { fetchPatient, fetchVets, fetchSpecies, fetchRaces, fetchCustomers }
+const findCustomers = (callback, bodyData = {}) => {
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/customers", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+
+
+// INSERTS / UPDATES
+
+const addUpdateCustomer = (fData, action, id = '') => {
+
+    const bodyData = {
+        id: id,
+        email: fData.customerEmail.value,
+        dni: fData.customerDni.value,
+        name: fData.customerName.value,
+        last_name: fData.customerLastname.value,
+        postal_code: fData.customerPc.value,
+        address: fData.customerAddress.value,
+        phone: fData.customerPhone.value,
+        info: fData.customerInfo.value,
+        password: bcrypt.hashSync(fData.customerName.value)
+    }
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    let request;
+    if (action == 'add') {
+        request = new Request("http://192.168.1.81:8888/api/customer/add", config);
+    } else {
+        request = new Request("http://192.168.1.81:8888/api/customer/update", config);
+    }
+
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            handleAlert(true);
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
+const addUpdatePatient = (fData, action, id = '', customerId = '') => {
+
+    const birthday = `${fData.birthday.value.split('T')[0]}`
+
+    const bodyData = {
+            patientId: id,
+            name: fData.name.value,
+            info: fData.info.value,
+            chip: fData.chip.value,
+            eyes: fData.eyes.value,
+            color: fData.color.value,
+            weight: fData.weight.value,
+            gender: fData.gender.value,
+            sterilised: fData.sterilised.value,
+            vet: fData.vet.value,
+            race: fData.race.value,
+            species: fData.species.value,
+            customer: customerId,
+            birthday: birthday
+    }
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    let request;
+    if (action == 'add') {
+        request = new Request("http://192.168.1.81:8888/api/patient/add", config);
+    } else {
+        request = new Request("http://192.168.1.81:8888/api/patient/update", config);
+    }
+
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            handleAlert(true);
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
+
+
+export { fetchPatient, getVets, getSpecies, getRaces, findRaces, getCustomers, findCustomers, getPatients, addUpdateCustomer, addUpdatePatient }

@@ -16,13 +16,15 @@ use App\Entity\Patient;
 
 class PatientsController extends AbstractController
 {
+
     /**
-     * @Route("/api/patients", name="app_patients", methods="POST")
+     * @Route("/api/patients", name="app_patients_post", methods="POST")
      */
-    public function index(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, Request $request): Response
+    public function findPatients(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, Request $request): Response
     {
         $patients = [];
         $query = array();
+        
         $data = $request->toArray();
 
         if ($data['id'] !== '')         { $query['id'] = $data['id']; }
@@ -30,7 +32,7 @@ class PatientsController extends AbstractController
         if ($data['species'] !== '')    { $query['species'] = $data['species']; }
         if ($data['customer'] !== '')   { $query['responsible'] = $data['customer']; }
         if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }
-
+    
         if (!empty($query)){
             $patientEntities = $patientRepository->findBy($query);
 
@@ -38,6 +40,43 @@ class PatientsController extends AbstractController
             $patientEntities = $patientRepository->findAll();
         }
 
+        foreach ($patientEntities as $patientEntity) {
+            $patient = [];
+            $patient['id'] = $patientEntity->getId();
+            $patient['name'] = $patientEntity->getName();
+            $patient['gender'] = $patientEntity->getGender();
+            $patient['birthday'] = $patientEntity->getBirthday();
+            $patient['sterilised'] = $patientEntity->getSterilised();
+
+            $patient['vet'] = $patientEntity->getVet()->getName();
+            $patient['species'] = $patientEntity->getSpecies()->getName();
+            $patient['responsible'] = $patientEntity->getResponsible()->getName();
+            $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
+
+            if ( $patientEntity->getRace() != null) 
+            {
+                $patient['race'] = $patientEntity->getRace()->getName();
+            }
+            else
+            {
+                $patient['race'] = '';
+            }
+
+            $patients[] = $patient;
+            
+        }
+        return $this->json($patients);
+    }
+
+        /**
+     * @Route("/api/patients", name="app_patients_get", methods="GET")
+     */
+    public function getPatients(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, Request $request): Response
+    {
+        $patients = [];
+        
+        $patientEntities = $patientRepository->findAll();
+        
         foreach ($patientEntities as $patientEntity) {
             $patient = [];
             $patient['id'] = $patientEntity->getId();

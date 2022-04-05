@@ -97,21 +97,21 @@ function CustomersList() {
     }
 
     const fetchCustomers = () => {
-        const bodyData = {
-            patient: patient,
-            userid: userId,
-            customer: customer,
-            species: species,
-            sterilised: sterilised
-        }
+        // const bodyData = {
+        //     patient: patient,
+        //     userid: userId,
+        //     customer: customer,
+        //     species: species,
+        //     sterilised: sterilised
+        // }
         const config = {
-            method: 'POST',
+            method: 'GET',
             mode: 'cors',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(bodyData)
+            // body: JSON.stringify(bodyData)
         }
         const request = new Request(`http://192.168.1.81:8888/api/customers`, config);
         fetch(request)
