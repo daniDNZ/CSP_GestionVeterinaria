@@ -29,28 +29,6 @@ function DashboardNavContent() {
                 </a>
             </li>
             <li className="mx-0 nav-item">
-                <a href="#" className="nav-link px-2 dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#patients-collapse" aria-controls="#patients-collapse" aria-expanded="false" aria-label="Toggle navigation">
-                    <i className="bi bi-people fs-5 me-2"></i>
-                    <span className="d-inline">Pacientes</span>
-                </a>
-                <div id="patients-collapse" className="collapse navbar-collapse">
-                    <hr className="m-0" />
-                    <ul className="nav navbar-nav flex-column">
-                        <li className="nav-item">
-                            <NavLink to="/turdus/patients" className="nav-link px-2 text-reset">
-                                <span className="d-inline">Lista Pacientes</span>
-                            </NavLink>
-                        </li>
-                        <li className="nav-item">
-                            <NavLink to="/turdus/patients/new" className="nav-link px-2 text-reset">
-                                <span className="d-inline">Nuevo Paciente</span>
-                            </NavLink>
-                        </li>
-                    </ul>
-                </div>
-
-            </li>
-            <li className="mx-0 nav-item">
                 <a href="#" className="nav-link px-2 dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#customers-collapse" aria-controls="#customers-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <i className="bi bi-person-lines-fill fs-5 me-2"></i>
                     <span className="d-inline">Clientes</span>
@@ -58,14 +36,20 @@ function DashboardNavContent() {
                 <div id="customers-collapse" className="collapse navbar-collapse">
                     <hr className="m-0" />
                     <ul className="nav navbar-nav flex-column">
+                        <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/registrations" className="nav-link px-2">
+                                <i className="bi bi-card-text fs-5 me-2"></i>
+                                <span className="d-inline">Altas</span>
+                            </NavLink>
+                        </li>
                         <li className="nav-item">
                             <NavLink to="/turdus/customers" className="nav-link px-2 text-reset">
                                 <span className="d-inline">Lista Clientes</span>
                             </NavLink>
                         </li>
                         <li className="nav-item">
-                            <NavLink to="/turdus/customers/new" className="nav-link px-2 text-reset">
-                                <span className="d-inline">Nuevo Cliente</span>
+                            <NavLink to="/turdus/patients" className="nav-link px-2 text-reset">
+                                <span className="d-inline">Lista Pacientes</span>
                             </NavLink>
                         </li>
                     </ul>

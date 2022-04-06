@@ -234,24 +234,24 @@ const addUpdateCustomer = (fData, action, id = '') => {
     
 }
 
-const addUpdatePatient = (fData, action, id = '', customerId = '') => {
+const addUpdatePatient = (fData, action, id = '') => {
 
-    const birthday = `${fData.birthday.value.split('T')[0]}`
-
+    const birthday = `${fData.patientBirthday.value.split('T')[0]}`;
+    
     const bodyData = {
             patientId: id,
-            name: fData.name.value,
-            info: fData.info.value,
-            chip: fData.chip.value,
-            eyes: fData.eyes.value,
-            color: fData.color.value,
-            weight: fData.weight.value,
-            gender: fData.gender.value,
-            sterilised: fData.sterilised.value,
-            vet: fData.vet.value,
-            race: fData.race.value,
-            species: fData.species.value,
-            customer: customerId,
+            name: fData.patientName.value,
+            info: fData.patientInfo.value,
+            chip: fData.patientChip.value,
+            eyes: fData.patientEyes.value,
+            color: fData.patientColor.value,
+            weight: fData.patientWeight.value,
+            gender: fData.genderPicker.value,
+            sterilised: fData.sterilisedPicker.value,
+            vet: fData.vetPicker.value,
+            race: fData.racePicker.value,
+            species: fData.speciesPicker.value,
+            customer: fData.customerPicker.value,
             birthday: birthday
     }
 

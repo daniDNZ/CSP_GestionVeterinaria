@@ -142,7 +142,15 @@ class PatientsController extends AbstractController
     /**
      * @Route("/api/patient/update", name="app_patient_update", methods="POST" )
      */
-    public function update(CustomerRepository $customerRepository, RaceRepository $raceRepository, SpeciesRepository $speciesRepository, UserRepository $userRepository, PatientRepository $patientRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function update(
+        CustomerRepository $customerRepository, 
+        RaceRepository $raceRepository, 
+        SpeciesRepository $speciesRepository, 
+        UserRepository $userRepository, 
+        PatientRepository $patientRepository, 
+        Request $request, 
+        EntityManagerInterface $entityManager
+    ): Response
     {
         $data = $request->toArray();
         $patient = $patientRepository->find($data['id']);
@@ -156,10 +164,10 @@ class PatientsController extends AbstractController
         $patient->setGender($data['gender']);
         $patient->setSterilised($data['sterilised']);
 
-        $patient->setVet($userRepository->find($data['vet']));
-        $patient->setRace($raceRepository->find($data['race']));
-        $patient->setSpecies($speciesRepository->find($data['species']));
-        $patient->setResponsible($customerRepository->find($data['customer']));
+        $patient->setVet($userRepository->findOneBy(array('username' => $data['vet'])));
+        $patient->setRace($raceRepository->findOneBy(array('name' => $data['race'])));
+        $patient->setSpecies($speciesRepository->findOneBy(array('name' => $data['species'])));
+        $patient->setResponsible($customerRepository->findOneBy(array('email' => $data['customer'])));
 
         $dateString = $data['birthday'];
         $dateReconverted = \DateTime::createFromFormat('Y-m-d', $dateString);
@@ -175,7 +183,15 @@ class PatientsController extends AbstractController
     /**
      * @Route("/api/patient/add", name="app_patient_add", methods="POST" )
      */
-    public function add(CustomerRepository $customerRepository, RaceRepository $raceRepository, SpeciesRepository $speciesRepository, UserRepository $userRepository, PatientRepository $patientRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function add(
+        CustomerRepository $customerRepository, 
+        RaceRepository $raceRepository, 
+        SpeciesRepository $speciesRepository, 
+        UserRepository $userRepository, 
+        PatientRepository $patientRepository, 
+        Request $request, 
+        EntityManagerInterface $entityManager
+    ): Response
     {
         $data = $request->toArray();
         $patient = New Patient;
@@ -189,11 +205,11 @@ class PatientsController extends AbstractController
         $patient->setGender($data['gender']);
         $patient->setSterilised($data['sterilised']);
 
-        $patient->setVet($userRepository->find($data['vet']));
-        $patient->setRace($raceRepository->find($data['race']));
-        $patient->setSpecies($speciesRepository->find($data['species']));
-        $patient->setResponsible($customerRepository->find($data['customer']));
-        $patient->setFamily($customerRepository->find($data['customer'])->getFamily());
+        $patient->setVet($userRepository->findOneBy(array('username' => $data['vet'])));
+        $patient->setRace($raceRepository->findOneBy(array('name' => $data['race'])));
+        $patient->setSpecies($speciesRepository->findOneBy(array('name' => $data['species'])));
+        $patient->setResponsible($customerRepository->findOneBy(array('email' => $data['customer'])));
+        $patient->setFamily($customerRepository->findOneBy(array('email' => $data['customer']))->getFamily());
 
         $dateString = $data['birthday'];
         $dateReconverted = \DateTime::createFromFormat('Y-m-d', $dateString);

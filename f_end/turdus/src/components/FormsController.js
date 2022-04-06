@@ -29,6 +29,7 @@ function FormModal() {
 }
 
 function FormAlerts() {
+
     const closeAlert = (e) => {
         e.preventDefault();
     
@@ -36,10 +37,14 @@ function FormAlerts() {
         alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none');
     
     }
+
     useEffect(() => {
+
         document.getElementById('alert-success-close').addEventListener('click', closeAlert);
         document.getElementById('alert-danger-close').addEventListener('click', closeAlert);
+
     }, [])
+
     
     return (
         <>
@@ -69,6 +74,19 @@ const handleAlert = (success) => {
     }
     alert.classList.contains('d-none') ? alert.classList.remove('d-none') : alert.classList.add('d-none')
 
+    // Creamos una función y llamamos a un timeout para cerrar la alerta pasados 3 segundos. 
+    const closedByTime = () => {
+        const alertSuccess = document.getElementById('completedAlert');
+        const alertDanger = document.getElementById('failedAlert');
+
+        const arr = [alertSuccess, alertDanger];
+
+        arr.forEach(e => {
+           if (!e.classList.contains('d-none')) e.classList.add('d-none');
+        });
+    }
+
+    setTimeout(closedByTime, 3000);
 }
 
 const handleClean = (fData) => {
@@ -433,7 +451,6 @@ function FormArray
         default:
             arrForm = patientForm;
             arrForm = arrForm.concat(separator).concat(customerForm);
-            console.log(arrForm)
             break;
     }
     return arrForm;
@@ -456,9 +473,11 @@ function datalistGenerator (id, data) {
 function FormGenerator ({ arrForm }) {
     useEffect( () => {
         dataWalker();
-    }, [])
+    }, [arrForm])
 
     const dataWalker = () => {
+        let form = '';
+        
         arrForm.forEach(e => {
             let cell = '';
             let input = '';
@@ -512,10 +531,10 @@ function FormGenerator ({ arrForm }) {
                 `;
 
             }
-            
-            document.getElementById('form-row-1').insertAdjacentHTML('beforeend', cell);
+            form += cell;            
         
         });
+        document.getElementById('form-row-1').innerHTML = form;
     }
 
     return (
@@ -523,7 +542,6 @@ function FormGenerator ({ arrForm }) {
             <FormAlerts />
             <form id="auto-form">
                 <div id="form-row-1" className="row">
-
 
                 </div>
                 <FormModal />

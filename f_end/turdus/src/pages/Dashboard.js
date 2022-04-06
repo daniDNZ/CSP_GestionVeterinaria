@@ -7,11 +7,10 @@ import VisitsList from '../components/VisitsList';
 import Visit from '../components/Visit';
 import PatientsList from '../components/PatientsList';
 import Patient from '../components/Patient';
-import NewPatient from '../components/NewPatient';
+import NewPatient from '../components/Registrations';
 import CustomersList from '../components/CustomersList';
 import Customer from '../components/Customer';
-import NewCustomer from '../components/NewCustomer';
-
+import Registrations from '../components/Registrations';
 
 function Dashboard({ comp }) {
   document.body.removeAttribute('data-bs-spy');
@@ -34,13 +33,11 @@ function Dashboard({ comp }) {
       case 7:
         return <Patient />
       case 8:
-        return <NewPatient />
-      case 9:
         return <CustomersList />
-      case 10:
+      case 9:
         return <Customer />
-      case 11:
-        return <NewCustomer />  
+      case 10:
+        return <Registrations />  
       default:
         break;
     }
