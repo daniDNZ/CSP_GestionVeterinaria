@@ -2,7 +2,7 @@ import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
-import { FormAlerts, FormModal } from "./FormsController";
+import { FormAlerts, FormModal } from "./FormController";
 function Visit() {
     const { id } = useParams();
     let arrData;

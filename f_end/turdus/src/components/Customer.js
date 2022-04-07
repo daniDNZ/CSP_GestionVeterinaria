@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
-import { FormGenerator, FormArray, CustomerForm, FormAlerts, FormModal } from "./FormsController";
+import { FormGenerator, FormArray, CustomerForm, FormAlerts, FormModal } from "./FormController";
 import { findCustomers, addUpdateCustomer } from "./ApiFetch";
 
 function Customer() {

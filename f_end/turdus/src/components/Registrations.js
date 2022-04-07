@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { handleDatalist } from "./Handlers";
-import { FormGenerator, FormArray, handleClean } from "./FormsController";
+import { FormGenerator, FormArray, handleClean } from "./FormController";
 import { addUpdatePatient, getVets, getCustomers, getSpecies, getRaces, findRaces, addUpdateCustomer } from "./ApiFetch";
 
 function Registrations() {
@@ -22,6 +22,7 @@ function Registrations() {
             getRaces(handleDatalist, 'racePicker');
     
             document.getElementById('speciesPicker').addEventListener('input', filterRaces);
+            // HAY QUE AÑADIR MÁS FILTROS
     
         }
        

@@ -1,4 +1,4 @@
-import { datalistGenerator } from "./FormsController";
+import { datalistGenerator } from "./FormController";
 
 const handleDatalist = (data, id) => {
     let arr = [];

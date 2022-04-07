@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\CustomerRepository;
 use App\Repository\PatientRepository;
+use App\Repository\SpeciesRepository;
 use App\Repository\UserRepository;
 
 class UsersController extends AbstractController
@@ -34,7 +35,13 @@ class UsersController extends AbstractController
     /**
      * @Route("/api/vets", name="app_vets", methods={"GET", "POST"})
      */
-    public function vets(UserRepository $userRepository, PatientRepository $patientRepository, CustomerRepository $customerRepository, Request $request): Response
+    public function vets(
+        UserRepository $userRepository, 
+        PatientRepository $patientRepository, 
+        CustomerRepository $customerRepository, 
+        SpeciesRepository $speciesRepository,
+        Request $request
+        ): Response
     {   
         $users = [];
         $vetIds = [];
@@ -50,16 +57,11 @@ class UsersController extends AbstractController
             $data = $request->toArray();
 
             // Construimos la query
-            if ($data['patient'] !== '')    { $query['id'] = $data['patient']; }
-            if ($data['species'] !== '')    { $query['species'] = $data['species']; }
+            if ($data['patient'] !== '')    { $query['name'] = $data['patient']; }
+            if ($data['species'] !== '')    { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
             if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }
-            if ($data['customer'] !== '')   
-            {
-                $customerEntities = $customerRepository->findOneBy(array('id' => $data['customer']));
-                $customerId = $customerEntities->getId();
-
-                $query['responsible'] = $customerId;
-            }
+            if ($data['customer'] !== '')   { $query['responsible'] = $customerRepository->findOneBy(array('email' => $data['customer']))->getId();} 
+            
             // Hacemos la búsqueda por QUERY o por ROL
             if (!empty($query)) 
             {

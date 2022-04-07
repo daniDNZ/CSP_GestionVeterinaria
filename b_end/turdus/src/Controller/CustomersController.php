@@ -10,7 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CustomerRepository;
 use App\Repository\PatientRepository;
 use App\Repository\PostalCodeRepository;
+use App\Repository\SpeciesRepository;
 use App\Repository\FamilyRepository;
+use App\Repository\UserRepository;
 use App\Entity\Customer;
 use App\Entity\Family;
 
@@ -37,7 +39,12 @@ class CustomersController extends AbstractController
     /**
      * @Route("/api/customers", name="app_customers_post", methods="POST")
      */
-    public function findCustomers(CustomerRepository $customerRepository, PatientRepository $patientRepository, Request $request): Response
+    public function findCustomers(
+        CustomerRepository $customerRepository, 
+        PatientRepository $patientRepository, 
+        UserRepository $userRepository, 
+        SpeciesRepository $speciesRepository,
+        Request $request): Response
     {   
         $customers = [];
         $data = $request->toArray();
@@ -46,47 +53,31 @@ class CustomersController extends AbstractController
         {
             $customer = [];
             $customer['id'] = $customerEntity->getId();
-            $customer['dni'] = $customerEntity->getDni();
             $customer['name'] = $customerEntity->getName();
-            $customer['city'] = $customerEntity->getPostalCode()->getCity();
-            $customer['info'] = $customerEntity->getInfo();
+            $customer['lastName'] = $customerEntity->getLastName();
             $customer['phone'] = $customerEntity->getPhone();
             $customer['email'] = $customerEntity->getEmail();
-            $customer['family'] = $customerEntity->getFamily()->getId();
-            $customer['address'] = $customerEntity->getAddress();
-            $customer['lastName'] = $customerEntity->getLastName();
-            $customer['province'] = $customerEntity->getPostalCode()->getProvince();
-            $customer['postalCode'] = $customerEntity->getPostalCode()->getId();
-
-            $patients = [];
-            $id = $customerEntity->getId();
-            $patientEntities = $patientRepository->findBy(array('responsible' => $id));
-
-            foreach ($patientEntities as $patientEntity) 
-            {
-                $patient = [];
-                $patients[] = $patient;
-                $patient['id'] = $patientEntity->getId();
-                $patient['name'] = $patientEntity->getName();
-            }
-
-            $customer['patients'] = $patients;
 
             return $customer;
         }
 
-        if ($data['customerId'] != '')
+        // if ($data['customerId'] != '')
+        // {
+        //     $customerEntity = $customerRepository->findOneBy(array('id' => $data['customerId']));
+        //     $customers[] = maker($customerEntity, $patientRepository);
+        // }
+        if ($data['customer'] != '')
         {
-            $customerEntity = $customerRepository->findOneBy(array('id' => $data['customerId']));
+            $customerEntity = $customerRepository->findOneBy(array('email' => $data['customer']));
             $customers[] = maker($customerEntity, $patientRepository);
         }
         else
         {
             $query = array();
 
-            if ($data['userid'] != '')      { $query['vet'] = $data['userid']; }
-            if ($data['patient'] != '')     { $query['id'] = $data['patient']; }
-            if ($data['species'] != '')     { $query['species'] = $data['species']; }
+            if ($data['user'] != '')        { $query['vet'] = $userRepository->findOneBy(array('username' => $data['user']))->getId(); }
+            if ($data['patient'] != '')     { $query['name'] = $data['patient']; }
+            if ($data['species'] != '')     { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
             if ($data['sterilised'] != '')  { $query['sterilised'] = $data['sterilised']; }
             
             if (!empty($query)) 
@@ -123,6 +114,55 @@ class CustomersController extends AbstractController
     
         return $this->json($customers);
     }
+    //  /**
+    //  * @Route("/api/customers", name="app_customers_get", methods="GET")
+    //  */
+    // public function getCustomers(CustomerRepository $customerRepository, PatientRepository $patientRepository, Request $request): Response
+    // {   
+    //     $customers = [];
+
+    //     function maker($customerEntity, $patientRepository)
+    //     {
+    //         $customer = [];
+    //         $customer['id'] = $customerEntity->getId();
+    //         $customer['dni'] = $customerEntity->getDni();
+    //         $customer['name'] = $customerEntity->getName();
+    //         $customer['city'] = $customerEntity->getPostalCode()->getCity();
+    //         $customer['info'] = $customerEntity->getInfo();
+    //         $customer['phone'] = $customerEntity->getPhone();
+    //         $customer['email'] = $customerEntity->getEmail();
+    //         $customer['family'] = $customerEntity->getFamily()->getId();
+    //         $customer['address'] = $customerEntity->getAddress();
+    //         $customer['lastName'] = $customerEntity->getLastName();
+    //         $customer['province'] = $customerEntity->getPostalCode()->getProvince();
+    //         $customer['postalCode'] = $customerEntity->getPostalCode()->getId();
+
+    //         $patients = [];
+    //         $id = $customerEntity->getId();
+    //         $patientEntities = $patientRepository->findBy(array('responsible' => $id));
+
+    //         foreach ($patientEntities as $patientEntity) 
+    //         {
+    //             $patient = [];
+    //             $patients[] = $patient;
+    //             $patient['id'] = $patientEntity->getId();
+    //             $patient['name'] = $patientEntity->getName();
+    //         }
+
+    //         $customer['patients'] = $patients;
+
+    //         return $customer;
+    //     }
+
+    //     $customerEntities = $customerRepository->findAll();
+
+    //     foreach ($customerEntities as $customerEntity) 
+    //     {
+    //         $customers[] = maker($customerEntity, $patientRepository);
+    //     }
+    
+    //     return $this->json($customers);
+    // }
 
      /**
      * @Route("/api/customers", name="app_customers_get", methods="GET")
@@ -135,31 +175,10 @@ class CustomersController extends AbstractController
         {
             $customer = [];
             $customer['id'] = $customerEntity->getId();
-            $customer['dni'] = $customerEntity->getDni();
             $customer['name'] = $customerEntity->getName();
-            $customer['city'] = $customerEntity->getPostalCode()->getCity();
-            $customer['info'] = $customerEntity->getInfo();
+            $customer['lastName'] = $customerEntity->getLastName();
             $customer['phone'] = $customerEntity->getPhone();
             $customer['email'] = $customerEntity->getEmail();
-            $customer['family'] = $customerEntity->getFamily()->getId();
-            $customer['address'] = $customerEntity->getAddress();
-            $customer['lastName'] = $customerEntity->getLastName();
-            $customer['province'] = $customerEntity->getPostalCode()->getProvince();
-            $customer['postalCode'] = $customerEntity->getPostalCode()->getId();
-
-            $patients = [];
-            $id = $customerEntity->getId();
-            $patientEntities = $patientRepository->findBy(array('responsible' => $id));
-
-            foreach ($patientEntities as $patientEntity) 
-            {
-                $patient = [];
-                $patients[] = $patient;
-                $patient['id'] = $patientEntity->getId();
-                $patient['name'] = $patientEntity->getName();
-            }
-
-            $customer['patients'] = $patients;
 
             return $customer;
         }

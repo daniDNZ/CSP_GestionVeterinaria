@@ -2,7 +2,7 @@ import jwt_decode from "jwt-decode";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
-import { FormAlerts, FormModal, PatientForm } from "./FormsController";
+import { FormAlerts, FormModal, PatientForm } from "./FormController";
 
 function Patient() {
     const { id } = useParams();

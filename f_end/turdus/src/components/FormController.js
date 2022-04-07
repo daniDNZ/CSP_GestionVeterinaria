@@ -256,7 +256,6 @@ function FormArray
     
     let arrForm;
 
-    
     const patientForm = [
         {
             label: '',
@@ -488,7 +487,7 @@ function FormGenerator ({ arrForm }) {
 
             if (e.type == 'search') {
 
-                
+                // FALTA AÑADIR SELECT
                 datalist = `<datalist id="${e.id}-datalist">`;
                 datalist += datalistGenerator(e.id, e.datalist);
                 datalist += `</datalist>`;

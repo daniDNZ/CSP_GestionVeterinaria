@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs/dist/bcrypt";
-import { handleAlert, handleClean } from "./FormsController";
+import { handleAlert, handleClean } from "./FormController";
 
 const fetchPatient = (id = '', userId = '', customer = '', species = '', sterilised = '') => {
     let arrPatients;
@@ -119,28 +119,6 @@ const getRaces = (callback, id) => {
     
 }
 
-const findRaces = (callback, id, value) => {
-    const bodyData = {
-        species: value
-    }
-    const config = {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-    }
-    const request = new Request("http://192.168.1.81:8888/api/races", config);
-    fetch(request)
-        .then(response => response.json())
-        .then(data => { callback(data, id) })
-        .catch(e => {
-            console.log(e)
-            // localStorage.clear();
-        });
-}
 
 const getCustomers = (callback, id) => {
 
@@ -162,7 +140,29 @@ const getCustomers = (callback, id) => {
         });
 }
 
-const findCustomers = (callback, bodyData = {}) => {
+const findPatients = (callback, bodyData = {}, id) => {
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/patients", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+const findCustomers = (callback, bodyData = {}, id) => {
 
     const config = {
         method: 'POST',
@@ -176,12 +176,77 @@ const findCustomers = (callback, bodyData = {}) => {
     const request = new Request("http://192.168.1.81:8888/api/customers", config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data) })
+        .then(data => { callback(data, id) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
         });
   
+}
+
+const findVets = (callback, bodyData = {}, id) => {
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/vets", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+const findSpecies = (callback, bodyData = {}, id) => {
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/species", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
+const findRaces = (callback, id, value) => {
+    const bodyData = {
+        species: value
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/races", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
 }
 
 
@@ -288,4 +353,18 @@ const addUpdatePatient = (fData, action, id = '') => {
 
 
 
-export { fetchPatient, getVets, getSpecies, getRaces, findRaces, getCustomers, findCustomers, getPatients, addUpdateCustomer, addUpdatePatient }
+export { 
+    fetchPatient, 
+    getVets, 
+    getSpecies, 
+    getRaces, 
+    findRaces, 
+    getCustomers, 
+    findCustomers, 
+    getPatients, 
+    findPatients, 
+    findVets,
+    findSpecies,
+    addUpdateCustomer, 
+    addUpdatePatient 
+}

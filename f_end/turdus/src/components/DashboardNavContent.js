@@ -38,20 +38,17 @@ function DashboardNavContent() {
                     <ul className="nav navbar-nav flex-column">
                         <li className="mx-0 nav-item">
                             <NavLink to="/turdus/registrations" className="nav-link px-2">
-                                <i className="bi bi-card-text fs-5 me-2"></i>
+                                <i className="bi bi-plus-circle fs-5 me-2"></i>
                                 <span className="d-inline">Altas</span>
                             </NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink to="/turdus/customers" className="nav-link px-2 text-reset">
-                                <span className="d-inline">Lista Clientes</span>
+                        <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/search" className="nav-link px-2">
+                                <i className="bi bi-search fs-5 me-2"></i>
+                                <span className="d-inline">Búsqueda</span>
                             </NavLink>
                         </li>
-                        <li className="nav-item">
-                            <NavLink to="/turdus/patients" className="nav-link px-2 text-reset">
-                                <span className="d-inline">Lista Pacientes</span>
-                            </NavLink>
-                        </li>
+                        
                     </ul>
                 </div>
 

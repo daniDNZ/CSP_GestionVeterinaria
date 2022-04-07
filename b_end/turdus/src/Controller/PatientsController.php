@@ -20,17 +20,23 @@ class PatientsController extends AbstractController
     /**
      * @Route("/api/patients", name="app_patients_post", methods="POST")
      */
-    public function findPatients(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, Request $request): Response
+    public function findPatients(
+        PatientRepository $patientRepository, 
+        UserRepository $userRepository, 
+        CustomerRepository $customerRepository,
+        SpeciesRepository $speciesRepository, 
+        Request $request
+        ): Response
     {
         $patients = [];
         $query = array();
         
         $data = $request->toArray();
 
-        if ($data['id'] !== '')         { $query['id'] = $data['id']; }
-        if ($data['userid'] !== '')     { $query['vet'] = $data['userid']; }
-        if ($data['species'] !== '')    { $query['species'] = $data['species']; }
-        if ($data['customer'] !== '')   { $query['responsible'] = $data['customer']; }
+        if ($data['patient'] !== '')    { $query['name'] = $data['patient']; }
+        if ($data['user'] !== '')       { $query['vet'] = $userRepository->findOneBy(array('username' => $data['user']))->getId(); }
+        if ($data['species'] !== '')    { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
+        if ($data['customer'] !== '')   { $query['responsible'] = $customerRepository->findOneBy(array('email' => $data['customer']))->getId(); }
         if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }
     
         if (!empty($query)){
@@ -44,14 +50,7 @@ class PatientsController extends AbstractController
             $patient = [];
             $patient['id'] = $patientEntity->getId();
             $patient['name'] = $patientEntity->getName();
-            $patient['gender'] = $patientEntity->getGender();
-            $patient['birthday'] = $patientEntity->getBirthday();
-            $patient['sterilised'] = $patientEntity->getSterilised();
-
-            $patient['vet'] = $patientEntity->getVet()->getName();
             $patient['species'] = $patientEntity->getSpecies()->getName();
-            $patient['responsible'] = $patientEntity->getResponsible()->getName();
-            $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
 
             if ( $patientEntity->getRace() != null) 
             {
@@ -62,6 +61,15 @@ class PatientsController extends AbstractController
                 $patient['race'] = '';
             }
 
+            $patient['birthday'] = $patientEntity->getBirthday()->format('d/m/Y');
+            $patient['gender'] = $patientEntity->getGender();
+            $patient['sterilised'] = $patientEntity->getSterilised();
+
+            $patient['vet'] = $patientEntity->getVet()->getName();
+            $patient['responsible'] = $patientEntity->getResponsible()->getName();
+            // $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
+
+            
             $patients[] = $patient;
             
         }
@@ -81,14 +89,7 @@ class PatientsController extends AbstractController
             $patient = [];
             $patient['id'] = $patientEntity->getId();
             $patient['name'] = $patientEntity->getName();
-            $patient['gender'] = $patientEntity->getGender();
-            $patient['birthday'] = $patientEntity->getBirthday();
-            $patient['sterilised'] = $patientEntity->getSterilised();
-
-            $patient['vet'] = $patientEntity->getVet()->getName();
             $patient['species'] = $patientEntity->getSpecies()->getName();
-            $patient['responsible'] = $patientEntity->getResponsible()->getName();
-            $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
 
             if ( $patientEntity->getRace() != null) 
             {
@@ -98,6 +99,16 @@ class PatientsController extends AbstractController
             {
                 $patient['race'] = '';
             }
+
+            $patient['birthday'] = $patientEntity->getBirthday()->format('d/m/Y');
+            $patient['gender'] = $patientEntity->getGender();
+            $patient['sterilised'] = $patientEntity->getSterilised();
+
+            $patient['vet'] = $patientEntity->getVet()->getName();
+            $patient['responsible'] = $patientEntity->getResponsible()->getName();
+            // $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
+
+            
 
             $patients[] = $patient;
             

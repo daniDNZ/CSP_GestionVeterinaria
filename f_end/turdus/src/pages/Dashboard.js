@@ -5,12 +5,10 @@ import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
 import VisitsList from '../components/VisitsList';
 import Visit from '../components/Visit';
-import PatientsList from '../components/PatientsList';
 import Patient from '../components/Patient';
-import NewPatient from '../components/Registrations';
-import CustomersList from '../components/CustomersList';
 import Customer from '../components/Customer';
 import Registrations from '../components/Registrations';
+import Search from '../components/Search';
 
 function Dashboard({ comp }) {
   document.body.removeAttribute('data-bs-spy');
@@ -29,14 +27,12 @@ function Dashboard({ comp }) {
       case 5:
         return <Visit />
       case 6:
-        return <PatientsList />
+        return <Search />
       case 7:
         return <Patient />
       case 8:
-        return <CustomersList />
-      case 9:
         return <Customer />
-      case 10:
+      case 9:
         return <Registrations />  
       default:
         break;
