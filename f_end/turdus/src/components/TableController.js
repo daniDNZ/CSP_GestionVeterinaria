@@ -5,6 +5,9 @@ import { FormArray, FormGenerator, handleClean, inputGenerator } from "./FormCon
 
 function SearchFilter({ arr, fetchMethod }) {
 
+    // HAY QUE SEGUIR CON EL CONTROLLER DE LAS VISITAS, A VER CÓMO HACEMOS LAS BÚSQUEDAS. 
+    // DESPUÉS HABRÁ QUE ADAPTAR LOS CONTROLLERS DE CUSTOMERS Y PATIENTS.
+
     let filter = {
         user: '',
         customer: '',
