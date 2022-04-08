@@ -58,6 +58,18 @@ class PatientRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findByNameAndCustomers($name, $customers)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.responsible IN (:val)')
+            ->andWhere('p.name LIKE (:nam)')
+            ->setParameter('val', $customers)
+            ->setParameter('nam', $name)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     
 
     /*

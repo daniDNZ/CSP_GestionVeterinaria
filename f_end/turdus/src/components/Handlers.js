@@ -1,18 +1,28 @@
 import { datalistGenerator } from "./FormController";
 
+// const handleDatalist = (data, id) => {
+//     let arr = [];
+//     let value;
+//     data.forEach(e => {
+
+//         if (e.username) {
+//             value = e.username;
+//         } else if (e.email) {
+//             value = e.email;
+//         } else {
+//             value = e.name;
+//         }
+//         arr.push({value: value, text: e.name})
+//     });
+//     const datalist = datalistGenerator(id, arr);
+//     document.getElementById(`${id}-datalist`).innerHTML = datalist;
+// }
 const handleDatalist = (data, id) => {
     let arr = [];
-    let username;
+    let value;
     data.forEach(e => {
 
-        if (e.username) {
-            username = e.username;
-        } else if (e.email) {
-            username = e.email;
-        } else {
-            username = e.name;
-        }
-        arr.push({username: username, name: e.name})
+        arr.push({value: e, text: e})
     });
     const datalist = datalistGenerator(id, arr);
     document.getElementById(`${id}-datalist`).innerHTML = datalist;

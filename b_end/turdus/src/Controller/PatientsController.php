@@ -66,7 +66,7 @@ class PatientsController extends AbstractController
             $patient['sterilised'] = $patientEntity->getSterilised();
 
             $patient['vet'] = $patientEntity->getVet()->getName();
-            $patient['responsible'] = $patientEntity->getResponsible()->getName();
+            $patient['customer'] = $patientEntity->getResponsible()->getName();
             // $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
 
             
@@ -105,7 +105,7 @@ class PatientsController extends AbstractController
             $patient['sterilised'] = $patientEntity->getSterilised();
 
             $patient['vet'] = $patientEntity->getVet()->getName();
-            $patient['responsible'] = $patientEntity->getResponsible()->getName();
+            $patient['customer'] = $patientEntity->getResponsible()->getName();
             // $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
 
             

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { getPatients, getCustomers, getVets, getSpecies, getRaces, findCustomers, findPatients, findVets, findSpecies } from "./ApiFetch";
+import { getPatients, getCustomers, getVets, getSpecies, getRaces, findVisits, findCustomers, findPatients, findVets, findSpecies } from "./ApiFetch";
 import { handleDatalist } from "./Handlers";
-import { handleClean } from "./FormController";
+import { FormArray, FormGenerator, handleClean, inputGenerator } from "./FormController";
 
 function SearchFilter({ arr, fetchMethod }) {
 
@@ -10,30 +10,42 @@ function SearchFilter({ arr, fetchMethod }) {
         customer: '',
         patient: '',
         species: '',
-        sterilised: ''
+        sterilised: '',
+        date: '',
+        completed: ''
     };
+    let formType = 'searchForm';
+
+    if (arr[0] == 'visits') formType = 'visitSearchForm';
 
     const findData = () => {
-        
-        if (arr[0] == 'patients') findPatients(assignData, filter, arr);
-        if (arr[0] == 'customers') findCustomers(assignData, filter, arr);
-        findPatients(handleDatalist, filter, 'patientPicker');
-        findCustomers(handleDatalist, filter, 'customerPicker');
-        findVets(handleDatalist, filter,  'vetPicker');
-        findSpecies(handleDatalist, filter, 'speciesPicker');
+
+        if (arr[0] == 'patients') {
+            findPatients(assignData, filter, arr);
+            findPatients(getData);
+        }
+        if (arr[0] == 'customers') {
+            findCustomers(assignData, filter, arr);
+            findCustomers(getData);
+        }
+        if (arr[0] == 'visits') {
+            findVisits(assignData, filter, arr);
+            findVisits(getData);
+        }
+        // findPatients(handleDatalist, filter, 'patientPicker');
+        // findCustomers(handleDatalist, filter, 'customerPicker');
+        // findVets(handleDatalist, filter, 'vetPicker');
+        // if (arr[0] !== 'visits') findSpecies(handleDatalist, filter, 'speciesPicker');
     }
 
     const captureUser = (e) => {
         e.preventDefault();
         filter.user = e.target.value;
-        
         findData();
-
     }
 
     const captureCustomer = (e) => {
         e.preventDefault();
-
         filter.customer = e.target.value;
         findData();
     }
@@ -42,7 +54,6 @@ function SearchFilter({ arr, fetchMethod }) {
         e.preventDefault();
         filter.patient = e.target.value.split(' ')[0];
         findData();
-
     }
 
     const captureSpecies = (e) => {
@@ -53,16 +64,57 @@ function SearchFilter({ arr, fetchMethod }) {
 
     const captureSterilised = (e) => {
         e.preventDefault();
-        filter.sterilised = e.target.checked;
+        filter.sterilised = e.target.value;
         findData();
+    }
+
+    const captureCompleted = (e) => {
+        e.preventDefault();
+        filter.completed = e.target.value;
+        findData();
+    }
+
+    const captureDate = (e) => {
+        e.preventDefault();
+        filter.date = e.target.valueAsDate.toLocaleDateString();
+        findData();
+    }
+
+    const getData = (data) => {
+        let arrVets = [];
+        let arrCustomers = [];
+        let arrPatients = [];
+        let vet;
+        let customer;
+        let patient;
+
+        data.forEach(e => {
+            e.vet ? vet = e.vet : vet = e.name;
+            e.customer ? customer = e.customer : customer = e.name;
+            e.patient ? patient = e.patient : patient = e.name;
+
+            arrVets.push(vet);
+            arrCustomers.push(customer);
+            arrPatients.push(patient)
+        });
+
+        // Eliminamos duplicados
+        arrVets = [... new Set(arrVets)];
+        arrCustomers = [... new Set(arrCustomers)];
+        arrPatients = [... new Set(arrPatients)];
+
+        handleDatalist(arrVets, 'vetPicker');
+        handleDatalist(arrCustomers, 'customerPicker');
+        handleDatalist(arrPatients, 'patientPicker');
 
     }
 
     const fillDatalist = () => {
-        getVets(handleDatalist, 'vetPicker');
-        getCustomers(handleDatalist, 'customerPicker');
-        getSpecies(handleDatalist, 'speciesPicker');
-        getPatients(handleDatalist, 'patientPicker');
+        fetchMethod( getData )
+        // getVets(handleDatalist, 'vetPicker');
+        // getCustomers(handleDatalist, 'customerPicker');
+        // if (arr[0] !== 'visits') getSpecies(handleDatalist, 'speciesPicker');
+        // getPatients(handleDatalist, 'patientPicker');
     }
 
     const cleanForm = (e) => {
@@ -79,46 +131,29 @@ function SearchFilter({ arr, fetchMethod }) {
         fillDatalist();
     }
 
-    useEffect(() => {
-        fillDatalist();
-    }, [])
+    const searchListeners = () => {
+        document.getElementById('vetPicker').addEventListener('input', captureUser);
+        document.getElementById('customerPicker').addEventListener('input', captureCustomer);
+        document.getElementById('patientPicker').addEventListener('input', capturePatient);
+        if (arr[0] !== 'visits') {
+            document.getElementById('sterilisedPicker').addEventListener('input', captureSterilised)
+            document.getElementById('speciesPicker').addEventListener('input', captureSpecies)
+        } else {
+            document.getElementById('datePicker').addEventListener('input', captureDate);
+            document.getElementById('completedPicker').addEventListener('input', captureCompleted);
+        }
+        document.getElementById('cleanButton').addEventListener('click', cleanForm);
+    }
 
+    useEffect(() => {
+        inputGenerator(FormArray(formType, {}))
+        fillDatalist();
+        searchListeners();
+    }, [arr])
 
     return (
         <form>
-            <div className="row">
-                <div className="mb-3 col-auto">
-                    <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
-                    <input id="vetPicker" list="vetPicker-datalist" className="form-control" placeholder="Buscar..." onInput={captureUser}></input>
-                    <datalist id="vetPicker-datalist"></datalist>
-                </div>
-                <div className="mb-3 col-auto">
-                    <label htmlFor="customerPicker" className="form-label">Cliente:</label>
-                    <input id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." onInput={captureCustomer}></input>
-                    <datalist id="customerPicker-datalist"></datalist>
-                </div>
-                <div className="mb-3 col-auto">
-                    <label htmlFor="patientPicker" className="form-label">Paciente:</label>
-                    <input id="patientPicker" className="form-control" list="patientPicker-datalist" placeholder="Buscar..." onInput={capturePatient}></input>
-                    <datalist id="patientPicker-datalist"></datalist>
-                </div>
-                <div className="mb-3 col-auto">
-                    <label htmlFor="speciesPicker" className="form-label">Especie:</label>
-                    <input list="speciesPicker-datalist" id="speciesPicker" className="form-control" placeholder="Buscar..." onInput={captureSpecies} />
-                    <datalist id="speciesPicker-datalist">
-                    </datalist>
-                </div>
-                <div className="mb-3 col-auto d-flex flex-column">
-                    <div>
-                        <label htmlFor="checkbox-sterilised" className="form-label row">Esterilizado: </label>
-                    </div>
-                    <div className=" my-auto d-flex flex-row justify-content-center">
-                        <input type="checkbox" id="checkbox-sterilised" name="completed" className="form-check-input row" onInput={captureSterilised} />
-                    </div>
-                </div>
-                <div className="mb-3 col-auto flex-column d-flex justify-content-end">
-                    <button type="submit" className="btn btn-light" onClick={cleanForm}>Limpiar...</button>
-                </div>
+            <div id="form-row-1" className="row">
             </div>
         </form>
     )
@@ -135,8 +170,8 @@ const fillTable = (data) => {
 
     data.thead.forEach(e => {
         if (i !== 0) {
-        let cell = `<th scope="col">${e}</th>`;
-        headRow += cell;
+            let cell = `<th scope="col">${e}</th>`;
+            headRow += cell;
         }
         i++;
     });
@@ -173,7 +208,7 @@ const assignData = (fetchData, arr) => {
         thead: arr,
         tbody: fetchData
     }
-
+    
     fillTable(data);
 };
 
@@ -185,7 +220,7 @@ function TableGenerator({ arr, fetchMethod }) {
 
     return (
         <>
-            <SearchFilter arr={arr} fetchMethod={fetchMethod}/>
+            <SearchFilter arr={arr} fetchMethod={fetchMethod} />
             <div className="d-flex flex-row table-responsive">
                 <table className="table table-striped table-hover" id="auto-table">
                     <thead id="auto-table-thead"></thead>

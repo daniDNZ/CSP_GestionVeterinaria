@@ -16,12 +16,38 @@ function DashboardNavContent() {
                     <span className="d-inline">Horario</span>
                 </NavLink>
             </li>
-            <li className="mx-0 nav-item">
+            {/* <li className="mx-0 nav-item">
                 <NavLink to="/turdus/visits" className="nav-link px-2">
                     <i className="bi bi-card-text fs-5 me-2"></i>
                     <span className="d-inline">Visitas</span>
                 </NavLink>
+            </li> */}
+             <li className="mx-0 nav-item">
+                <a href="#" className="nav-link px-2 dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#visits-collapse" aria-controls="#visits-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <i className="bi bi-card-text fs-5 me-2"></i>
+                    <span className="d-inline">Visitas</span>
+                </a>
+                <div id="visits-collapse" className="collapse navbar-collapse">
+                    <hr className="m-0" />
+                    <ul className="nav navbar-nav flex-column">
+                        <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/registrations" className="nav-link px-2">
+                                <i className="bi bi-plus-circle fs-5 me-2"></i>
+                                <span className="d-inline">Añadir</span>
+                            </NavLink>
+                        </li>
+                        <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/visits" className="nav-link px-2">
+                                <i className="bi bi-search fs-5 me-2"></i>
+                                <span className="d-inline">Búsqueda</span>
+                            </NavLink>
+                        </li>
+                        
+                    </ul>
+                </div>
+
             </li>
+
             <li className="mx-0 nav-item">
                 <a href="#" className="nav-link px-2">
                     <i className="bi bi-bricks fs-5 me-2 "></i>

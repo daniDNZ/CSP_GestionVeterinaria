@@ -90,7 +90,35 @@ class VisitRepository extends ServiceEntityRepository
         ->getResult();
     }
     
+    public function findByPatients($value)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.patient IN (:val)')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
+    public function findByUsers($value)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.user IN (:val)')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // public function findByCustomers($value)
+    // {
+    //     return $this->createQueryBuilder('v')
+    //         ->andWhere('v.customer IN (:val)')
+    //         ->setParameter('val', $value)
+    //         ->getQuery()
+    //         ->getResult()
+    //     ;
+    // }
     /*
     public function findOneBySomeField($value): ?Visit
     {

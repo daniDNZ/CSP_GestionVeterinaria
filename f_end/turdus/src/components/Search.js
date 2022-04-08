@@ -15,6 +15,7 @@ function Search() {
     ]);
     
     const [fetchMethod, setFetchMethod] = useState(() => getCustomers);
+    
     const changeForm = (e) => {
         e.preventDefault();
 

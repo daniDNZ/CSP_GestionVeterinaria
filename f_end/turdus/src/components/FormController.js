@@ -269,55 +269,61 @@ function FormArray
             id: 'vetPicker',
             tag: 'input',
             type: 'search',
-            value: pVet,
-            datalist: arrVets
+            value: '',
+            datalist: ''
         },
         {
             label: 'Cliente',
             id: 'customerPicker',
             tag: 'input',
             type: 'search',
-            value: cId,
-            datalist: arrCustomers
+            value: '',
+            datalist: ''
         },
         {
             label: 'Nombre paciente',
             id: 'patientName',
             tag: 'input',
             type: 'text',
-            value: pName
+            value: ''
         },
         {
             label: 'Especie',
             id: 'speciesPicker',
             tag: 'input',
             type: 'search',
-            value: pSpecies,
-            datalist: arrSpecies
+            value: '',
+            datalist: ''
         },
         {
             label: 'Raza',
             id: 'racePicker',
             tag: 'input',
             type: 'search',
-            value: pRace,
-            datalist: arrRaces
+            value: '',
+            datalist: ''
         },
         {
             label: 'Género',
             id: 'genderPicker',
-            tag: 'input',
-            type: 'search',
-            value: pGender,
-            datalist: [{username: "Male", name: "Macho"}, {username: "Female", name: "Hembra"}]
+            tag: 'select',
+            type: '',
+            value: '',
+            datalist: [
+                {value: "", text: "Select..."}, 
+                {value: "Male", text: "Macho"}, 
+                {value: "Female", text: "Hembra"}]
         },
         {
             label: 'Esterilizad@',
             id: 'sterilisedPicker',
-            tag: 'input',
-            type: 'search',
-            value: pSterilised,
-            datalist: [{username: "false", name:"No"}, {username: "true", name: "Sí"}]
+            tag: 'select',
+            type: '',
+            value: '',
+            datalist: [
+                {value: "", text: "Select..."},
+                {value: "0", text:"No"}, 
+                {value: "1", text: "Sí"}]
         },
         {
             label: 'Cumpleaños',
@@ -429,6 +435,131 @@ function FormArray
         },
     ]
 
+    const searchForm = [
+        {
+            label: 'Veterinaria/o',
+            id: 'vetPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Cliente',
+            id: 'customerPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Paciente',
+            id: 'patientPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Especie',
+            id: 'speciesPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Esterilizado',
+            id: 'sterilisedPicker',
+            tag: 'select',
+            type: '',
+            value: '',
+            datalist: [
+                {
+                    value: '',
+                    text: 'Select...'
+                },
+                {
+                    value: '1',
+                    text: 'Sí'
+                },
+                {
+                    value: '0',
+                    text: 'No'
+                }
+            ]
+        },
+        {
+            label: '',
+            id: 'cleanButton',
+            tag: 'button',
+            type: 'submit',
+            value: 'Limpiar'
+        }
+    ]
+
+    const visitSearchForm = [
+        {
+            label: 'Fecha',
+            id: 'datePicker',
+            tag: 'input',
+            type: 'date',
+            value: '',
+        },
+        {
+            label: 'Veterinaria/o',
+            id: 'vetPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Cliente',
+            id: 'customerPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Paciente',
+            id: 'patientPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Completada',
+            id: 'completedPicker',
+            tag: 'select',
+            type: '',
+            value: '',
+            datalist: [
+                {
+                    value: '',
+                    text: 'Select...'
+                },
+                {
+                    value: '1',
+                    text: 'Sí'
+                },
+                {
+                    value: '0',
+                    text: 'No'
+                }
+            ]
+        },
+        {
+            label: '',
+            id: 'cleanButton',
+            tag: 'button',
+            type: 'submit',
+            value: 'Limpiar'
+        }
+    ]
+
     let separator = [
         {
             label: '',
@@ -447,6 +578,12 @@ function FormArray
         case 'customer':
             arrForm = customerForm;
             break;
+        case 'searchForm':
+            arrForm = searchForm;
+            break;
+        case 'visitSearchForm':
+            arrForm = visitSearchForm;
+            break;
         default:
             arrForm = patientForm;
             arrForm = arrForm.concat(separator).concat(customerForm);
@@ -462,79 +599,95 @@ function datalistGenerator (id, data) {
 
         datalist += 
         `
-            <option id="${id.slice(0,2)}-${v.username}" value='${v.username}'>${v.name}</option> 
+            <option id="${id.slice(0,2)}-${v.value}" value='${v.value}'>${v.text}</option> 
         `;
 
     });
     return datalist;
 }
 
-function FormGenerator ({ arrForm }) {
-    useEffect( () => {
-        dataWalker();
-    }, [arrForm])
-
-    const dataWalker = () => {
-        let form = '';
+function inputGenerator( arrForm ) {
+    let form = '';
+    
+    arrForm.forEach(e => {
+        let cell = '';
+        let input = '';
+        let datalist = '';
+        let attributes = '';
         
-        arrForm.forEach(e => {
-            let cell = '';
-            let input = '';
-            let datalist = '';
-            let attributes = '';
+        if (e.tag !== 'hr' && e.tag !== 'h3' && e.tag !== 'select') attributes = `type="${e.type}" id="${e.id}" class="form-control" value="${e.value}"`;
+
+        if (e.type == 'search') {
+
+            datalist = `<datalist id="${e.id}-datalist">`;
+            if (e.datalist != '' ) datalist += datalistGenerator(e.id, e.datalist);
+            datalist += `</datalist>`;
+            attributes += `list="${e.id}-datalist" placeholder="Buscar..."`;
             
-            if (e.tag !== 'hr' && e.tag !== 'h3') attributes = `type="${e.type}" id="${e.id}" class="form-control" value="${e.value}"`;
+        } else if (e.tag == 'select'){
 
-            if (e.type == 'search') {
+            datalist += datalistGenerator(e.id, e.datalist);
+            attributes = `type="${e.type}" id="${e.id}" class="form-select" value="${e.value}"`;
 
-                // FALTA AÑADIR SELECT
-                datalist = `<datalist id="${e.id}-datalist">`;
-                datalist += datalistGenerator(e.id, e.datalist);
-                datalist += `</datalist>`;
-                attributes += `list="${e.id}-datalist" placeholder="Buscar..."`;
-                
-            } else if (e.tag == 'textarea'){
-                attributes += `rows="5"`;
-            }
+        } else if (e.tag == 'textarea'){
+            attributes += `rows="5"`;
+        } else if (e.tag == 'button'){
+            attributes = `id="${e.id}" class="btn btn-light"`;
+        }
 
-            input = 
+        input = 
+        `
+            <${e.tag} ${attributes}>
+        `;
+
+        if (datalist) input += datalist;
+
+        if (e.tag == 'textarea') {
+            
+            cell += 
             `
-                <${e.tag} ${attributes}>
+                <div class=row>
+                    <div class="mb-3">
+                    <label htmlFor="${e.id}" class="form-label">${e.label}:</label>
+                    ${input}</${e.tag}>
+                </div> 
             `;
 
-            if (datalist) input += datalist;
+        } else if (e.tag == 'button') {
 
-            if (e.tag == 'textarea') {
+            cell += 
+            `
+                    <div class="mb-3 col-auto flex-column d-flex justify-content-end">
+                        ${input}${e.value}</${e.tag}>
+                    </div>
                 
-                cell += 
-                `
-                    <div class=row>
-                        <div class="mb-3">
-                        <label htmlFor="${e.id}" class="form-label">${e.label}:</label>
-                        ${input}</${e.tag}>
-                    </div> 
-                `;
+            `;
 
-            } else if (e.tag == 'hr' || e.tag == 'h3') {
+        }  else if (e.tag == 'hr' || e.tag == 'h3') {
 
-                cell += `${input}${e.value}</${e.tag}>`;
+            cell += `${input}${e.value}</${e.tag}>`;
 
-            } else {
+        } else {
 
-                cell += 
-                `
-                    <div class="mb-3 col-auto">
-                        <label htmlFor="${e.id}" class="form-label">${e.label}:</label>
-                        ${input}</${e.tag}>
-                    </div> 
-                `;
+            cell += 
+            `
+                <div class="mb-3 col-auto">
+                    <label htmlFor="${e.id}" class="form-label">${e.label}:</label>
+                    ${input}</${e.tag}>
+                </div> 
+            `;
 
-            }
-            form += cell;            
-        
-        });
-        document.getElementById('form-row-1').innerHTML = form;
-    }
+        }
+        form += cell;            
+    
+    });
+    document.getElementById('form-row-1').innerHTML = form;
+}
+
+function FormGenerator ({ arrForm }) {
+    useEffect( () => {
+        inputGenerator(arrForm);
+    }, [arrForm])
 
     return (
         <>
@@ -548,4 +701,14 @@ function FormGenerator ({ arrForm }) {
         </>
     )
 }
-export { FormModal, FormAlerts, handleAlert, handleClean, CustomerForm, PatientForm, FormGenerator, FormArray, datalistGenerator };
+export { 
+    FormModal, 
+    FormAlerts, 
+    handleAlert, 
+    handleClean, 
+    CustomerForm, 
+    PatientForm, 
+    FormGenerator, 
+    FormArray, 
+    inputGenerator,
+    datalistGenerator };

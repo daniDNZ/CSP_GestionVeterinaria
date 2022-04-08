@@ -33,6 +33,27 @@ const fetchPatient = (id = '', userId = '', customer = '', species = '', sterili
     return arrPatients;
 }
 
+const getVisits = (callback, id) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request("http://192.168.1.81:8888/api/visits", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+
+}
+
 const getPatients = (callback, id) => {
 
     const config = {
@@ -138,6 +159,28 @@ const getCustomers = (callback, id) => {
             console.log(e)
             // localStorage.clear();
         });
+}
+
+const findVisits = (callback, bodyData = {}, id) => {
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/visits", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
 }
 
 const findPatients = (callback, bodyData = {}, id) => {
@@ -358,13 +401,15 @@ export {
     getVets, 
     getSpecies, 
     getRaces, 
-    findRaces, 
+    getVisits,
     getCustomers, 
-    findCustomers, 
     getPatients, 
+    findVisits,
     findPatients, 
     findVets,
     findSpecies,
+    findRaces, 
+    findCustomers, 
     addUpdateCustomer, 
     addUpdatePatient 
 }

@@ -10,10 +10,110 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\VisitRepository;
 use App\Repository\UserRepository;
 use App\Repository\PatientRepository;
-
+use App\Repository\CustomerRepository;
+use App\Repository\SpeciesRepository;
 
 class VisitsController extends AbstractController
 {
+    /**
+     * @Route("/api/visits", name="app_visits_get", methods="GET" )
+     */
+    public function getVisits(VisitRepository $visitRepository): Response
+    {
+        $visitEntities = $visitRepository->findAll();
+
+        $visits = [];
+
+        foreach ($visitEntities as $visitEntity) 
+        {
+            $visit = [];
+            $visit['id'] = $visitEntity->getId();
+            $visit['date_time'] = $visitEntity->getDateTime()->format('d/m/Y');
+            $visit['category'] = $visitEntity->getCategory();
+            $visit['patient'] = $visitEntity->getPatient()->getName();
+            $visit['vet'] = $visitEntity->getUser()->getName();
+            $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
+
+            $visits[] = $visit;
+        }
+
+        return $this->json($visits);
+    }
+
+    /**
+     * @Route("/api/visits", name="app_visits_post", methods="POST")
+     */
+    public function findVisits(
+        VisitRepository $visitRepository,
+        PatientRepository $patientRepository, 
+        UserRepository $userRepository, 
+        CustomerRepository $customerRepository,
+        SpeciesRepository $speciesRepository, 
+        Request $request
+    ): Response
+    {
+        $visits = [];
+        $query = array();
+        $patientQuery = array();
+        $userQuery = array();
+        $customerQuery = array();
+        $patientEntities = array();
+        
+        $data = $request->toArray();
+
+        if ($data['patient'] != '')    { $patientQuery['name'] = $data['patient']; }
+        if ($data['user'] !== '')       { $userQuery['name'] = $data['user']; }
+        if ($data['customer'] !== '')   { $customerQuery['name'] = $data['customer']; }
+        if ($data['completed'] !== '')  { $query['done'] = $data['completed']; }
+
+        if (!empty($patientQuery))
+        {
+            if (!empty($customerQuery))
+            {
+                $customerEntities = $customerRepository->findBy($customerQuery);
+                $arrCustomers = array();
+
+                foreach ($customerEntities as $customerEntity) {
+                    $arrCustomers[] = $customerEntity->getId();
+                }
+                $patientEntities = $patientRepository->findByNameAndCustomers($patientQuery, $arrCustomers);
+            }
+            else
+            {
+                $patientEntities = $patientRepository->findBy($patientQuery);
+            }
+            
+            $visitEntities = [];
+            $arrPatients = array();
+
+            foreach ($patientEntities as $patientEntity) 
+            {
+                $arrPatients[] = $patientEntity->getId();
+                // $query['patient'] = $patientEntity->getId();
+                // $arrVisitEntities[] = $visitRepository->findBy($query);
+            }
+            $visitEntities = $visitRepository->findByPatients($arrPatients);
+            // foreach ($arrVisitEntities as $visitEntities)
+            // {
+                foreach ($visitEntities as $visitEntity) 
+                {
+                    $visit = [];
+                    $visit['id'] = $visitEntity->getId();
+                    $visit['date_time'] = $visitEntity->getDateTime()->format('d/m/Y');
+                    $visit['category'] = $visitEntity->getCategory();
+                    $visit['patient'] = $visitEntity->getPatient()->getName();
+                    $visit['vet'] = $visitEntity->getUser()->getName();
+                    $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
+
+                    $visits[] = $visit;
+                }
+            // }
+        }
+       
+        
+        return $this->json($visits);
+    }
+
     /**
      * @Route("/api/visit", name="app_visit", methods="POST" )
      */
