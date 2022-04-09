@@ -47,9 +47,38 @@ class CustomersController extends AbstractController
         Request $request): Response
     {   
         $customers = [];
+        $customerEntities = array();
         $data = $request->toArray();
 
-        function maker($customerEntity, $patientRepository)
+        // function getArrIds($repository, $query)
+        // {
+        //     $entities = $repository->findBy(array('name' => $query));
+        //     foreach ($entities as $entity) {
+        //         $arrIds[] = $entity->getId();
+        //     }
+        //     $return = array_unique($arrIds, $sort_flags = SORT_REGULAR);
+        //     return $return;
+        // }
+
+        // function getArrUsers()
+        // {
+        //     $userEntities = $userRepository->findBy(array('name' => $data['user']));
+        //     foreach ($userEntities as $userEntity) {
+        //         $arrUsers[] = $userEntity->getId();
+        //     }
+        //     return $arrUsers;
+        // }
+
+        // function getArrUsers()
+        // {
+        //     $userEntities = $userRepository->findBy(array('name' => $data['user']));
+        //     foreach ($userEntities as $userEntity) {
+        //         $arrUsers[] = $userEntity->getId();
+        //     }
+        //     return $arrUsers;
+        // }
+
+        function maker($customerEntity)
         {
             $customer = [];
             $customer['id'] = $customerEntity->getId();
@@ -60,60 +89,150 @@ class CustomersController extends AbstractController
 
             return $customer;
         }
+        $query = array();
+        if ($data['namePicker'] != '')    {$query['name'] = $data['namePicker'];}
+        if ($data['lastnamePicker'] != ''){$query['last_name'] = $data['lastnamePicker'];}
+        if ($data['phonePicker'] != '')    {$query['phone'] = $data['phonePicker'];}
+        if ($data['emailPicker'] != '')    {$query['email'] = $data['emailPicker'];}
 
-        // if ($data['customerId'] != '')
-        // {
-        //     $customerEntity = $customerRepository->findOneBy(array('id' => $data['customerId']));
-        //     $customers[] = maker($customerEntity, $patientRepository);
-        // }
-        if ($data['customer'] != '')
+        // a ver si se puede cambiar por LIKES las búsquedas
+        $customerEntities = $customerRepository->findBy($query);
+
+        foreach ($customerEntities as $customerEntity)
         {
-            $customerEntity = $customerRepository->findOneBy(array('email' => $data['customer']));
-            $customers[] = maker($customerEntity, $patientRepository);
+            $customers[] = maker($customerEntity);
         }
-        else
-        {
-            $query = array();
 
-            if ($data['user'] != '')        { $query['vet'] = $userRepository->findOneBy(array('username' => $data['user']))->getId(); }
-            if ($data['patient'] != '')     { $query['name'] = $data['patient']; }
-            if ($data['species'] != '')     { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
-            if ($data['sterilised'] != '')  { $query['sterilised'] = $data['sterilised']; }
+        // if ($data['customer' != ''])    {$arrCustomers = getArrIds($customerRepository, $data['customer']);}
+        // else                            {$arrCustomers = '%';}
+        // if ($data['user' != ''])        {$arrUsers = getArrIds($userRepository, $data['user']);}
+        // else                            {$arrUsers = '%';}
+        // if ($data['species' != ''])     {$arrSpecies = getArrIds($speciesRepository, $data['species']);}
+        // else                            {$arrSpecies = '%';}
+        // if ($data['sterilised' != ''])  {$sterilised = $data['sterilised'].'%';}
+        // if ($data['patient' != ''])     {$patient = $data['patient'].'%';}
+
+        // $patientEntities = $patientRepository
+        // ->findByComplex(
+        //     $arrCustomers,
+        //     $arrUsers,
+        //     $arrSpecies,
+        //     $sterilised,
+        //     $name
+        // );
+
+        // if(!empty($patientEntities))
+        // {   
+        //     $patients = array();
+
+        //     foreach ($patientEntities as $patientEntity) 
+        //     {
+        //         $patients[] = $patientEntity->getResponsible();
+        //     }
+
+        //     $arrResponsibles = array_unique($patients, $sort_flags = SORT_REGULAR);
+
+        //     foreach ($arrResponsibles as $r) 
+        //     {
+        //         $customerEntities[] = $customerRepository->find($r);
+
+        //         foreach ($customerEntities as $customerEntity) 
+        //         {
+        //             $customers[] = maker($customerEntity);
+        //         }
+        //     }
             
-            if (!empty($query)) 
-            {
-                $arrCustomerEntities = [];
-                $patientEntities = $patientRepository->findBy($query);
+        // }
+        // else
+        // {
+        //     $customerEntities = $customerRepository->findAll();
+        //     foreach ($customerEntities as $customerEntity) 
+        //     {
+        //         $customers[] = maker($customerEntity);
+        //     }
+        // }
 
-                foreach ($patientEntities as $patientEntity) 
-                {
-                    $customer = $patientEntity->getResponsible();
-                    $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
-                }
-
-                $entry = array_unique($arrCustomerEntities, $sort_flags = SORT_REGULAR);
-
-                foreach ($entry as $customerEntities) 
-                {
-                    foreach ($customerEntities as $customerEntity) 
-                    {
-                        $customers[] = maker($customerEntity, $patientRepository);
-                    }
-                }
-            } 
-            else 
-            {
-                $customerEntities = $customerRepository->findAll();
-
-                foreach ($customerEntities as $customerEntity) 
-                {
-                    $customers[] = maker($customerEntity, $patientRepository);
-                }
-            }
-        }
-    
         return $this->json($customers);
     }
+
+    // /**
+    //  * @Route("/api/customers", name="app_customers_post", methods="POST")
+    //  */
+    // public function findCustomers(
+    //     CustomerRepository $customerRepository, 
+    //     PatientRepository $patientRepository, 
+    //     UserRepository $userRepository, 
+    //     SpeciesRepository $speciesRepository,
+    //     Request $request): Response
+    // {   
+    //     $customers = [];
+    //     $data = $request->toArray();
+
+    //     function maker($customerEntity, $patientRepository)
+    //     {
+    //         $customer = [];
+    //         $customer['id'] = $customerEntity->getId();
+    //         $customer['name'] = $customerEntity->getName();
+    //         $customer['lastName'] = $customerEntity->getLastName();
+    //         $customer['phone'] = $customerEntity->getPhone();
+    //         $customer['email'] = $customerEntity->getEmail();
+
+    //         return $customer;
+    //     }
+
+    //     // if ($data['customerId'] != '')
+    //     // {
+    //     //     $customerEntity = $customerRepository->findOneBy(array('id' => $data['customerId']));
+    //     //     $customers[] = maker($customerEntity, $patientRepository);
+    //     // }
+    //     if ($data['customer'] != '')
+    //     {
+    //         $customerEntity = $customerRepository->findOneBy(array('email' => $data['customer']));
+    //         $customers[] = maker($customerEntity, $patientRepository);
+    //     }
+    //     else
+    //     {
+    //         $query = array();
+
+    //         if ($data['user'] != '')        { $query['vet'] = $userRepository->findOneBy(array('username' => $data['user']))->getId(); }
+    //         if ($data['patient'] != '')     { $query['name'] = $data['patient']; }
+    //         if ($data['species'] != '')     { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
+    //         if ($data['sterilised'] != '')  { $query['sterilised'] = $data['sterilised']; }
+            
+    //         if (!empty($query)) 
+    //         {
+    //             $arrCustomerEntities = [];
+    //             $patientEntities = $patientRepository->findBy($query);
+
+    //             foreach ($patientEntities as $patientEntity) 
+    //             {
+    //                 $customer = $patientEntity->getResponsible();
+    //                 $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
+    //             }
+
+    //             $entry = array_unique($arrCustomerEntities, $sort_flags = SORT_REGULAR);
+
+    //             foreach ($entry as $customerEntities) 
+    //             {
+    //                 foreach ($customerEntities as $customerEntity) 
+    //                 {
+    //                     $customers[] = maker($customerEntity, $patientRepository);
+    //                 }
+    //             }
+    //         } 
+    //         else 
+    //         {
+    //             $customerEntities = $customerRepository->findAll();
+
+    //             foreach ($customerEntities as $customerEntity) 
+    //             {
+    //                 $customers[] = maker($customerEntity, $patientRepository);
+    //             }
+    //         }
+    //     }
+    
+    //     return $this->json($customers);
+    // }
     //  /**
     //  * @Route("/api/customers", name="app_customers_get", methods="GET")
     //  */

@@ -435,7 +435,7 @@ function FormArray
         },
     ]
 
-    const searchForm = [
+    const searchPatientForm = [
         {
             label: 'Veterinaria/o',
             id: 'vetPicker',
@@ -498,7 +498,7 @@ function FormArray
         }
     ]
 
-    const visitSearchForm = [
+    const searchVisitForm = [
         {
             label: 'Fecha',
             id: 'datePicker',
@@ -560,6 +560,48 @@ function FormArray
         }
     ]
 
+    const searchCustomerForm = [
+        {
+            label: 'Nombre',
+            id: 'namePicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Apellidos',
+            id: 'lastnamePicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Teléfono',
+            id: 'phonePicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'e-mail',
+            id: 'emailPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: '',
+            id: 'cleanButton',
+            tag: 'button',
+            type: 'submit',
+            value: 'Limpiar'
+        }
+    ]
+
     let separator = [
         {
             label: '',
@@ -578,11 +620,14 @@ function FormArray
         case 'customer':
             arrForm = customerForm;
             break;
-        case 'searchForm':
-            arrForm = searchForm;
+        case 'searchPatientForm':
+            arrForm = searchPatientForm;
             break;
-        case 'visitSearchForm':
-            arrForm = visitSearchForm;
+        case 'searchCustomerForm':
+            arrForm = searchCustomerForm;
+            break;
+        case 'searchVisitForm':
+            arrForm = searchVisitForm;
             break;
         default:
             arrForm = patientForm;

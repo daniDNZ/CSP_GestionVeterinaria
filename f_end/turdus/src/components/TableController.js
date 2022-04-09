@@ -5,21 +5,29 @@ import { FormArray, FormGenerator, handleClean, inputGenerator } from "./FormCon
 
 function SearchFilter({ arr, fetchMethod }) {
 
-    // HAY QUE SEGUIR CON EL CONTROLLER DE LAS VISITAS, A VER CÓMO HACEMOS LAS BÚSQUEDAS. 
-    // DESPUÉS HABRÁ QUE ADAPTAR LOS CONTROLLERS DE CUSTOMERS Y PATIENTS.
+    // CONTINUAR AFINANDO LAS BÚSQUEDAS, LOS DATALIST Y DEMÁS
 
     let filter = {
-        user: '',
-        customer: '',
-        patient: '',
-        species: '',
-        sterilised: '',
-        date: '',
-        completed: ''
+        // user: '',
+        // customer: '',
+        // patient: '',
+        // species: '',
+        // sterilised: '',
+        // date: '',
+        // completed: ''
     };
-    let formType = 'searchForm';
+    let formType = 'searchCustomerForm';
+    let id = ['namePicker', 'lastnamePicker', 'phonePicker', 'emailPicker'];
 
-    if (arr[0] == 'visits') formType = 'visitSearchForm';
+    if (arr[0] == 'visits') {
+        formType = 'searchVisitForm';
+    }
+    if (arr[0] == 'patients') formType = 'searchPatientForm';
+
+    if (arr[0] == 'customers') {
+        formType = 'searchCustomerForm';
+        id = ['namePicker', 'lastnamePicker', 'phonePicker', 'emailPicker']
+    }
 
     const findData = () => {
 
@@ -28,6 +36,7 @@ function SearchFilter({ arr, fetchMethod }) {
             findPatients(getData);
         }
         if (arr[0] == 'customers') {
+            console.log(filter)
             findCustomers(assignData, filter, arr);
             findCustomers(getData);
         }
@@ -41,74 +50,82 @@ function SearchFilter({ arr, fetchMethod }) {
         // if (arr[0] !== 'visits') findSpecies(handleDatalist, filter, 'speciesPicker');
     }
 
-    const captureUser = (e) => {
-        e.preventDefault();
-        filter.user = e.target.value;
-        findData();
-    }
+    // const captureUser = (e) => {
+    //     e.preventDefault();
+    //     filter.user = e.target.value;
+    //     findData();
+    // }
 
-    const captureCustomer = (e) => {
-        e.preventDefault();
-        filter.customer = e.target.value;
-        findData();
-    }
+    // const captureCustomer = (e) => {
+    //     e.preventDefault();
+    //     filter.customer = e.target.value;
+    //     findData();
+    // }
 
-    const capturePatient = (e) => {
-        e.preventDefault();
-        filter.patient = e.target.value.split(' ')[0];
-        findData();
-    }
+    // const capturePatient = (e) => {
+    //     e.preventDefault();
+    //     filter.patient = e.target.value.split(' ')[0];
+    //     findData();
+    // }
 
-    const captureSpecies = (e) => {
-        e.preventDefault();
-        filter.species = e.target.value;
-        findData();
-    }
+    // const captureSpecies = (e) => {
+    //     e.preventDefault();
+    //     filter.species = e.target.value;
+    //     findData();
+    // }
 
-    const captureSterilised = (e) => {
-        e.preventDefault();
-        filter.sterilised = e.target.value;
-        findData();
-    }
+    // const captureSterilised = (e) => {
+    //     e.preventDefault();
+    //     filter.sterilised = e.target.value;
+    //     findData();
+    // }
 
-    const captureCompleted = (e) => {
-        e.preventDefault();
-        filter.completed = e.target.value;
-        findData();
-    }
+    // const captureCompleted = (e) => {
+    //     e.preventDefault();
+    //     filter.completed = e.target.value;
+    //     findData();
+    // }
 
-    const captureDate = (e) => {
+    // const captureDate = (e) => {
+    //     e.preventDefault();
+    //     filter.date = e.target.valueAsDate.toLocaleDateString();
+    //     findData();
+    // }
+
+    const captureData = (e) => {
         e.preventDefault();
-        filter.date = e.target.valueAsDate.toLocaleDateString();
+        let named = e.target.id;
+        let value = e.target.value;
+        Object.defineProperty(filter, named, 
+        {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        })
+        console.log(filter)
         findData();
     }
 
     const getData = (data) => {
-        let arrVets = [];
-        let arrCustomers = [];
-        let arrPatients = [];
-        let vet;
-        let customer;
-        let patient;
+        
+        let i = 0;
+        let keys = Object.keys(data[0]);
+        keys.shift();
 
-        data.forEach(e => {
-            e.vet ? vet = e.vet : vet = e.name;
-            e.customer ? customer = e.customer : customer = e.name;
-            e.patient ? patient = e.patient : patient = e.name;
+        keys.forEach(k => {
+            let arr = [];
+            data.forEach(obj => {
 
-            arrVets.push(vet);
-            arrCustomers.push(customer);
-            arrPatients.push(patient)
+                arr.push(obj[k]);
+        
+            });
+
+            arr = [... new Set(arr)];
+            handleDatalist(arr, id[i]);
+            i++;
         });
-
-        // Eliminamos duplicados
-        arrVets = [... new Set(arrVets)];
-        arrCustomers = [... new Set(arrCustomers)];
-        arrPatients = [... new Set(arrPatients)];
-
-        handleDatalist(arrVets, 'vetPicker');
-        handleDatalist(arrCustomers, 'customerPicker');
-        handleDatalist(arrPatients, 'patientPicker');
+        
 
     }
 
@@ -135,16 +152,30 @@ function SearchFilter({ arr, fetchMethod }) {
     }
 
     const searchListeners = () => {
-        document.getElementById('vetPicker').addEventListener('input', captureUser);
-        document.getElementById('customerPicker').addEventListener('input', captureCustomer);
-        document.getElementById('patientPicker').addEventListener('input', capturePatient);
-        if (arr[0] !== 'visits') {
-            document.getElementById('sterilisedPicker').addEventListener('input', captureSterilised)
-            document.getElementById('speciesPicker').addEventListener('input', captureSpecies)
-        } else {
-            document.getElementById('datePicker').addEventListener('input', captureDate);
-            document.getElementById('completedPicker').addEventListener('input', captureCompleted);
-        }
+        
+        // if (arr[0] == 'patients') {
+        //     document.getElementById('vetPicker').addEventListener('input', captureUser);
+        //     document.getElementById('customerPicker').addEventListener('input', captureCustomer);
+        //     document.getElementById('patientPicker').addEventListener('input', capturePatient);
+        //     document.getElementById('sterilisedPicker').addEventListener('input', captureSterilised)
+        //     document.getElementById('speciesPicker').addEventListener('input', captureSpecies)
+        // } else if (arr[0] == 'visits'){
+        //     document.getElementById('datePicker').addEventListener('input', captureDate);
+        //     document.getElementById('completedPicker').addEventListener('input', captureCompleted);
+        // } else if (arr[0] == 'customers'){
+            id.forEach(e => {
+                Object.defineProperty(filter, e, 
+                    {
+                        value: '',
+                        enumerable: true,
+                        configurable: true,
+                        writable: true
+                    })
+                document.getElementById(e).addEventListener('input', captureData);
+            });
+            
+            // document.getElementById('completedPicker').addEventListener('input', captureCompleted);
+        // }
         document.getElementById('cleanButton').addEventListener('click', cleanForm);
     }
 
