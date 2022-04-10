@@ -50,34 +50,6 @@ class CustomersController extends AbstractController
         $customerEntities = array();
         $data = $request->toArray();
 
-        // function getArrIds($repository, $query)
-        // {
-        //     $entities = $repository->findBy(array('name' => $query));
-        //     foreach ($entities as $entity) {
-        //         $arrIds[] = $entity->getId();
-        //     }
-        //     $return = array_unique($arrIds, $sort_flags = SORT_REGULAR);
-        //     return $return;
-        // }
-
-        // function getArrUsers()
-        // {
-        //     $userEntities = $userRepository->findBy(array('name' => $data['user']));
-        //     foreach ($userEntities as $userEntity) {
-        //         $arrUsers[] = $userEntity->getId();
-        //     }
-        //     return $arrUsers;
-        // }
-
-        // function getArrUsers()
-        // {
-        //     $userEntities = $userRepository->findBy(array('name' => $data['user']));
-        //     foreach ($userEntities as $userEntity) {
-        //         $arrUsers[] = $userEntity->getId();
-        //     }
-        //     return $arrUsers;
-        // }
-
         function maker($customerEntity)
         {
             $customer = [];
@@ -90,198 +62,21 @@ class CustomersController extends AbstractController
             return $customer;
         }
         $query = array();
-        if ($data['namePicker'] != '')    {$query['name'] = $data['namePicker'];}
-        if ($data['lastnamePicker'] != ''){$query['last_name'] = $data['lastnamePicker'];}
-        if ($data['phonePicker'] != '')    {$query['phone'] = $data['phonePicker'];}
-        if ($data['emailPicker'] != '')    {$query['email'] = $data['emailPicker'];}
+        if ($data['namePicker'] != '')      {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
+        if ($data['lastnamePicker'] != '')  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
+        if ($data['phonePicker'] != '')     {$query['phone'] = $data['phonePicker'];} else {$query['phone'] = '%';}
+        if ($data['emailPicker'] != '')     {$query['email'] = $data['emailPicker'];} else {$query['email'] = '%';}
 
         // a ver si se puede cambiar por LIKES las búsquedas
-        $customerEntities = $customerRepository->findBy($query);
+        $customerEntities = $customerRepository->findByQuery($query);
 
         foreach ($customerEntities as $customerEntity)
         {
             $customers[] = maker($customerEntity);
         }
 
-        // if ($data['customer' != ''])    {$arrCustomers = getArrIds($customerRepository, $data['customer']);}
-        // else                            {$arrCustomers = '%';}
-        // if ($data['user' != ''])        {$arrUsers = getArrIds($userRepository, $data['user']);}
-        // else                            {$arrUsers = '%';}
-        // if ($data['species' != ''])     {$arrSpecies = getArrIds($speciesRepository, $data['species']);}
-        // else                            {$arrSpecies = '%';}
-        // if ($data['sterilised' != ''])  {$sterilised = $data['sterilised'].'%';}
-        // if ($data['patient' != ''])     {$patient = $data['patient'].'%';}
-
-        // $patientEntities = $patientRepository
-        // ->findByComplex(
-        //     $arrCustomers,
-        //     $arrUsers,
-        //     $arrSpecies,
-        //     $sterilised,
-        //     $name
-        // );
-
-        // if(!empty($patientEntities))
-        // {   
-        //     $patients = array();
-
-        //     foreach ($patientEntities as $patientEntity) 
-        //     {
-        //         $patients[] = $patientEntity->getResponsible();
-        //     }
-
-        //     $arrResponsibles = array_unique($patients, $sort_flags = SORT_REGULAR);
-
-        //     foreach ($arrResponsibles as $r) 
-        //     {
-        //         $customerEntities[] = $customerRepository->find($r);
-
-        //         foreach ($customerEntities as $customerEntity) 
-        //         {
-        //             $customers[] = maker($customerEntity);
-        //         }
-        //     }
-            
-        // }
-        // else
-        // {
-        //     $customerEntities = $customerRepository->findAll();
-        //     foreach ($customerEntities as $customerEntity) 
-        //     {
-        //         $customers[] = maker($customerEntity);
-        //     }
-        // }
-
         return $this->json($customers);
     }
-
-    // /**
-    //  * @Route("/api/customers", name="app_customers_post", methods="POST")
-    //  */
-    // public function findCustomers(
-    //     CustomerRepository $customerRepository, 
-    //     PatientRepository $patientRepository, 
-    //     UserRepository $userRepository, 
-    //     SpeciesRepository $speciesRepository,
-    //     Request $request): Response
-    // {   
-    //     $customers = [];
-    //     $data = $request->toArray();
-
-    //     function maker($customerEntity, $patientRepository)
-    //     {
-    //         $customer = [];
-    //         $customer['id'] = $customerEntity->getId();
-    //         $customer['name'] = $customerEntity->getName();
-    //         $customer['lastName'] = $customerEntity->getLastName();
-    //         $customer['phone'] = $customerEntity->getPhone();
-    //         $customer['email'] = $customerEntity->getEmail();
-
-    //         return $customer;
-    //     }
-
-    //     // if ($data['customerId'] != '')
-    //     // {
-    //     //     $customerEntity = $customerRepository->findOneBy(array('id' => $data['customerId']));
-    //     //     $customers[] = maker($customerEntity, $patientRepository);
-    //     // }
-    //     if ($data['customer'] != '')
-    //     {
-    //         $customerEntity = $customerRepository->findOneBy(array('email' => $data['customer']));
-    //         $customers[] = maker($customerEntity, $patientRepository);
-    //     }
-    //     else
-    //     {
-    //         $query = array();
-
-    //         if ($data['user'] != '')        { $query['vet'] = $userRepository->findOneBy(array('username' => $data['user']))->getId(); }
-    //         if ($data['patient'] != '')     { $query['name'] = $data['patient']; }
-    //         if ($data['species'] != '')     { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
-    //         if ($data['sterilised'] != '')  { $query['sterilised'] = $data['sterilised']; }
-            
-    //         if (!empty($query)) 
-    //         {
-    //             $arrCustomerEntities = [];
-    //             $patientEntities = $patientRepository->findBy($query);
-
-    //             foreach ($patientEntities as $patientEntity) 
-    //             {
-    //                 $customer = $patientEntity->getResponsible();
-    //                 $arrCustomerEntities[] = $customerRepository->findBy(array('id' => $customer));
-    //             }
-
-    //             $entry = array_unique($arrCustomerEntities, $sort_flags = SORT_REGULAR);
-
-    //             foreach ($entry as $customerEntities) 
-    //             {
-    //                 foreach ($customerEntities as $customerEntity) 
-    //                 {
-    //                     $customers[] = maker($customerEntity, $patientRepository);
-    //                 }
-    //             }
-    //         } 
-    //         else 
-    //         {
-    //             $customerEntities = $customerRepository->findAll();
-
-    //             foreach ($customerEntities as $customerEntity) 
-    //             {
-    //                 $customers[] = maker($customerEntity, $patientRepository);
-    //             }
-    //         }
-    //     }
-    
-    //     return $this->json($customers);
-    // }
-    //  /**
-    //  * @Route("/api/customers", name="app_customers_get", methods="GET")
-    //  */
-    // public function getCustomers(CustomerRepository $customerRepository, PatientRepository $patientRepository, Request $request): Response
-    // {   
-    //     $customers = [];
-
-    //     function maker($customerEntity, $patientRepository)
-    //     {
-    //         $customer = [];
-    //         $customer['id'] = $customerEntity->getId();
-    //         $customer['dni'] = $customerEntity->getDni();
-    //         $customer['name'] = $customerEntity->getName();
-    //         $customer['city'] = $customerEntity->getPostalCode()->getCity();
-    //         $customer['info'] = $customerEntity->getInfo();
-    //         $customer['phone'] = $customerEntity->getPhone();
-    //         $customer['email'] = $customerEntity->getEmail();
-    //         $customer['family'] = $customerEntity->getFamily()->getId();
-    //         $customer['address'] = $customerEntity->getAddress();
-    //         $customer['lastName'] = $customerEntity->getLastName();
-    //         $customer['province'] = $customerEntity->getPostalCode()->getProvince();
-    //         $customer['postalCode'] = $customerEntity->getPostalCode()->getId();
-
-    //         $patients = [];
-    //         $id = $customerEntity->getId();
-    //         $patientEntities = $patientRepository->findBy(array('responsible' => $id));
-
-    //         foreach ($patientEntities as $patientEntity) 
-    //         {
-    //             $patient = [];
-    //             $patients[] = $patient;
-    //             $patient['id'] = $patientEntity->getId();
-    //             $patient['name'] = $patientEntity->getName();
-    //         }
-
-    //         $customer['patients'] = $patients;
-
-    //         return $customer;
-    //     }
-
-    //     $customerEntities = $customerRepository->findAll();
-
-    //     foreach ($customerEntities as $customerEntity) 
-    //     {
-    //         $customers[] = maker($customerEntity, $patientRepository);
-    //     }
-    
-    //     return $this->json($customers);
-    // }
 
      /**
      * @Route("/api/customers", name="app_customers_get", methods="GET")

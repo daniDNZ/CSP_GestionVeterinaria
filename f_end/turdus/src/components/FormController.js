@@ -437,24 +437,8 @@ function FormArray
 
     const searchPatientForm = [
         {
-            label: 'Veterinaria/o',
-            id: 'vetPicker',
-            tag: 'input',
-            type: 'search',
-            value: '',
-            datalist: '',
-        },
-        {
-            label: 'Cliente',
-            id: 'customerPicker',
-            tag: 'input',
-            type: 'search',
-            value: '',
-            datalist: '',
-        },
-        {
             label: 'Paciente',
-            id: 'patientPicker',
+            id: 'namePicker',
             tag: 'input',
             type: 'search',
             value: '',
@@ -467,6 +451,43 @@ function FormArray
             type: 'search',
             value: '',
             datalist: '',
+        },
+        {
+            label: 'Raza',
+            id: 'racePicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'F. Nacimiento',
+            id: 'birthdayPicker',
+            tag: 'input',
+            type: 'date',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Género',
+            id: 'genderPicker',
+            tag: 'select',
+            type: '',
+            value: '',
+            datalist: [
+                {
+                    value: '',
+                    text: 'Select...'
+                },
+                {
+                    value: 'female',
+                    text: 'Hembra'
+                },
+                {
+                    value: 'male',
+                    text: 'Macho'
+                }
+            ]
         },
         {
             label: 'Esterilizado',
@@ -488,6 +509,22 @@ function FormArray
                     text: 'No'
                 }
             ]
+        },
+        {
+            label: 'Veterinaria/o',
+            id: 'vetPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
+        },
+        {
+            label: 'Cliente',
+            id: 'customerPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: '',
         },
         {
             label: '',

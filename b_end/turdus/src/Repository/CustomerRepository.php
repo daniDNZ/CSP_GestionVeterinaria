@@ -66,17 +66,23 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
     //  * @return Customer[] Returns an array of Customer objects
     //  */
     
-    // public function findByComplex($value)
-    // {
-    //     return $this->createQueryBuilder('c')
-    //         ->andWhere('c.exampleField = :val')
-    //         ->setParameter('val', $value)
-    //         ->orderBy('c.id', 'ASC')
-    //         ->setMaxResults(10)
-    //         ->getQuery()
-    //         ->getResult()
-    //     ;
-    // }
+    public function findByQuery($q)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.name LIKE :name')
+            ->andWhere('c.last_name LIKE :lname')
+            ->andWhere('c.phone LIKE :phone')
+            ->andWhere('c.email LIKE :email')
+            ->setParameter('name', '%'.$q['name'].'%')
+            ->setParameter('lname', '%'.$q['last_name'].'%')
+            ->setParameter('phone', '%'.$q['phone'].'%')
+            ->setParameter('email', '%'.$q['email'].'%')
+            ->orderBy('c.name', 'ASC')
+            // ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     
 
     /*

@@ -5,24 +5,31 @@ import { FormArray, FormGenerator, handleClean, inputGenerator } from "./FormCon
 
 function SearchFilter({ arr, fetchMethod }) {
 
+    // ORDENAR ELEMENTOS EN EL PRIMER FECTH (GET) UTILIZANDO LA FUNCIÓN CUSTOM
     // CONTINUAR AFINANDO LAS BÚSQUEDAS, LOS DATALIST Y DEMÁS
 
-    let filter = {
-        // user: '',
-        // customer: '',
-        // patient: '',
-        // species: '',
-        // sterilised: '',
-        // date: '',
-        // completed: ''
-    };
+    let filter = {};
     let formType = 'searchCustomerForm';
+
     let id = ['namePicker', 'lastnamePicker', 'phonePicker', 'emailPicker'];
 
     if (arr[0] == 'visits') {
         formType = 'searchVisitForm';
     }
-    if (arr[0] == 'patients') formType = 'searchPatientForm';
+
+    if (arr[0] == 'patients') {
+        formType = 'searchPatientForm';
+        id = [
+            'namePicker', 
+            'speciesPicker', 
+            'racePicker', 
+            'birthdayPicker', 
+            'genderPicker',
+            'sterilisedPicker',
+            'vetPicker',
+            'customerPicker'
+        ]
+    }
 
     if (arr[0] == 'customers') {
         formType = 'searchCustomerForm';
@@ -33,64 +40,18 @@ function SearchFilter({ arr, fetchMethod }) {
 
         if (arr[0] == 'patients') {
             findPatients(assignData, filter, arr);
-            findPatients(getData);
+            findPatients(getData, filter);
         }
         if (arr[0] == 'customers') {
-            console.log(filter)
             findCustomers(assignData, filter, arr);
-            findCustomers(getData);
+            findCustomers(getData, filter);
         }
         if (arr[0] == 'visits') {
             findVisits(assignData, filter, arr);
-            findVisits(getData);
+            findVisits(getData, filter);
         }
-        // findPatients(handleDatalist, filter, 'patientPicker');
-        // findCustomers(handleDatalist, filter, 'customerPicker');
-        // findVets(handleDatalist, filter, 'vetPicker');
-        // if (arr[0] !== 'visits') findSpecies(handleDatalist, filter, 'speciesPicker');
+
     }
-
-    // const captureUser = (e) => {
-    //     e.preventDefault();
-    //     filter.user = e.target.value;
-    //     findData();
-    // }
-
-    // const captureCustomer = (e) => {
-    //     e.preventDefault();
-    //     filter.customer = e.target.value;
-    //     findData();
-    // }
-
-    // const capturePatient = (e) => {
-    //     e.preventDefault();
-    //     filter.patient = e.target.value.split(' ')[0];
-    //     findData();
-    // }
-
-    // const captureSpecies = (e) => {
-    //     e.preventDefault();
-    //     filter.species = e.target.value;
-    //     findData();
-    // }
-
-    // const captureSterilised = (e) => {
-    //     e.preventDefault();
-    //     filter.sterilised = e.target.value;
-    //     findData();
-    // }
-
-    // const captureCompleted = (e) => {
-    //     e.preventDefault();
-    //     filter.completed = e.target.value;
-    //     findData();
-    // }
-
-    // const captureDate = (e) => {
-    //     e.preventDefault();
-    //     filter.date = e.target.valueAsDate.toLocaleDateString();
-    //     findData();
-    // }
 
     const captureData = (e) => {
         e.preventDefault();
@@ -103,38 +64,44 @@ function SearchFilter({ arr, fetchMethod }) {
             configurable: true,
             writable: true
         })
-        console.log(filter)
         findData();
     }
 
+    // Recoge los valores de la misma key de cada objeto para 
+    // imprimirlos después en la datalist correspondiente.
     const getData = (data) => {
         
-        let i = 0;
-        let keys = Object.keys(data[0]);
-        keys.shift();
+        // Primero comprobamos que tenemos datos.
+        if (data.length > 0) {
 
-        keys.forEach(k => {
-            let arr = [];
-            data.forEach(obj => {
+            // Inicializamos un contador para recorrer los id
+            // del array de ids para las datalist.
+            let i = 0;
 
-                arr.push(obj[k]);
-        
+            // Recogemos las keys del objeto.
+            let keys = Object.keys(data[0]);
+
+            // Eliminamos la key 'id',
+            keys.shift();
+
+            // Por cada key recorremos todos los objetos y los almacenamos
+            // para enviarlos al método que crea la datalist.
+            keys.forEach(k => {
+                let arrData = [];
+
+                data.forEach(obj => { arrData.push(obj[k]) });
+
+                // Eliminamos elementos repetidos.
+                arrData = [... new Set(arrData)];
+
+                handleDatalist(arrData, id[i]);
+                i++;
             });
-
-            arr = [... new Set(arr)];
-            handleDatalist(arr, id[i]);
-            i++;
-        });
-        
-
+        }
     }
 
     const fillDatalist = () => {
         fetchMethod( getData )
-        // getVets(handleDatalist, 'vetPicker');
-        // getCustomers(handleDatalist, 'customerPicker');
-        // if (arr[0] !== 'visits') getSpecies(handleDatalist, 'speciesPicker');
-        // getPatients(handleDatalist, 'patientPicker');
     }
 
     const cleanForm = (e) => {
@@ -153,16 +120,6 @@ function SearchFilter({ arr, fetchMethod }) {
 
     const searchListeners = () => {
         
-        // if (arr[0] == 'patients') {
-        //     document.getElementById('vetPicker').addEventListener('input', captureUser);
-        //     document.getElementById('customerPicker').addEventListener('input', captureCustomer);
-        //     document.getElementById('patientPicker').addEventListener('input', capturePatient);
-        //     document.getElementById('sterilisedPicker').addEventListener('input', captureSterilised)
-        //     document.getElementById('speciesPicker').addEventListener('input', captureSpecies)
-        // } else if (arr[0] == 'visits'){
-        //     document.getElementById('datePicker').addEventListener('input', captureDate);
-        //     document.getElementById('completedPicker').addEventListener('input', captureCompleted);
-        // } else if (arr[0] == 'customers'){
             id.forEach(e => {
                 Object.defineProperty(filter, e, 
                     {
@@ -174,8 +131,6 @@ function SearchFilter({ arr, fetchMethod }) {
                 document.getElementById(e).addEventListener('input', captureData);
             });
             
-            // document.getElementById('completedPicker').addEventListener('input', captureCompleted);
-        // }
         document.getElementById('cleanButton').addEventListener('click', cleanForm);
     }
 

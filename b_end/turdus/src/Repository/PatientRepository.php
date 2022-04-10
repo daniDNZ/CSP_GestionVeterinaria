@@ -61,7 +61,7 @@ class PatientRepository extends ServiceEntityRepository
 
     public function findByComplex(
         $customers,
-        $vets,
+        $users,
         $species,
         $sterilised,
         $name
@@ -69,12 +69,12 @@ class PatientRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.responsible IN (:val)')
-            ->andWhere('p.vet IN (:vet)')
+            ->andWhere('p.vet IN (:usr)')
             ->andWhere('p.species IN (:spe)')
             ->andWhere('p.sterilised LIKE (:ste)')
             ->andWhere('p.name LIKE (:nam)')
             ->setParameter('val', $customers)
-            ->setParameter('vet', $vets)
+            ->setParameter('usr', $users)
             ->setParameter('spe', $species)
             ->setParameter('ste', $sterilised)
             ->setParameter('nam', $name)
