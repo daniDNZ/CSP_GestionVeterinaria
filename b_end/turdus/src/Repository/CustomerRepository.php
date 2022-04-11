@@ -65,6 +65,11 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
     // /**
     //  * @return Customer[] Returns an array of Customer objects
     //  */
+
+    public function findAll()
+    {
+        return $this->findBy(array(), array('name' => 'ASC'));
+    }
     
     public function findByQuery($q)
     {
@@ -84,6 +89,17 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
         ;
     }
     
+    public function findByName($value)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.name LIKE :val')
+            ->setParameter('val', '%'.$value.'%')
+            ->orderBy('c.name', 'ASC')
+            // ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     /*
     public function findOneBySomeField($value): ?Customer

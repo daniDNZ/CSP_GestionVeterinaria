@@ -11,9 +11,10 @@ function Visits() {
         '#', 
         'Fecha', 
         'Categoría', 
-        'Paciente', 
         'Veterinaria/o', 
         'Cliente',
+        'Paciente', 
+        'Completada', 
         'Vista'
     ];
 

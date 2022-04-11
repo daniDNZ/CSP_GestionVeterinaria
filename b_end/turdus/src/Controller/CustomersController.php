@@ -36,44 +36,41 @@ class CustomersController extends AbstractController
         return $this->json($customer);
     }
 
+    function maker($customerEntities)
+        {
+            foreach ($customerEntities as $customerEntity)
+            {
+                $customer = [];
+                $customer['id'] = $customerEntity->getId();
+                $customer['name'] = $customerEntity->getName();
+                $customer['lastName'] = $customerEntity->getLastName();
+                $customer['phone'] = $customerEntity->getPhone();
+                $customer['email'] = $customerEntity->getEmail();
+                $customers[] = $customer;
+            }
+            
+
+            return $customers;
+        }
+
     /**
      * @Route("/api/customers", name="app_customers_post", methods="POST")
      */
-    public function findCustomers(
-        CustomerRepository $customerRepository, 
-        PatientRepository $patientRepository, 
-        UserRepository $userRepository, 
-        SpeciesRepository $speciesRepository,
-        Request $request): Response
+    public function findCustomers( CustomerRepository $customerRepository, Request $request): Response
     {   
         $customers = [];
         $customerEntities = array();
         $data = $request->toArray();
 
-        function maker($customerEntity)
-        {
-            $customer = [];
-            $customer['id'] = $customerEntity->getId();
-            $customer['name'] = $customerEntity->getName();
-            $customer['lastName'] = $customerEntity->getLastName();
-            $customer['phone'] = $customerEntity->getPhone();
-            $customer['email'] = $customerEntity->getEmail();
-
-            return $customer;
-        }
         $query = array();
         if ($data['namePicker'] != '')      {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
         if ($data['lastnamePicker'] != '')  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
         if ($data['phonePicker'] != '')     {$query['phone'] = $data['phonePicker'];} else {$query['phone'] = '%';}
         if ($data['emailPicker'] != '')     {$query['email'] = $data['emailPicker'];} else {$query['email'] = '%';}
 
-        // a ver si se puede cambiar por LIKES las búsquedas
         $customerEntities = $customerRepository->findByQuery($query);
 
-        foreach ($customerEntities as $customerEntity)
-        {
-            $customers[] = maker($customerEntity);
-        }
+        $customers = $this->maker($customerEntities);
 
         return $this->json($customers);
     }
@@ -81,28 +78,13 @@ class CustomersController extends AbstractController
      /**
      * @Route("/api/customers", name="app_customers_get", methods="GET")
      */
-    public function getCustomers(CustomerRepository $customerRepository, PatientRepository $patientRepository, Request $request): Response
+    public function getCustomers(CustomerRepository $customerRepository, Request $request): Response
     {   
         $customers = [];
 
-        function maker($customerEntity, $patientRepository)
-        {
-            $customer = [];
-            $customer['id'] = $customerEntity->getId();
-            $customer['name'] = $customerEntity->getName();
-            $customer['lastName'] = $customerEntity->getLastName();
-            $customer['phone'] = $customerEntity->getPhone();
-            $customer['email'] = $customerEntity->getEmail();
-
-            return $customer;
-        }
-
         $customerEntities = $customerRepository->findAll();
 
-        foreach ($customerEntities as $customerEntity) 
-        {
-            $customers[] = maker($customerEntity, $patientRepository);
-        }
+        $customers = $this->maker($customerEntities);
     
         return $this->json($customers);
     }

@@ -62,6 +62,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    
+    // /**
+    //  * @return User[] Returns an array of User objects
+    //  */
     public function findByRoles($role)
     {
         return $this->createQueryBuilder('r')
@@ -70,10 +74,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ->getQuery()
         ->getResult();
     }
-
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
+    public function findByName($value)
+    {
+        return $this->createQueryBuilder('su')
+            ->andWhere('u.name LIKE :val')
+            ->setParameter('val', '%'.$value.'%')
+            ->orderBy('u.name', 'ASC')
+            // ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     /*
     public function findByExampleField($value)
     {

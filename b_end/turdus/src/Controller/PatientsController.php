@@ -17,36 +17,13 @@ use App\Entity\Patient;
 class PatientsController extends AbstractController
 {
 
-    /**
-     * @Route("/api/patients", name="app_patients_post", methods="POST")
-     */
-    public function findPatients(
-        PatientRepository $patientRepository, 
-        UserRepository $userRepository, 
-        CustomerRepository $customerRepository,
-        SpeciesRepository $speciesRepository, 
-        Request $request
-        ): Response
+    function maker($patientEntities)
     {
         $patients = [];
-        $query = array();
+
+        foreach ($patientEntities as $patientEntity)
+        {
         
-        $data = $request->toArray();
-
-        if ($data['patient'] !== '')    { $query['name'] = $data['patient']; }
-        if ($data['user'] !== '')       { $query['vet'] = $userRepository->findOneBy(array('username' => $data['user']))->getId(); }
-        if ($data['species'] !== '')    { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
-        if ($data['customer'] !== '')   { $query['responsible'] = $customerRepository->findOneBy(array('email' => $data['customer']))->getId(); }
-        if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }
-    
-        if (!empty($query)){
-            $patientEntities = $patientRepository->findBy($query);
-
-        } else {
-            $patientEntities = $patientRepository->findAll();
-        }
-
-        foreach ($patientEntities as $patientEntity) {
             $patient = [];
             $patient['id'] = $patientEntity->getId();
             $patient['name'] = $patientEntity->getName();
@@ -67,52 +44,54 @@ class PatientsController extends AbstractController
 
             $patient['vet'] = $patientEntity->getVet()->getName();
             $patient['customer'] = $patientEntity->getResponsible()->getName();
-            // $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
 
-            
             $patients[] = $patient;
-            
         }
+        return $patients;
+    }
+
+    /**
+     * @Route("/api/patients", name="app_patients_post", methods="POST")
+     */
+    public function findPatients( PatientRepository $patientRepository, Request $request ): Response
+    {
+        $patients = [];
+        $patientEntities = array();
+        $data = $request->toArray();
+
+
+        $query = array();
+
+        if ($data['namePicker'] != '')          {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
+        if ($data['speciesPicker'] != '')       {$query['species'] = $data['speciesPicker'];} else {$query['species'] = '%';}
+        if ($data['racePicker'] != '')          {$query['race'] = $data['racePicker'];} else {$query['race'] = '%';}
+        if ($data['birthdayPicker'] != '')      {$query['birthday'] = $data['birthdayPicker'];} else {$query['birthday'] = '%';}
+        if ($data['genderPicker'] != '')        {$query['gender'] = $data['genderPicker'];} else {$query['gender'] = '%';}
+        if ($data['sterilisedPicker'] != '')    {$query['sterilised'] = $data['sterilisedPicker'];} else {$query['sterilised'] = '%';}
+        if ($data['vetPicker'] != '')           {$query['vet'] = $data['vetPicker'];} else {$query['vet'] = '%';}
+        if ($data['customerPicker'] != '')      {$query['responsible'] = $data['customerPicker'];} else {$query['responsible'] = '%';}
+
+        
+        $patientEntities = $patientRepository->findByQuery($query);
+
+        
+        $patients = $this->maker($patientEntities);
+        
+
         return $this->json($patients);
     }
 
         /**
      * @Route("/api/patients", name="app_patients_get", methods="GET")
      */
-    public function getPatients(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, Request $request): Response
+    public function getPatients(PatientRepository $patientRepository, Request $request): Response
     {
         $patients = [];
         
         $patientEntities = $patientRepository->findAll();
         
-        foreach ($patientEntities as $patientEntity) {
-            $patient = [];
-            $patient['id'] = $patientEntity->getId();
-            $patient['name'] = $patientEntity->getName();
-            $patient['species'] = $patientEntity->getSpecies()->getName();
-
-            if ( $patientEntity->getRace() != null) 
-            {
-                $patient['race'] = $patientEntity->getRace()->getName();
-            }
-            else
-            {
-                $patient['race'] = '';
-            }
-
-            $patient['birthday'] = $patientEntity->getBirthday()->format('d/m/Y');
-            $patient['gender'] = $patientEntity->getGender();
-            $patient['sterilised'] = $patientEntity->getSterilised();
-
-            $patient['vet'] = $patientEntity->getVet()->getName();
-            $patient['customer'] = $patientEntity->getResponsible()->getName();
-            // $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
-
+        $patients = $this->maker($patientEntities);
             
-
-            $patients[] = $patient;
-            
-        }
         return $this->json($patients);
     }
 

@@ -48,6 +48,10 @@ class PatientRepository extends ServiceEntityRepository
     // /**
     //  * @return Patient[] Returns an array of Patient objects
     //  */
+    public function findAll()
+    {
+        return $this->findBy(array(), array('name' => 'ASC'));
+    }
     
     public function findByVets($value)
     {
@@ -59,25 +63,31 @@ class PatientRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByComplex(
-        $customers,
-        $users,
-        $species,
-        $sterilised,
-        $name
-        )
+    public function findByQuery($q)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.responsible IN (:val)')
-            ->andWhere('p.vet IN (:usr)')
-            ->andWhere('p.species IN (:spe)')
-            ->andWhere('p.sterilised LIKE (:ste)')
-            ->andWhere('p.name LIKE (:nam)')
-            ->setParameter('val', $customers)
-            ->setParameter('usr', $users)
-            ->setParameter('spe', $species)
-            ->setParameter('ste', $sterilised)
-            ->setParameter('nam', $name)
+            ->innerJoin('p.species', 's')
+            ->innerJoin('p.race', 'r')
+            ->innerJoin('p.vet', 'v')
+            ->innerJoin('p.responsible', 'c')
+            ->andWhere('p.name LIKE :name')
+            ->andWhere('s.name LIKE :spe')
+            ->andWhere('r.name LIKE :race')
+            ->andWhere('p.birthday LIKE :birth')
+            ->andWhere('p.gender LIKE :gen')
+            ->andWhere('p.sterilised LIKE :ster')
+            ->andWhere('v.name LIKE :vet')
+            ->andWhere('c.name LIKE :resp')
+            ->setParameter('name', '%'.$q['name'].'%')
+            ->setParameter('spe', '%'.$q['species'].'%')
+            ->setParameter('race', '%'.$q['race'].'%')
+            ->setParameter('birth', '%'.$q['birthday'].'%')
+            ->setParameter('gen', '%'.$q['gender'].'%')
+            ->setParameter('ster', '%'.$q['sterilised'].'%')
+            ->setParameter('vet', '%'.$q['vet'].'%')
+            ->setParameter('resp', '%'.$q['responsible'].'%')
+            ->orderBy('p.name', 'ASC')
+            // ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;

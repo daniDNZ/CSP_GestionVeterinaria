@@ -24,8 +24,13 @@ const handleDatalist = (data, id) => {
 
         arr.push({value: e, text: e})
     });
+    const datalistElement = document.getElementById(`${id}-datalist`);
+
+    // Comprobamos si existe la datalist
+    if (datalistElement) {
     const datalist = datalistGenerator(id, arr);
-    document.getElementById(`${id}-datalist`).innerHTML = datalist;
+    datalistElement.innerHTML = datalist;
+    }
 }
 
 export { handleDatalist };

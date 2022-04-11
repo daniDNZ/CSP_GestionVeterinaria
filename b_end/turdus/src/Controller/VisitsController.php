@@ -15,6 +15,25 @@ use App\Repository\SpeciesRepository;
 
 class VisitsController extends AbstractController
 {
+    function maker($visitEntities) {
+
+        foreach ($visitEntities as $visitEntity) 
+        {
+            $visit = [];
+            $visit['id'] = $visitEntity->getId();
+            $visit['date_time'] = $visitEntity->getDateTime()->format('d/m/Y H:i');
+            $visit['category'] = $visitEntity->getCategory();
+            $visit['vet'] = $visitEntity->getUser()->getName();
+            $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
+            $visit['patient'] = $visitEntity->getPatient()->getName();
+            $visit['completed'] = $visitEntity->getDone();
+
+            $visits[] = $visit;
+        }
+
+        return $visits;
+    }
+
     /**
      * @Route("/api/visits", name="app_visits_get", methods="GET" )
      */
@@ -22,23 +41,11 @@ class VisitsController extends AbstractController
     {
         $visitEntities = $visitRepository->findAll();
 
-        $visits = [];
-
-        foreach ($visitEntities as $visitEntity) 
-        {
-            $visit = [];
-            $visit['id'] = $visitEntity->getId();
-            $visit['date_time'] = $visitEntity->getDateTime()->format('d/m/Y');
-            $visit['category'] = $visitEntity->getCategory();
-            $visit['patient'] = $visitEntity->getPatient()->getName();
-            $visit['vet'] = $visitEntity->getUser()->getName();
-            $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
-
-            $visits[] = $visit;
-        }
+        $visits = $this->maker($visitEntities);
 
         return $this->json($visits);
     }
+    
 
     /**
      * @Route("/api/visits", name="app_visits_post", methods="POST")
@@ -54,63 +61,27 @@ class VisitsController extends AbstractController
     {
         $visits = [];
         $query = array();
-        $patientQuery = array();
-        $userQuery = array();
-        $customerQuery = array();
-        $patientEntities = array();
-        
         $data = $request->toArray();
 
-        if ($data['patient'] != '')    { $patientQuery['name'] = $data['patient']; }
-        if ($data['user'] !== '')       { $userQuery['name'] = $data['user']; }
-        if ($data['customer'] !== '')   { $customerQuery['name'] = $data['customer']; }
-        if ($data['completed'] !== '')  { $query['done'] = $data['completed']; }
-
-        if (!empty($patientQuery))
-        {
-            if (!empty($customerQuery))
-            {
-                $customerEntities = $customerRepository->findBy($customerQuery);
-                $arrCustomers = array();
-
-                foreach ($customerEntities as $customerEntity) {
-                    $arrCustomers[] = $customerEntity->getId();
-                }
-                $patientEntities = $patientRepository->findByNameAndCustomers($patientQuery, $arrCustomers);
-            }
-            else
-            {
-                $patientEntities = $patientRepository->findBy($patientQuery);
-            }
-            
-            $visitEntities = [];
-            $arrPatients = array();
-
-            foreach ($patientEntities as $patientEntity) 
-            {
-                $arrPatients[] = $patientEntity->getId();
-                // $query['patient'] = $patientEntity->getId();
-                // $arrVisitEntities[] = $visitRepository->findBy($query);
-            }
-            $visitEntities = $visitRepository->findByPatients($arrPatients);
-            // foreach ($arrVisitEntities as $visitEntities)
-            // {
-                foreach ($visitEntities as $visitEntity) 
-                {
-                    $visit = [];
-                    $visit['id'] = $visitEntity->getId();
-                    $visit['date_time'] = $visitEntity->getDateTime()->format('d/m/Y');
-                    $visit['category'] = $visitEntity->getCategory();
-                    $visit['patient'] = $visitEntity->getPatient()->getName();
-                    $visit['vet'] = $visitEntity->getUser()->getName();
-                    $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
-
-                    $visits[] = $visit;
-                }
-            // }
-        }
-       
         
+
+        $query = array();
+
+        if ($data['datePicker'] != '')          {$query['date'] = $data['datePicker'];} else {$query['date'] = '%';}
+        if ($data['vetPicker'] != '')           {$query['vet'] = $data['vetPicker'];} else {$query['vet'] = '%';}
+        if ($data['customerPicker'] != '')      {$query['customer'] = $data['customerPicker'];} else {$query['customer'] = '%';}
+        if ($data['patientPicker'] != '')       {$query['patient'] = $data['patientPicker'];} else {$query['patient'] = '%';}
+        if ($data['categoryPicker'] != '')      {$query['category'] = $data['categoryPicker'];} else {$query['category'] = '%';}
+        if ($data['completedPicker'] != '')     {$query['completed'] = $data['completedPicker'];} else {$query['completed'] = '%';}
+
+        
+        $visitEntities = $visitRepository->findByQuery($query);
+
+        foreach ($visitEntities as $visitEntity)
+        {
+            $visits = $this->maker($visitEntities);
+        }
+               
         return $this->json($visits);
     }
 

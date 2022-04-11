@@ -15,6 +15,14 @@ function SearchFilter({ arr, fetchMethod }) {
 
     if (arr[0] == 'visits') {
         formType = 'searchVisitForm';
+        id = [
+            'datePicker',
+            'categoryPicker',
+            'vetPicker',
+            'customerPicker',
+            'patientPicker',
+            'completedPicker'
+        ]
     }
 
     if (arr[0] == 'patients') {

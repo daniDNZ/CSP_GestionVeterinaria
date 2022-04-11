@@ -568,6 +568,14 @@ function FormArray
             datalist: '',
         },
         {
+            label: 'Categoría',
+            id: 'categoryPicker',
+            tag: 'input',
+            type: 'text',
+            value: '',
+            datalist: '',
+        },
+        {
             label: 'Completada',
             id: 'completedPicker',
             tag: 'select',
