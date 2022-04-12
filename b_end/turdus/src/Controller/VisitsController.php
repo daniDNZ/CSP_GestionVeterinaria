@@ -35,15 +35,23 @@ class VisitsController extends AbstractController
     }
 
     /**
-     * @Route("/api/visits", name="app_visits_get", methods="GET" )
+     * @Route("/api/{currentPage}/visits", name="app_visits_get", methods="GET" )
      */
-    public function getVisits(VisitRepository $visitRepository): Response
+    public function getVisits(VisitRepository $visitRepository, int $currentPage): Response
     {
-        $visitEntities = $visitRepository->findAll();
+        $limit = 10;
+        $visitsFound = $visitRepository->findAll($currentPage, $limit);
+        $result = $visitsFound['paginator'];
 
-        $visits = $this->maker($visitEntities);
+        $maxPages = ceil($visitsFound['paginator']->count() / $limit);
 
-        return $this->json($visits);
+        $visits = $this->maker($result);
+
+        return $this->json([
+            'data' => $visits,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage
+        ]);
     }
     
 

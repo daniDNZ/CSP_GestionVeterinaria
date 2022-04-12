@@ -6,6 +6,7 @@ use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -61,15 +62,35 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
         $this->_em->persist($user);
         $this->_em->flush();
     }
+    /**
+     * PAGINATOR
+     */
+    public function paginate($dql, $page = 1, $limit = 10)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
+    }
 
     // /**
     //  * @return Customer[] Returns an array of Customer objects
     //  */
 
-    public function findAll()
+    public function findAll($currentPage = 1, $limit = 10)
     {
-        return $this->findBy(array(), array('name' => 'ASC'));
+        $query =  $this->createQueryBuilder('c')
+            ->orderBy('c.name', 'ASC')
+            ->getQuery();
+
+            $paginator = $this->paginate($query, $currentPage, $limit);
+
+            return array('paginator' => $paginator, 'query' => $query);
     }
+
     
     public function findByQuery($q)
     {

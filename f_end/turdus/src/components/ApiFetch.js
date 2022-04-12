@@ -43,10 +43,10 @@ const getVisits = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/visits", config);
+    const request = new Request("http://192.168.1.81:8888/api/1/visits", config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data, id) })
+        .then(data => { callback(data.data, id) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -141,7 +141,7 @@ const getRaces = (callback, id) => {
 }
 
 
-const getCustomers = (callback, id) => {
+const getCustomers = (callback, id, currentPage = 1) => {
 
     const config = {
         method: 'GET',
@@ -151,7 +151,7 @@ const getCustomers = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request("http://192.168.1.81:8888/api/customers", config);
+    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
     fetch(request)
         .then(response => response.json())
         .then(data => { callback(data, id) })

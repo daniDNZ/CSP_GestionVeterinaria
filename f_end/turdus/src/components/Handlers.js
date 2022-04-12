@@ -33,4 +33,15 @@ const handleDatalist = (data, id) => {
     }
 }
 
-export { handleDatalist };
+const handlePagination = (e) => {
+    e.preventDefault();
+    console.log('funciona');
+    const sumPage = 1;
+    let currentPage;
+    if ( e.target.ariaLabel == 'Previous') sumPage = -1
+    else if (e.target.ariaLabel == 'Next') sumPage = 1
+    else currentPage = e.target.textContent;
+
+}
+
+export { handleDatalist, handlePagination };

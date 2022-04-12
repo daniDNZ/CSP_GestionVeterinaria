@@ -76,17 +76,23 @@ class CustomersController extends AbstractController
     }
 
      /**
-     * @Route("/api/customers", name="app_customers_get", methods="GET")
+     * @Route("/api/{currentPage}/customers", name="app_customers_get", methods="GET")
      */
-    public function getCustomers(CustomerRepository $customerRepository, Request $request): Response
+    public function getCustomers(CustomerRepository $customerRepository, int $currentPage, Request $request): Response
     {   
-        $customers = [];
+        $limit = 10;
+        $customersFound = $customerRepository->findAll($currentPage, $limit);
+        $result = $customersFound['paginator'];
 
-        $customerEntities = $customerRepository->findAll();
+        $maxPages = ceil($customersFound['paginator']->count() / $limit);
 
-        $customers = $this->maker($customerEntities);
-    
-        return $this->json($customers);
+        $customers = $this->maker($result);
+
+        return $this->json([
+            'data' => $customers,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage
+        ]);
     }
 
    /**

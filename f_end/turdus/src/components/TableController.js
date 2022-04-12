@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { getPatients, getCustomers, getVets, getSpecies, getRaces, findVisits, findCustomers, findPatients, findVets, findSpecies } from "./ApiFetch";
-import { handleDatalist } from "./Handlers";
+import { handleDatalist, handlePagination } from "./Handlers";
 import { FormArray, FormGenerator, handleClean, inputGenerator } from "./FormController";
 
 function SearchFilter({ arr, fetchMethod }) {
@@ -140,6 +140,7 @@ function SearchFilter({ arr, fetchMethod }) {
             });
             
         document.getElementById('cleanButton').addEventListener('click', cleanForm);
+        
     }
 
     useEffect(() => {
@@ -160,6 +161,7 @@ const fillTable = (data) => {
 
     const thead = document.getElementById('auto-table-thead');
     const tbody = document.getElementById('auto-table-tbody');
+    const pagination = document.getElementById('pagination');
 
     let newTbody = '';
     let headRow = '<tr>';
@@ -194,8 +196,68 @@ const fillTable = (data) => {
         newTbody += bodyRow;
     });
 
+    // Pagination
+    
+    let pages = [];
+    let arr;
+    
+    if (data.thisPage == 1) {
+        
+        arr = [];
+        for (let i = 1; i <= data.maxPages; i++) {
+            arr.push(i)
+        }
+        pages = arr;
+        
+
+    } else if (data.thisPage == data.maxPages) {
+
+        arr = [];
+        for (let i = data.maxPages; i >= 1; i--) {
+            arr.push(i)
+        }
+            
+        pages = arr.reverse();
+
+    } else {
+        pages = [data.thisPage-1, data.thisPage, data.thisPage+1];
+    }
+        
+    let paginator = `
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    `;
+
+    pages.forEach(p => {
+        paginator += 
+        `
+            <li class="page-item"><a class="page-link" href="#">${p}</a></li>
+        `
+    });
+
+    paginator +=
+    `
+        <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    `
+
     thead.innerHTML = headRow;
     tbody.innerHTML = newTbody;
+    pagination.innerHTML = paginator;
+
+    // Paginator listeners
+    const paginationItems = document.querySelectorAll('.page-link');
+
+    paginationItems.forEach(e => {
+        // MIRAR CÓMO HACER EL FECTH PARA DEVOLVER LOS CAMPOS (DÓNDE PONER EL HANDLE, CÓMO DEVOLVER LA PÁGINA ACTUAL, ETC)
+        e.addEventListener('click', handlePagination);
+    });
 
 }
 
@@ -203,9 +265,10 @@ const assignData = (fetchData, arr) => {
 
     let data = {
         thead: arr,
-        tbody: fetchData
+        tbody: fetchData.data,
+        maxPages: fetchData.maxPages,
+        thisPage: fetchData.thisPage
     }
-    
     fillTable(data);
 };
 
@@ -224,6 +287,23 @@ function TableGenerator({ arr, fetchMethod }) {
                     <tbody id="auto-table-tbody"></tbody>
                 </table>
             </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+                    {/* <li className="page-item">
+                        <a className="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li className="page-item"><a className="page-link" href="#">1</a></li>
+                    <li className="page-item"><a className="page-link" href="#">2</a></li>
+                    <li className="page-item"><a className="page-link" href="#">3</a></li>
+                    <li className="page-item">
+                        <a className="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li> */}
+                </ul>
+            </nav>
         </>
     )
 }
