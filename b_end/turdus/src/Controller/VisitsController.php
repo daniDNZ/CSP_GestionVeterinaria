@@ -46,32 +46,25 @@ class VisitsController extends AbstractController
         $maxPages = ceil($visitsFound['paginator']->count() / $limit);
 
         $visits = $this->maker($result);
+        $allVisits = $this->maker($visitsFound['all']);
 
         return $this->json([
             'data' => $visits,
             'maxPages' => $maxPages,
-            'thisPage' => $currentPage
+            'thisPage' => $currentPage,
+            'allData' => $allVisits
         ]);
     }
     
 
     /**
-     * @Route("/api/visits", name="app_visits_post", methods="POST")
+     * @Route("/api/{currentPage}/visits", name="app_visits_post", methods="POST")
      */
-    public function findVisits(
-        VisitRepository $visitRepository,
-        PatientRepository $patientRepository, 
-        UserRepository $userRepository, 
-        CustomerRepository $customerRepository,
-        SpeciesRepository $speciesRepository, 
-        Request $request
-    ): Response
+    public function findVisits( VisitRepository $visitRepository, int $currentPage, Request $request ): Response
     {
+        $limit = 10;
         $visits = [];
-        $query = array();
         $data = $request->toArray();
-
-        
 
         $query = array();
 
@@ -82,15 +75,20 @@ class VisitsController extends AbstractController
         if ($data['categoryPicker'] != '')      {$query['category'] = $data['categoryPicker'];} else {$query['category'] = '%';}
         if ($data['completedPicker'] != '')     {$query['completed'] = $data['completedPicker'];} else {$query['completed'] = '%';}
 
-        
-        $visitEntities = $visitRepository->findByQuery($query);
+        $visitsFound = $visitRepository->findByQuery($query, $currentPage, $limit);
+        $result = $visitsFound['paginator'];
 
-        foreach ($visitEntities as $visitEntity)
-        {
-            $visits = $this->maker($visitEntities);
-        }
-               
-        return $this->json($visits);
+        $maxPages = ceil($visitsFound['paginator']->count() / $limit);
+
+        $visits = $this->maker($result);
+        $allVisits = $this->maker($visitsFound['all']);
+
+        return $this->json([
+            'data' => $visits,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage,
+            'allData' => $allVisits
+        ]);
     }
 
     /**

@@ -70,14 +70,16 @@ class VisitRepository extends ServiceEntityRepository
             ->orderBy('v.date_time', 'ASC')
             ->getQuery();
 
-            $paginator = $this->paginate($query, $currentPage, $limit);
+        $all = $query->getResult();
+        $paginator = $this->paginate($query, $currentPage, $limit);
 
-            return array('paginator' => $paginator, 'query' => $query);
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
 
-    public function findByQuery($q)
+    public function findByQuery($q, $currentPage = 1, $limit = 10)
     {
-        return $this->createQueryBuilder('v')
+
+        $query = $this->createQueryBuilder('v')
             ->innerJoin('v.patient', 'p')
             ->innerJoin('v.user', 'u')
             ->innerJoin('p.responsible', 'c')
@@ -94,10 +96,13 @@ class VisitRepository extends ServiceEntityRepository
             ->setParameter('vet', '%'.$q['vet'].'%')
             ->setParameter('cust', '%'.$q['customer'].'%')
             ->orderBy('v.date_time', 'ASC')
-            // ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->getQuery();
+
+        $all = $query->getResult();
+
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
 
     public function findByDate($value)

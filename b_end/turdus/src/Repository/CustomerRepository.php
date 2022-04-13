@@ -86,15 +86,17 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
             ->orderBy('c.name', 'ASC')
             ->getQuery();
 
-            $paginator = $this->paginate($query, $currentPage, $limit);
+        $all = $query->getResult();
 
-            return array('paginator' => $paginator, 'query' => $query);
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
 
     
-    public function findByQuery($q)
+    public function findByQuery($q, $currentPage = 1, $limit = 10)
     {
-        return $this->createQueryBuilder('c')
+        $query = $this->createQueryBuilder('c')
             ->andWhere('c.name LIKE :name')
             ->andWhere('c.last_name LIKE :lname')
             ->andWhere('c.phone LIKE :phone')
@@ -104,10 +106,13 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
             ->setParameter('phone', '%'.$q['phone'].'%')
             ->setParameter('email', '%'.$q['email'].'%')
             ->orderBy('c.name', 'ASC')
-            // ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->getQuery();
+
+        $all = $query->getResult();
+        
+        $paginator = $this->paginate($query, $currentPage, $limit);
+        
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
     
     public function findByName($value)

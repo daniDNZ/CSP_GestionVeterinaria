@@ -22,7 +22,19 @@ function DashboardNavContent() {
                     <span className="d-inline">Visitas</span>
                 </NavLink>
             </li> */}
-             <li className="mx-0 nav-item">
+            <li className="mx-0 nav-item">
+                <NavLink to="/turdus/search" className="nav-link px-2">
+                    <i className="bi bi-search fs-5 me-2"></i>
+                    <span className="d-inline">Buscar</span>
+                </NavLink>
+            </li>
+            <li className="mx-0 nav-item">
+                <NavLink to="/turdus/registrations" className="nav-link px-2">
+                    <i className="bi bi-plus-circle fs-5 me-2"></i>
+                    <span className="d-inline">Añadir</span>
+                </NavLink>
+            </li>
+             {/* <li className="mx-0 nav-item">
                 <a href="#" className="nav-link px-2 dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#visits-collapse" aria-controls="#visits-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <i className="bi bi-card-text fs-5 me-2"></i>
                     <span className="d-inline">Visitas</span>
@@ -46,15 +58,15 @@ function DashboardNavContent() {
                     </ul>
                 </div>
 
-            </li>
+            </li> */}
 
-            <li className="mx-0 nav-item">
+            {/* <li className="mx-0 nav-item">
                 <a href="#" className="nav-link px-2">
                     <i className="bi bi-bricks fs-5 me-2 "></i>
                     <span className="d-inline">Products</span>
                 </a>
-            </li>
-            <li className="mx-0 nav-item">
+            </li> */}
+            {/* <li className="mx-0 nav-item">
                 <a href="#" className="nav-link px-2 dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#customers-collapse" aria-controls="#customers-collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <i className="bi bi-person-lines-fill fs-5 me-2"></i>
                     <span className="d-inline">Clientes</span>
@@ -78,7 +90,7 @@ function DashboardNavContent() {
                     </ul>
                 </div>
 
-            </li>
+            </li> */}
             <li className="mx-0 nav-item d-md-none">
                 <a href="#" className="nav-link px-2 dropdown-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-controls="#user-collapse" aria-expanded="false">
                     <img src="https://via.placeholder.com/28?text=!" alt="user" width="24" height="24" className="rounded-circle me-1" />

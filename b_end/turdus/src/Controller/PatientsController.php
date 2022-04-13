@@ -51,14 +51,14 @@ class PatientsController extends AbstractController
     }
 
     /**
-     * @Route("/api/patients", name="app_patients_post", methods="POST")
+     * @Route("/api/{currentPage}/patients", name="app_patients_post", methods="POST")
      */
-    public function findPatients( PatientRepository $patientRepository, Request $request ): Response
+    public function findPatients( PatientRepository $patientRepository, int $currentPage, Request $request ): Response
     {
+        $limit = 10;
         $patients = [];
         $patientEntities = array();
         $data = $request->toArray();
-
 
         $query = array();
 
@@ -72,27 +72,42 @@ class PatientsController extends AbstractController
         if ($data['customerPicker'] != '')      {$query['responsible'] = $data['customerPicker'];} else {$query['responsible'] = '%';}
 
         
-        $patientEntities = $patientRepository->findByQuery($query);
+        $patientsFound = $patientRepository->findByQuery($query, $currentPage, $limit);
+        $result = $patientsFound['paginator'];
 
-        
-        $patients = $this->maker($patientEntities);
-        
+        $maxPages = ceil($patientsFound['paginator']->count() / $limit);
 
-        return $this->json($patients);
+        $patients = $this->maker($result);
+        $allPatients = $this->maker($patientsFound['all']);
+
+        return $this->json([
+            'data' => $patients,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage,
+            'allData' => $allPatients
+        ]);
     }
 
-        /**
-     * @Route("/api/patients", name="app_patients_get", methods="GET")
+    /**
+     * @Route("/api/{currentPage}/patients", name="app_patients_get", methods="GET")
      */
-    public function getPatients(PatientRepository $patientRepository, Request $request): Response
+    public function getPatients(PatientRepository $patientRepository, int $currentPage, Request $request): Response
     {
-        $patients = [];
-        
-        $patientEntities = $patientRepository->findAll();
-        
-        $patients = $this->maker($patientEntities);
-            
-        return $this->json($patients);
+        $limit = 10;
+        $patientsFound = $patientRepository->findAll($currentPage, $limit);
+        $result = $patientsFound['paginator'];
+
+        $maxPages = ceil($patientsFound['paginator']->count() / $limit);
+
+        $patients = $this->maker($result);
+        $allPatients = $this->maker($patientsFound['all']);
+
+        return $this->json([
+            'data' => $patients,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage,
+            'allData' => $allPatients
+        ]);
     }
 
       /**

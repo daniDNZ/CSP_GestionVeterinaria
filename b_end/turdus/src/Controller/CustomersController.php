@@ -54,25 +54,36 @@ class CustomersController extends AbstractController
         }
 
     /**
-     * @Route("/api/customers", name="app_customers_post", methods="POST")
+     * @Route("/api/{currentPage}/customers", name="app_customers_post", methods="POST")
      */
-    public function findCustomers( CustomerRepository $customerRepository, Request $request): Response
+    public function findCustomers( CustomerRepository $customerRepository, int $currentPage, Request $request): Response
     {   
+        $limit = 10;
         $customers = [];
         $customerEntities = array();
         $data = $request->toArray();
 
         $query = array();
+
         if ($data['namePicker'] != '')      {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
         if ($data['lastnamePicker'] != '')  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
         if ($data['phonePicker'] != '')     {$query['phone'] = $data['phonePicker'];} else {$query['phone'] = '%';}
         if ($data['emailPicker'] != '')     {$query['email'] = $data['emailPicker'];} else {$query['email'] = '%';}
 
-        $customerEntities = $customerRepository->findByQuery($query);
+        $customersFound = $customerRepository->findByQuery($query, $currentPage, $limit);
+        $result = $customersFound['paginator'];
 
-        $customers = $this->maker($customerEntities);
+        $maxPages = ceil($customersFound['paginator']->count() / $limit);
 
-        return $this->json($customers);
+        $customers = $this->maker($result);
+        $allCustomers = $this->maker($customersFound['all']);
+
+        return $this->json([
+            'data' => $customers,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage,
+            'allData' => $allCustomers
+        ]);
     }
 
      /**
@@ -87,11 +98,13 @@ class CustomersController extends AbstractController
         $maxPages = ceil($customersFound['paginator']->count() / $limit);
 
         $customers = $this->maker($result);
+        $allCustomers = $this->maker($customersFound['all']);
 
         return $this->json([
             'data' => $customers,
             'maxPages' => $maxPages,
-            'thisPage' => $currentPage
+            'thisPage' => $currentPage,
+            'allData' => $allCustomers
         ]);
     }
 

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { getPatients, getCustomers, getVets, getSpecies, getRaces, findVisits, findCustomers, findPatients, findVets, findSpecies } from "./ApiFetch";
-import { handleDatalist, handlePagination } from "./Handlers";
-import { FormArray, FormGenerator, handleClean, inputGenerator } from "./FormController";
+import { findVisits, findCustomers, findPatients } from "./ApiFetch";
+import { FormArray, handleClean, inputGenerator } from "./FormController";
+import { getDataDatalist } from "./Datalist";
 
 function SearchFilter({ arr, fetchMethod }) {
 
@@ -9,58 +9,21 @@ function SearchFilter({ arr, fetchMethod }) {
     // CONTINUAR AFINANDO LAS BÚSQUEDAS, LOS DATALIST Y DEMÁS
 
     let filter = {};
-    let formType = 'searchCustomerForm';
-
-    let id = ['namePicker', 'lastnamePicker', 'phonePicker', 'emailPicker'];
-
-    if (arr[0] == 'visits') {
-        formType = 'searchVisitForm';
-        id = [
-            'datePicker',
-            'categoryPicker',
-            'vetPicker',
-            'customerPicker',
-            'patientPicker',
-            'completedPicker'
-        ]
-    }
-
-    if (arr[0] == 'patients') {
-        formType = 'searchPatientForm';
-        id = [
-            'namePicker', 
-            'speciesPicker', 
-            'racePicker', 
-            'birthdayPicker', 
-            'genderPicker',
-            'sterilisedPicker',
-            'vetPicker',
-            'customerPicker'
-        ]
-    }
-
-    if (arr[0] == 'customers') {
-        formType = 'searchCustomerForm';
-        id = ['namePicker', 'lastnamePicker', 'phonePicker', 'emailPicker']
-    }
 
     const findData = () => {
 
-        if (arr[0] == 'patients') {
-            findPatients(assignData, filter, arr);
-            findPatients(getData, filter);
+        if (arr.headers[0] == 'patients') {
+            findPatients(arr, 1, filter);
         }
-        if (arr[0] == 'customers') {
-            findCustomers(assignData, filter, arr);
-            findCustomers(getData, filter);
+        if (arr.headers[0] == 'customers') {
+            findCustomers(arr, 1, filter);
         }
-        if (arr[0] == 'visits') {
-            findVisits(assignData, filter, arr);
-            findVisits(getData, filter);
+        if (arr.headers[0] == 'visits') {
+            findVisits(arr, 1, filter);
         }
-
+    
     }
-
+  
     const captureData = (e) => {
         e.preventDefault();
         let named = e.target.id;
@@ -75,42 +38,9 @@ function SearchFilter({ arr, fetchMethod }) {
         findData();
     }
 
-    // Recoge los valores de la misma key de cada objeto para 
-    // imprimirlos después en la datalist correspondiente.
-    const getData = (data) => {
-        
-        // Primero comprobamos que tenemos datos.
-        if (data.length > 0) {
-
-            // Inicializamos un contador para recorrer los id
-            // del array de ids para las datalist.
-            let i = 0;
-
-            // Recogemos las keys del objeto.
-            let keys = Object.keys(data[0]);
-
-            // Eliminamos la key 'id',
-            keys.shift();
-
-            // Por cada key recorremos todos los objetos y los almacenamos
-            // para enviarlos al método que crea la datalist.
-            keys.forEach(k => {
-                let arrData = [];
-
-                data.forEach(obj => { arrData.push(obj[k]) });
-
-                // Eliminamos elementos repetidos.
-                arrData = [... new Set(arrData)];
-
-                handleDatalist(arrData, id[i]);
-                i++;
-            });
-        }
-    }
-
-    const fillDatalist = () => {
-        fetchMethod( getData )
-    }
+    // const fillDatalist = () => {
+    //     fetchMethod( getDataDatalist, id )
+    // }
 
     const cleanForm = (e) => {
         e.preventDefault();
@@ -122,13 +52,14 @@ function SearchFilter({ arr, fetchMethod }) {
             filter[key] = '';
         }
 
-        fetchMethod(assignData, arr);
-        fillDatalist();
+        fetchMethod(arr);
+        // fetchMethod(assignData, arr);
+        // fillDatalist();
     }
 
     const searchListeners = () => {
         
-            id.forEach(e => {
+            arr.ids.forEach(e => {
                 Object.defineProperty(filter, e, 
                     {
                         value: '',
@@ -144,8 +75,9 @@ function SearchFilter({ arr, fetchMethod }) {
     }
 
     useEffect(() => {
-        inputGenerator(FormArray(formType, {}))
-        fillDatalist();
+        inputGenerator(FormArray(arr.formType, {}))
+        // fetchMethod();
+        // fillDatalist();
         searchListeners();
     }, [arr])
 
@@ -161,7 +93,6 @@ const fillTable = (data) => {
 
     const thead = document.getElementById('auto-table-thead');
     const tbody = document.getElementById('auto-table-tbody');
-    const pagination = document.getElementById('pagination');
 
     let newTbody = '';
     let headRow = '<tr>';
@@ -195,87 +126,28 @@ const fillTable = (data) => {
         </tr>`;
         newTbody += bodyRow;
     });
-
-    // Pagination
-    
-    let pages = [];
-    let arr;
-    
-    if (data.thisPage == 1) {
-        
-        arr = [];
-        for (let i = 1; i <= data.maxPages; i++) {
-            arr.push(i)
-        }
-        pages = arr;
-        
-
-    } else if (data.thisPage == data.maxPages) {
-
-        arr = [];
-        for (let i = data.maxPages; i >= 1; i--) {
-            arr.push(i)
-        }
-            
-        pages = arr.reverse();
-
-    } else {
-        pages = [data.thisPage-1, data.thisPage, data.thisPage+1];
-    }
-        
-    let paginator = `
-        <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-    `;
-
-    pages.forEach(p => {
-        paginator += 
-        `
-            <li class="page-item"><a class="page-link" href="#">${p}</a></li>
-        `
-    });
-
-    paginator +=
-    `
-        <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    `
-
     thead.innerHTML = headRow;
     tbody.innerHTML = newTbody;
-    pagination.innerHTML = paginator;
-
-    // Paginator listeners
-    const paginationItems = document.querySelectorAll('.page-link');
-
-    paginationItems.forEach(e => {
-        // MIRAR CÓMO HACER EL FECTH PARA DEVOLVER LOS CAMPOS (DÓNDE PONER EL HANDLE, CÓMO DEVOLVER LA PÁGINA ACTUAL, ETC)
-        e.addEventListener('click', handlePagination);
-    });
-
 }
 
-const assignData = (fetchData, arr) => {
-
+const assignData = (fetchData, arr, bodyData = {}) => {
     let data = {
-        thead: arr,
+        thead: arr.headers,
         tbody: fetchData.data,
         maxPages: fetchData.maxPages,
         thisPage: fetchData.thisPage
     }
+
     fillTable(data);
+    // activePagination(data, arr, bodyData);
 };
+
 
 function TableGenerator({ arr, fetchMethod }) {
 
     useEffect(() => {
-        fetchMethod(assignData, arr);
+        // fetchMethod(assignData, arr);
+        fetchMethod(arr);
     }, [arr])
 
     return (
@@ -308,4 +180,4 @@ function TableGenerator({ arr, fetchMethod }) {
     )
 }
 
-export { TableGenerator }
+export { TableGenerator, assignData }

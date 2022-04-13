@@ -12,6 +12,8 @@ function Registrations() {
 
     useEffect(() => { listeners() }, [arrForm]);
 
+    // SEGUIR EL EJEMPLO DE LOS FORMULARIOS DE BÚSQUEDA PARA LAS DATALIST.
+
     const listeners = () => {
 
         if (document.getElementById('speciesPicker')) {
@@ -50,7 +52,7 @@ function Registrations() {
 
     const changeForm = (e) => {
         formType = e.target.value;
-        prop =  FormArray(formType, {})
+        prop =  FormArray(formType)
         newArrForm(prop);
 
         document.getElementById('auto-form').removeEventListener('submit', handleData);
@@ -61,8 +63,8 @@ function Registrations() {
         <>
             <h3>Alta:</h3>
             <select id="selectForm" className="form-select" onChange={changeForm}>
-            <option value="customer">Nuevo Cliente</option>
-            <option value="patient">Nuevo Paciente</option>
+                <option value="customer">Nuevo Cliente</option>
+                <option value="patient">Nuevo Paciente</option>
                 {/* <option value="both" >Nuevo Paciente + Cliente</option> */}
             </select>
             <hr />

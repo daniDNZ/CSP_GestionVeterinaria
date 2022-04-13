@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { fetchVets } from "./ApiFetch"
+import { datalistGenerator } from "./Datalist";
 
 function FormModal() {
     return (
@@ -681,19 +681,6 @@ function FormArray
     }
     return arrForm;
 
-}
-
-function datalistGenerator (id, data) {
-    let datalist;
-    data.forEach(v => {
-
-        datalist += 
-        `
-            <option id="${id.slice(0,2)}-${v.value}" value='${v.value}'>${v.text}</option> 
-        `;
-
-    });
-    return datalist;
 }
 
 function inputGenerator( arrForm ) {

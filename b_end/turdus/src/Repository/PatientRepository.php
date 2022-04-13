@@ -6,6 +6,7 @@ use App\Entity\Patient;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,27 +46,38 @@ class PatientRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * PAGINATOR
+     */
+    public function paginate($dql, $page = 1, $limit = 10)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
+    }
+
     // /**
     //  * @return Patient[] Returns an array of Patient objects
     //  */
-    public function findAll()
+    public function findAll($currentPage = 1, $limit = 10)
     {
-        return $this->findBy(array(), array('name' => 'ASC'));
-    }
-    
-    public function findByVets($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.vet IN (:val)')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.name', 'ASC')
+            ->getQuery();
+        
+        $all = $query->getResult();
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
 
-    public function findByQuery($q)
+    public function findByQuery($q, $currentPage = 1, $limit = 10)
     {
-        return $this->createQueryBuilder('p')
+        $query = $this->createQueryBuilder('p')
             ->innerJoin('p.species', 's')
             ->innerJoin('p.race', 'r')
             ->innerJoin('p.vet', 'v')
@@ -87,12 +99,24 @@ class PatientRepository extends ServiceEntityRepository
             ->setParameter('vet', '%'.$q['vet'].'%')
             ->setParameter('resp', '%'.$q['responsible'].'%')
             ->orderBy('p.name', 'ASC')
-            // ->setMaxResults(10)
+            ->getQuery();
+
+        $all = $query->getResult();
+
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
+    }
+    
+    public function findByVets($value)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.vet IN (:val)')
+            ->setParameter('val', $value)
             ->getQuery()
             ->getResult()
         ;
     }
-    
 
     /*
     public function findOneBySomeField($value): ?Patient

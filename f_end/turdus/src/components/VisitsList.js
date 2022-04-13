@@ -6,17 +6,31 @@ import { getVisits } from "./ApiFetch";
 
 function Visits() {
 
-    const arr = [
-        'visits',
-        '#', 
-        'Fecha', 
-        'Categoría', 
-        'Veterinaria/o', 
-        'Cliente',
-        'Paciente', 
-        'Completada', 
-        'Vista'
-    ];
+    const arr = 
+        {
+            headers:
+                [
+                    'visits',
+                    '#', 
+                    'Fecha', 
+                    'Categoría', 
+                    'Veterinaria/o', 
+                    'Cliente',
+                    'Paciente', 
+                    'Completada', 
+                    'Vista'
+                ],
+            ids :
+                [
+                    'datePicker',
+                    'categoryPicker',
+                    'vetPicker',
+                    'customerPicker',
+                    'patientPicker',
+                    'completedPicker',
+                ],
+            formType: 'searchVisitForm'
+        };
 
     const fetchMethod = getVisits;
     
@@ -37,3 +51,4 @@ function Visits() {
     )
 }
 export default Visits;
+

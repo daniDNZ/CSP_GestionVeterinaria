@@ -1,5 +1,8 @@
 import bcrypt from "bcryptjs/dist/bcrypt";
-import { handleAlert, handleClean } from "./FormController";
+import { assignData } from "./TableController";
+import { getDataDatalist } from "./Datalist";
+import { handleAlert } from "./FormController";
+import { activePagination } from "./TablePagination";
 
 const fetchPatient = (id = '', userId = '', customer = '', species = '', sterilised = '') => {
     let arrPatients;
@@ -33,7 +36,7 @@ const fetchPatient = (id = '', userId = '', customer = '', species = '', sterili
     return arrPatients;
 }
 
-const getVisits = (callback, id) => {
+const getVisits = ( arr, currentPage = 1 ) => {
 
     const config = {
         method: 'GET',
@@ -43,10 +46,10 @@ const getVisits = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/1/visits", config);
+    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/visits`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data.data, id) })
+        .then(data => {  assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getVisits ) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -54,7 +57,7 @@ const getVisits = (callback, id) => {
 
 }
 
-const getPatients = (callback, id) => {
+const getPatients = ( arr, currentPage = 1 ) => {
 
     const config = {
         method: 'GET',
@@ -64,10 +67,10 @@ const getPatients = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/patients", config);
+    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/patients`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data, id) })
+        .then(data => {  assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getPatients ) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -141,7 +144,7 @@ const getRaces = (callback, id) => {
 }
 
 
-const getCustomers = (callback, id, currentPage = 1) => {
+const getCustomers = ( arr, currentPage = 1 ) => {
 
     const config = {
         method: 'GET',
@@ -154,14 +157,14 @@ const getCustomers = (callback, id, currentPage = 1) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data, id) })
+        .then(data => { assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getCustomers ) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
         });
 }
 
-const findVisits = (callback, bodyData = {}, id) => {
+const findVisits = ( arr, currentPage = 1, bodyData = {} ) => {
 
     const config = {
         method: 'POST',
@@ -172,32 +175,10 @@ const findVisits = (callback, bodyData = {}, id) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request("http://192.168.1.81:8888/api/visits", config);
+    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/visits`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data, id) })
-        .catch(e => {
-            console.log(e)
-            // localStorage.clear();
-        });
-  
-}
-
-const findPatients = (callback, bodyData = {}, id) => {
-
-    const config = {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-    }
-    const request = new Request("http://192.168.1.81:8888/api/patients", config);
-    fetch(request)
-        .then(response => response.json())
-        .then(data => { callback(data, id) })
+        .then(data => { assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findVisits, bodyData ) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -205,7 +186,7 @@ const findPatients = (callback, bodyData = {}, id) => {
   
 }
 
-const findCustomers = (callback, bodyData = {}, id) => {
+const findPatients = ( arr, currentPage = 1, bodyData = {} ) => {
 
     const config = {
         method: 'POST',
@@ -216,10 +197,32 @@ const findCustomers = (callback, bodyData = {}, id) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request("http://192.168.1.81:8888/api/customers", config);
+    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/patients`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data, id) })
+        .then(data => { assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+const findCustomers = ( arr, currentPage = 1, bodyData = {} ) => {
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findCustomers, bodyData ) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
