@@ -109,13 +109,12 @@ class CustomersController extends AbstractController
     }
 
    /**
-     * @Route("/api/customer", name="app_one_customer", methods="POST")
+     * @Route("/api/customers/{id}", name="app_one_customer", methods="GET")
      */
-    public function singleCustomer(PatientRepository $patientRepository, CustomerRepository $customerRepository, Request $request): Response
+    public function singleCustomer(PatientRepository $patientRepository, CustomerRepository $customerRepository, int $id, Request $request): Response
     {
-        $data = $request->toArray();
-
-        $customerEntity = $customerRepository->findOneBy(array('id' => $data['id']));
+    
+        $customerEntity = $customerRepository->findOneBy(array('id' => $id));
     
         $customer = [];
         $customer['id'] = $customerEntity->getId();

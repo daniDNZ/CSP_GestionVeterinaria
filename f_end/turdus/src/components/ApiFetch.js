@@ -164,6 +164,26 @@ const getCustomers = ( arr, currentPage = 1 ) => {
         });
 }
 
+const getAllCustomers = ( callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/1/customers`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data.allData, id) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
 const findVisits = ( arr, currentPage = 1, bodyData = {} ) => {
 
     const config = {
@@ -295,6 +315,28 @@ const findRaces = (callback, id, value) => {
         });
 }
 
+// FIND ONE
+
+const findOneCustomer = (callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/customers/${id}`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
 
 
 // INSERTS / UPDATES
@@ -335,6 +377,7 @@ const addUpdateCustomer = (fData, action, id = '') => {
         .then(response => response.json())
         .then(data => {
             handleAlert(true);
+            window.location = `/turdus/customers/${data.id}`;
         })
         .catch(e => {
             handleAlert(false);
@@ -406,6 +449,7 @@ export {
     getRaces, 
     getVisits,
     getCustomers, 
+    getAllCustomers,
     getPatients, 
     findVisits,
     findPatients, 
@@ -413,6 +457,7 @@ export {
     findSpecies,
     findRaces, 
     findCustomers, 
+    findOneCustomer,
     addUpdateCustomer, 
     addUpdatePatient 
 }

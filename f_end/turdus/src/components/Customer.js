@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { FormGenerator, FormArray, CustomerForm, FormAlerts, FormModal } from "./FormController";
-import { findCustomers, addUpdateCustomer } from "./ApiFetch";
+import { findOneCustomer, addUpdateCustomer } from "./ApiFetch";
 
 function Customer() {
     const { id } = useParams();
@@ -11,7 +11,8 @@ function Customer() {
 
     useEffect(() => {
 
-        findCustomers(handleCustomer, {customerId: id});
+        findOneCustomer(handleCustomer, id);
+        addButtons();
         document.getElementById('auto-form').addEventListener('submit', handleData);
 
     }, [])
@@ -24,7 +25,6 @@ function Customer() {
 
     const handleCustomer = (data) => {
 
-        data = data[0];
         document.getElementById("customerDni").value = data.dni;
         document.getElementById("customerName").value = data.name;
         document.getElementById("customerInfo").value = data.info;
@@ -34,6 +34,20 @@ function Customer() {
         document.getElementById("customerAddress").value = data.address;
         document.getElementById("customerLastname").value = data.lastName;
 
+    }
+
+    const addButtons = () => {
+        const formTitle = document.getElementById("form-title");
+        let bContainer = document.createElement("div");
+        bContainer.classList.add('btn', 'btn-light', 'col-auto', 'p-0');
+
+        let pButton = document.createElement("a");
+        pButton.setAttribute('id', 'addPatientButton');
+        pButton.classList.add('btn', 'col-auto');
+        pButton.textContent = ' Paciente + ';
+    
+        bContainer.append(pButton);
+        formTitle.append(bContainer);
     }
 
 

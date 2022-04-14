@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { handleDatalist } from "./Handlers";
+import { handleDatalist } from "./Datalist";
 import { FormGenerator, FormArray, handleClean } from "./FormController";
-import { addUpdatePatient, getVets, getCustomers, getSpecies, getRaces, findRaces, addUpdateCustomer } from "./ApiFetch";
+import { addUpdatePatient, getVets, getAllCustomers, getSpecies, getRaces, findRaces, addUpdateCustomer } from "./ApiFetch";
 
 function Registrations() {
 
@@ -18,10 +18,10 @@ function Registrations() {
 
         if (document.getElementById('speciesPicker')) {
 
-            getVets(handleDatalist, 'vetPicker');
-            getCustomers(handleDatalist, 'customerPicker');
-            getSpecies(handleDatalist, 'speciesPicker');
-            getRaces(handleDatalist, 'racePicker');
+            getVets(handleFetch, 'vetPicker');
+            getAllCustomers(handleFetch, 'customerPicker');
+            getSpecies(handleFetch, 'speciesPicker');
+            getRaces(handleFetch, 'racePicker');
     
             document.getElementById('speciesPicker').addEventListener('input', filterRaces);
             // HAY QUE AÑADIR MÁS FILTROS
@@ -32,15 +32,46 @@ function Registrations() {
         
     }
 
+    const handleFetch = (data, id) => {
+        let arrData = [];
+
+        if (id === 'customerPicker') {
+            data.forEach(e => {
+                arrData.push(e.name+' - '+e.email);
+            })
+        } else if (id === 'vetPicker'){
+            data.forEach(e => {
+                arrData.push(e.name+' - '+e.username);
+            })
+        } else {
+            data.forEach(e => {
+                arrData.push(e.name);
+            });
+        }
+
+            
+        
+            
+
+        handleDatalist(arrData, id);
+    }
+
     const handleData = (e) => {
         e.preventDefault();
         const fData = e.target;
 
-        fData.customerEmail ?
+
+        if (fData.customerEmail) {
             addUpdateCustomer(fData, 'add')
-        :
+
+        } else {
+            fData.customerPicker.value = fData.customerPicker.value.split(' - ')[1] 
+            
+            fData.vetPicker.value = fData.vetPicker.value.split(' - ')[1]
+            
             addUpdatePatient(fData, 'add')
-        ;
+        }
+            
         
         handleClean(fData);
     }
@@ -65,6 +96,7 @@ function Registrations() {
             <select id="selectForm" className="form-select" onChange={changeForm}>
                 <option value="customer">Nuevo Cliente</option>
                 <option value="patient">Nuevo Paciente</option>
+                <option value="visit">Nueva Visita</option>
                 {/* <option value="both" >Nuevo Paciente + Cliente</option> */}
             </select>
             <hr />

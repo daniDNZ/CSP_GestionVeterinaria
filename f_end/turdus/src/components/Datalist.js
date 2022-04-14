@@ -28,7 +28,6 @@ const getDataDatalist = (fetchData, id ) => {
 
 const handleDatalist = (data, id) => {
     let arr = [];
-    let value;
     data.forEach(e => {
 
         arr.push({value: e, text: e})

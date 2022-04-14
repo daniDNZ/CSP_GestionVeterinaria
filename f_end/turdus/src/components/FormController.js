@@ -435,6 +435,88 @@ function FormArray
         },
     ]
 
+    const visitForm = [
+        {
+            label: '',
+            id: '',
+            tag: 'h3',
+            type: '',
+            value: 'Visita',
+        },
+        {
+            label: 'Fecha/Hora',
+            id: 'dateTimePicker',
+            tag: 'input',
+            type: 'datetime-local',
+            value: '',
+            datalist: ''
+        },
+        {
+            label: 'Veterinaria/o',
+            id: 'vetPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: ''
+        },
+        {
+            label: 'Completada',
+            id: 'completedPicker',
+            tag: 'select',
+            type: '',
+            value: '',
+            datalist: [
+                {value: "", text: "Select..."},
+                {value: "0", text:"No"}, 
+                {value: "1", text: "Sí"}]
+        },
+        {
+            label: 'Cliente',
+            id: 'customerPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: ''
+        },
+        {
+            label: 'Categoría',
+            id: 'category',
+            tag: 'input',
+            type: 'text',
+            value: '',
+            datalist: ''
+        },
+        {
+            label: 'Paciente',
+            id: 'patientPicker',
+            tag: 'input',
+            type: 'search',
+            value: '',
+            datalist: ''
+        },
+        {
+            label: 'Peso',
+            id: 'patientWeight',
+            tag: 'input',
+            type: 'text',
+            value: ''
+        },
+        {
+            label: 'Descripción',
+            id: 'description',
+            tag: 'textarea',
+            type: '',
+            value: ''
+        },
+        {
+            label: 'Tratamiento',
+            id: 'treatment',
+            tag: 'textarea',
+            type: '',
+            value: '',
+        },
+    ]
+
     const searchPatientForm = [
         {
             label: 'Paciente',
@@ -665,6 +747,9 @@ function FormArray
         case 'customer':
             arrForm = customerForm;
             break;
+        case 'visit':
+            arrForm = visitForm;
+            break;
         case 'searchPatientForm':
             arrForm = searchPatientForm;
             break;
@@ -710,6 +795,8 @@ function inputGenerator( arrForm ) {
             attributes += `rows="5"`;
         } else if (e.tag == 'button'){
             attributes = `id="${e.id}" class="btn btn-light"`;
+        } else if (e.tag == 'h3') {
+            attributes = `class="col-auto"`;
         }
 
         input = 
@@ -740,7 +827,11 @@ function inputGenerator( arrForm ) {
                 
             `;
 
-        }  else if (e.tag == 'hr' || e.tag == 'h3') {
+        }  else if ( e.tag == 'h3' ) {
+
+            cell += `<div class='row justify-content-between' id='form-title'>${input}${e.value}</${e.tag}></div>`;
+
+        } else if (e.tag == 'hr' ) {
 
             cell += `${input}${e.value}</${e.tag}>`;
 
