@@ -65,10 +65,10 @@ class CustomersController extends AbstractController
 
         $query = array();
 
-        if ($data['namePicker'] != '')      {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
-        if ($data['lastnamePicker'] != '')  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
-        if ($data['phonePicker'] != '')     {$query['phone'] = $data['phonePicker'];} else {$query['phone'] = '%';}
-        if ($data['emailPicker'] != '')     {$query['email'] = $data['emailPicker'];} else {$query['email'] = '%';}
+        if (array_key_exists('namePicker', $data))      {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
+        if (array_key_exists('lastnamePicker', $data))  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
+        if (array_key_exists('phonePicker', $data))     {$query['phone'] = $data['phonePicker'];} else {$query['phone'] = '%';}
+        if (array_key_exists('emailPicker', $data))     {$query['email'] = $data['emailPicker'];} else {$query['email'] = '%';}
 
         $customersFound = $customerRepository->findByQuery($query, $currentPage, $limit);
         $result = $customersFound['paginator'];

@@ -1,2 +1,7 @@
 // Import Bootstrap and its default variables
 @import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+
+.offcanvas {
+    z-index: 1070 !important;
+}

@@ -62,14 +62,14 @@ class PatientsController extends AbstractController
 
         $query = array();
 
-        if ($data['namePicker'] != '')          {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
-        if ($data['speciesPicker'] != '')       {$query['species'] = $data['speciesPicker'];} else {$query['species'] = '%';}
-        if ($data['racePicker'] != '')          {$query['race'] = $data['racePicker'];} else {$query['race'] = '%';}
-        if ($data['birthdayPicker'] != '')      {$query['birthday'] = $data['birthdayPicker'];} else {$query['birthday'] = '%';}
-        if ($data['genderPicker'] != '')        {$query['gender'] = $data['genderPicker'];} else {$query['gender'] = '%';}
-        if ($data['sterilisedPicker'] != '')    {$query['sterilised'] = $data['sterilisedPicker'];} else {$query['sterilised'] = '%';}
-        if ($data['vetPicker'] != '')           {$query['vet'] = $data['vetPicker'];} else {$query['vet'] = '%';}
-        if ($data['customerPicker'] != '')      {$query['responsible'] = $data['customerPicker'];} else {$query['responsible'] = '%';}
+        if (array_key_exists('namePicker', $data))          {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
+        if (array_key_exists('speciesPicker', $data))       {$query['species'] = $data['speciesPicker'];} else {$query['species'] = '%';}
+        if (array_key_exists('racePicker', $data))          {$query['race'] = $data['racePicker'];} else {$query['race'] = '%';}
+        if (array_key_exists('birthdayPicker', $data))      {$query['birthday'] = $data['birthdayPicker'];} else {$query['birthday'] = '%';}
+        if (array_key_exists('genderPicker', $data))        {$query['gender'] = $data['genderPicker'];} else {$query['gender'] = '%';}
+        if (array_key_exists('sterilisedPicker', $data))    {$query['sterilised'] = $data['sterilisedPicker'];} else {$query['sterilised'] = '%';}
+        if (array_key_exists('vetPicker', $data))           {$query['vet'] = $data['vetPicker'];} else {$query['vet'] = '%';}
+        if (array_key_exists('customerPicker', $data))      {$query['responsible'] = $data['customerPicker'];} else {$query['responsible'] = '%';}
 
         
         $patientsFound = $patientRepository->findByQuery($query, $currentPage, $limit);

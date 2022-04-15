@@ -36,7 +36,7 @@ const fetchPatient = (id = '', userId = '', customer = '', species = '', sterili
     return arrPatients;
 }
 
-const getVisits = ( arr, currentPage = 1 ) => {
+const getVisits = ( callback, currentPage = 1 ) => {
 
     const config = {
         method: 'GET',
@@ -49,7 +49,9 @@ const getVisits = ( arr, currentPage = 1 ) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/visits`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => {  assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getVisits ) })
+        .then(data => {  callback(data, getVisits)
+            // assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getVisits ) 
+        })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -57,7 +59,7 @@ const getVisits = ( arr, currentPage = 1 ) => {
 
 }
 
-const getPatients = ( arr, currentPage = 1 ) => {
+const getPatients = ( callback, currentPage = 1 ) => {
 
     const config = {
         method: 'GET',
@@ -70,7 +72,9 @@ const getPatients = ( arr, currentPage = 1 ) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/patients`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => {  assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getPatients ) })
+        .then(data => {  callback(data, getPatients)
+            // assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getPatients ) 
+        })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -144,7 +148,7 @@ const getRaces = (callback, id) => {
 }
 
 
-const getCustomers = ( arr, currentPage = 1 ) => {
+const getCustomers = ( callback, currentPage = 1 ) => {
 
     const config = {
         method: 'GET',
@@ -157,7 +161,9 @@ const getCustomers = ( arr, currentPage = 1 ) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getCustomers ) })
+        .then(data => { callback(data, getCustomers)
+            // assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getCustomers ) 
+        })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -184,7 +190,7 @@ const getAllCustomers = ( callback, id ) => {
         });
 }
 
-const findVisits = ( arr, currentPage = 1, bodyData = {} ) => {
+const findVisits = ( callback, currentPage = 1, bodyData = {} ) => {
 
     const config = {
         method: 'POST',
@@ -198,7 +204,10 @@ const findVisits = ( arr, currentPage = 1, bodyData = {} ) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/visits`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findVisits, bodyData ) })
+        .then(data => {
+            callback(data, findVisits)
+            //  assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findVisits, bodyData ) 
+            })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -206,7 +215,7 @@ const findVisits = ( arr, currentPage = 1, bodyData = {} ) => {
   
 }
 
-const findPatients = ( arr, currentPage = 1, bodyData = {} ) => {
+const findPatients = ( callback, currentPage = 1, bodyData = {} ) => {
 
     const config = {
         method: 'POST',
@@ -220,7 +229,10 @@ const findPatients = ( arr, currentPage = 1, bodyData = {} ) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/patients`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) })
+        .then(data => { 
+            callback(data, findPatients)
+            // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) 
+        })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -228,7 +240,7 @@ const findPatients = ( arr, currentPage = 1, bodyData = {} ) => {
   
 }
 
-const findCustomers = ( arr, currentPage = 1, bodyData = {} ) => {
+const findCustomers = ( callback, currentPage = 1, bodyData = {}) => {
 
     const config = {
         method: 'POST',
@@ -242,7 +254,9 @@ const findCustomers = ( arr, currentPage = 1, bodyData = {} ) => {
     const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findCustomers, bodyData ) })
+        .then(data => { callback(data, findCustomers)
+            // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findCustomers, bodyData )
+         })
         .catch(e => {
             console.log(e)
             // localStorage.clear();

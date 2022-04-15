@@ -68,12 +68,12 @@ class VisitsController extends AbstractController
 
         $query = array();
 
-        if ($data['datePicker'] != '')          {$query['date'] = $data['datePicker'];} else {$query['date'] = '%';}
-        if ($data['vetPicker'] != '')           {$query['vet'] = $data['vetPicker'];} else {$query['vet'] = '%';}
-        if ($data['customerPicker'] != '')      {$query['customer'] = $data['customerPicker'];} else {$query['customer'] = '%';}
-        if ($data['patientPicker'] != '')       {$query['patient'] = $data['patientPicker'];} else {$query['patient'] = '%';}
-        if ($data['categoryPicker'] != '')      {$query['category'] = $data['categoryPicker'];} else {$query['category'] = '%';}
-        if ($data['completedPicker'] != '')     {$query['completed'] = $data['completedPicker'];} else {$query['completed'] = '%';}
+        if (array_key_exists('datePicker', $data))          {$query['date'] = $data['datePicker'];} else {$query['date'] = '%';}
+        if (array_key_exists('vetPicker', $data))           {$query['vet'] = $data['vetPicker'];} else {$query['vet'] = '%';}
+        if (array_key_exists('customerPicker', $data))      {$query['customer'] = $data['customerPicker'];} else {$query['customer'] = '%';}
+        if (array_key_exists('patientPicker', $data))       {$query['patient'] = $data['patientPicker'];} else {$query['patient'] = '%';}
+        if (array_key_exists('categoryPicker', $data))      {$query['category'] = $data['categoryPicker'];} else {$query['category'] = '%';}
+        if (array_key_exists('completedPicker', $data))     {$query['completed'] = $data['completedPicker'];} else {$query['completed'] = '%';}
 
         $visitsFound = $visitRepository->findByQuery($query, $currentPage, $limit);
         $result = $visitsFound['paginator'];
