@@ -390,7 +390,6 @@ const addUpdateCustomer = (fData, action, id = '') => {
     fetch(request)
         .then(response => response.json())
         .then(data => {
-            handleAlert(true);
             window.location = `/turdus/customers/${data.id}`;
         })
         .catch(e => {
@@ -443,7 +442,55 @@ const addUpdatePatient = (fData, action, id = '') => {
     fetch(request)
         .then(response => response.json())
         .then(data => {
-            handleAlert(true);
+            window.location = `/turdus/patients/${data.id}`;
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
+const addUpdateVisit = (fData, action, id = '') => {
+
+    const dateTime = `${fData.dateTimePicker.value.split('T')[0]} ${fData.dateTimePicker.value.split('T')[1]}`;
+    
+    const bodyData = {
+            patientId: id,
+            done: fData.completedPicker.value,
+            category: fData.category.value,
+            treatment: fData.treatment.value,
+            patientWeight: fData.patientWeight.value,
+            description: fData.description.value,
+            patient: fData.patientPicker.value.split(' #')[1],
+            vet: fData.vetPicker.value.split(' @')[1],
+            duration: parseInt(fData.duration.value) / 15,
+            date_time: dateTime
+    }
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    let request;
+    if (action == 'add') {
+        request = new Request("http://192.168.1.81:8888/api/visit/add", config);
+    } else {
+        request = new Request("http://192.168.1.81:8888/api/visit/update", config);
+    }
+
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            window.location = `/turdus/visits/${data.id}`;
         })
         .catch(e => {
             handleAlert(false);
@@ -473,5 +520,6 @@ export {
     findCustomers, 
     findOneCustomer,
     addUpdateCustomer, 
-    addUpdatePatient 
+    addUpdatePatient,
+    addUpdateVisit 
 }

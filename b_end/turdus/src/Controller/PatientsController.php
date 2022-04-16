@@ -181,7 +181,8 @@ class PatientsController extends AbstractController
         $entityManager->persist($patient);
         $entityManager->flush();
     
-        return $this->json(['response' => 'Actualizado']);
+
+        return $this->json($data);
         
     }
 
@@ -223,7 +224,9 @@ class PatientsController extends AbstractController
         $entityManager->persist($patient);
         $entityManager->flush();
     
-        return $this->json(['response' => 'Actualizado']);
+        $data['id'] = $patient->getId();
+
+        return $this->json($data);
         
     }
 }

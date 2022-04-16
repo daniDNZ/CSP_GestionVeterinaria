@@ -151,7 +151,8 @@ class CustomersController extends AbstractController
         $entityManager->persist($customer);
         $entityManager->flush();
     
-        return $this->json(['response' => 'Actualizado']);
+
+        return $this->json($data);
         
     }
 
@@ -187,8 +188,6 @@ class CustomersController extends AbstractController
 
         $data['id'] = $customer->getId();
 
-
-        // "id" => $customerRepository->findBy(array('phone' => $customer->getPhone()
         return $this->json($data);
         
     }

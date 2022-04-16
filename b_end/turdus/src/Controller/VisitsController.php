@@ -118,6 +118,36 @@ class VisitsController extends AbstractController
     }
 
     /**
+     * @Route("/api/visit/add", name="app_visit_add", methods="POST" )
+     */
+    public function add(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = $request->toArray();
+        $visit = New Visit;
+
+        $visit->setDone($data['done']);
+        $visit->setCategory($data['category']);
+        $visit->setTreatment($data['treatment']);
+        $visit->setWeight($data['patientWeight']);
+        $visit->setDescription($data['description']);
+        $visit->setPatient($data['patient']);
+        $visit->setUser($userRepository->find($data['vet']));
+        $visit->setDuration($data['duration']);
+
+        $dateString = $data['date_time'];
+        $dateReconverted = \DateTime::createFromFormat('Y-m-d H:i', $dateString);
+        $visit->setDateTime($dateReconverted);
+
+        $entityManager->persist($visit);
+        $entityManager->flush();
+
+        $data['id'] = $visit->getId();
+
+        return $this->json($data);
+        
+    }
+
+    /**
      * @Route("/api/visit/update", name="app_visit_update", methods="POST" )
      */
     public function update(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
@@ -135,13 +165,14 @@ class VisitsController extends AbstractController
         $visit->getPatient()->setSpecies($data['patientSpecies']);
 
         $dateString = $data['date_time'];
-        $dateReconverted = \DateTime::createFromFormat('Y-m-d H:i:s', $dateString);
+        $dateReconverted = \DateTime::createFromFormat('Y-m-d H:i', $dateString);
         $visit->setDateTime($dateReconverted);
 
         $entityManager->persist($visit);
         $entityManager->flush();
     
-        return $this->json(['response' => 'Actualizada']);
+
+        return $this->json($data);
         
     }
 
