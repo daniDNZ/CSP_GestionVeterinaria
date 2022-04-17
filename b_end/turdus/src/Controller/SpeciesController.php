@@ -24,6 +24,7 @@ class SpeciesController extends AbstractController
         {
             $oneSpecies = [];
             $oneSpecies['name'] = $speciesEntity->getName();
+            $oneSpecies['sciName'] = $speciesEntity->getScientificName();
             $oneSpecies['id'] = $speciesEntity->getId();
             $species[] = $oneSpecies;
         }

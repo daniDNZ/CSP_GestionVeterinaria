@@ -33,9 +33,9 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/api/vets", name="app_vets", methods={"GET", "POST"})
+     * @Route("/api/vets", name="app_vets_get", methods="GET")
      */
-    public function vets(
+    public function getVets(
         UserRepository $userRepository, 
         PatientRepository $patientRepository, 
         CustomerRepository $customerRepository, 
@@ -46,49 +46,61 @@ class UsersController extends AbstractController
         $users = [];
         $vetIds = [];
         
-
-        if ($request->isMethod('GET'))
-        {
-            $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
-        } 
-        else 
-        {
-            $query = array();
-            $data = $request->toArray();
-
-            // Construimos la query
-            if ($data['patient'] !== '')    { $query['name'] = $data['patient']; }
-            if ($data['species'] !== '')    { $query['species'] = $speciesRepository->findOneBy(array('name' => $data['species']))->getId(); }
-            if ($data['sterilised'] !== '') { $query['sterilised'] = $data['sterilised']; }
-            if ($data['customer'] !== '')   { $query['responsible'] = $customerRepository->findOneBy(array('email' => $data['customer']))->getId();} 
-            
-            // Hacemos la búsqueda por QUERY o por ROL
-            if (!empty($query)) 
-            {
-                $vetIds = [];
-                $entradaIds = [];
-                $userEntities = [];
-                $patientEntities = $patientRepository->findBy($query);
-
-                foreach ($patientEntities as $patientEntity) 
-                {
-                    $entradaIds[] = $patientEntity->getVet();
-                }
-
-                // Eliminamos los ids repetidos
-                $vetIds = array_unique($entradaIds, $sort_flags = SORT_REGULAR);
-
-                foreach ($vetIds as $id) 
-                {
-                    $userEntities[] = $userRepository->findOneBy(array('id' => $id));
-                }          
-            } 
-            else 
-            {
-                $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
-            }
-        }
+        $userEntities = $userRepository->findByRoles('[%"ROLE_VET"%]');
         
+        foreach ($userEntities as $userEntity) 
+        {
+            $user = [];
+            $user['id'] = $userEntity->getId();
+            $user['name'] = $userEntity->getName();
+            $user['area'] = $userEntity->getArea();
+            $user['username'] = $userEntity->getUsername();
+            $users[] = $user;
+        }
+
+        return $this->json($users);
+    }
+
+    /**
+     * @Route("/api/vets", name="app_vets_find", methods="POST")
+     */
+    public function findVets(
+        UserRepository $userRepository, 
+        PatientRepository $patientRepository, 
+        CustomerRepository $customerRepository, 
+        SpeciesRepository $speciesRepository,
+        Request $request
+        ): Response
+    {   
+        $users = [];
+        $vetIds = [];
+        
+        $query = array();
+        $data = $request->toArray();
+          
+        // Construimos la query
+        if (array_key_exists('patient', $data))    { $query['name'] = $data['patient']; } else { $query['name'] = '%';}
+        if (array_key_exists('species', $data))    { $query['species'] = $data['species']; } else { $query['species'] = '%';}
+        if (array_key_exists('sterilised', $data)) { $query['sterilised'] = $data['sterilised']; } else { $query['sterilised'] = '%';}
+        if (array_key_exists('customer', $data))   { $query['responsible'] = $data['customer'];} else { $query['responsible'] = '%';}
+        
+        $vetIds = [];
+        $entradaIds = [];
+        $userEntities = [];
+        $patientEntities = $patientRepository->findByQuery($query);
+
+        foreach ($patientEntities['all'] as $patientEntity) 
+        {
+            $entradaIds[] = $patientEntity->getVet();
+        }
+
+        // Eliminamos los ids repetidos
+        $vetIds = array_unique($entradaIds, $sort_flags = SORT_REGULAR);
+
+        foreach ($vetIds as $id) 
+        {
+            $userEntities[] = $userRepository->findOneBy(array('id' => $id));
+        }          
         
         foreach ($userEntities as $userEntity) 
         {

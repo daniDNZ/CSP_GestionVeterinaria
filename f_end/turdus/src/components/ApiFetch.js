@@ -264,7 +264,7 @@ const findCustomers = ( callback, currentPage = 1, bodyData = {}) => {
   
 }
 
-const findVets = (callback, bodyData = {}, id) => {
+const findVets = ( callback, bodyData = {} ) => {
 
     const config = {
         method: 'POST',
@@ -275,10 +275,10 @@ const findVets = (callback, bodyData = {}, id) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request("http://192.168.1.81:8888/api/vets", config);
+    const request = new Request(`http://192.168.1.81:8888/api/vets`, config);
     fetch(request)
         .then(response => response.json())
-        .then(data => { callback(data, id) })
+        .then(data => { callback(data) })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -306,7 +306,7 @@ const findSpecies = (callback, bodyData = {}, id) => {
         });
 }
 
-const findRaces = (callback, id, value) => {
+const findRaces = (callback, value, id = '') => {
     const bodyData = {
         species: value
     }

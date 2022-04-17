@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { addUpdateCustomer, addUpdatePatient, addUpdateVisit } from "./ApiFetch";
+import { addUpdateCustomer, addUpdatePatient, addUpdateVisit, findRaces, getCustomers, getRaces, getSpecies, getVets } from "./ApiFetch";
 import { FormModal, handleClean } from "./FormController";
 
 // Listeners
@@ -12,6 +12,22 @@ const addEvents = (callback) => {
 const setModal = (action) => {
     if (action == 'update') return <FormModal />
     else return <button type="submit" className="btn btn-primary">Añadir</button>
+}
+
+// Crea las options de las datalist
+const handleDatalist = ( id, name, identifier = '') => {
+    const datalist = document.getElementById(`${id}-datalist`);
+    const option = document.createElement('option');
+
+    identifier == '' ? option.value = name : option.value = `${name} - ${identifier}`;
+
+    datalist.append(option);
+}
+
+// Limpia una datalist
+const cleanDatalist = (id) => {
+    const datalist = document.getElementById(`${id}-datalist`);
+    datalist.innerHTML = '';
 }
 
 function CustomerForm({ action }) {
@@ -42,15 +58,15 @@ function CustomerForm({ action }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerLastname" className="form-label" >Apellidos cliente:</label>
-                        <input type="text" id="customerLastname" className="form-control" required/>
+                        <input type="text" id="customerLastname" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerPhone" className="form-label">Teléfono cliente:</label>
-                        <input type="text" id="customerPhone" className="form-control" required/>
+                        <input type="text" id="customerPhone" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerEmail" className="form-label">Email:</label>
-                        <input type="email" id="customerEmail" className="form-control" required/>
+                        <input type="email" id="customerEmail" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerDni" className="form-label">DNI:</label>
@@ -71,8 +87,8 @@ function CustomerForm({ action }) {
                         </div>
                     </div>
                 </div>
-                { modal }
-                
+                {modal}
+
             </form>
         </>
     )
@@ -90,8 +106,59 @@ function PatientForm({ action }) {
         addUpdatePatient(fData, action);   // Llamamos a la petición indicando la acción (add | update)
     }
 
+    const handleVets = (data) => {
+        data.forEach(e => {
+            const name = e.name;
+            const identifier = e.username; 
+
+            handleDatalist('vetPicker', name, identifier)
+        });
+    }
+
+    const handleCustomers = (data) => {
+        data['allData'].forEach(e => {
+            const name = e.name;
+            const identifier = e.email; 
+
+            handleDatalist('customerPicker', name, identifier)
+        });
+    }
+
+    const handleSpecies = (data) => {
+        data.forEach(e => {
+            const name = e.name;
+
+            handleDatalist('speciesPicker', name)
+        });
+    }
+
+    const handleRaces = (data) => {
+        data.forEach(e => {
+            const name = e.name;
+
+            handleDatalist('racePicker', name)
+        });
+    }
+
+    const captureSpecies = (e) => {
+        e.preventDefault();
+
+        const species = e.target.value;
+
+        cleanDatalist('racePicker');
+        findRaces(handleRaces, species);
+    }
+
+    const fetchDatalists = () => {
+        getVets(handleVets);
+        getCustomers(handleCustomers);
+        getSpecies(handleSpecies);
+        getRaces(handleRaces);
+    }
+
     useEffect(() => {
         addEvents(handleFData);
+        fetchDatalists();
     }, [])
     return (
         <>
@@ -118,7 +185,7 @@ function PatientForm({ action }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="speciesPicker" className="form-label">Especie:</label>
-                        <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." />
+                        <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." onInput={captureSpecies}/>
                         <datalist id="speciesPicker-datalist">
                         </datalist>
                     </div>
@@ -171,7 +238,7 @@ function PatientForm({ action }) {
                         </div>
                     </div>
                 </div>
-                { modal }
+                {modal}
             </form>
         </>
     )
@@ -194,7 +261,7 @@ function VisitForm({ action }) {
 
         const input = document.getElementById('duration');
         input.value = parseInt(input.value) + 15;
-        
+
     }
 
     const restDuration = (e) => {
@@ -221,16 +288,12 @@ function VisitForm({ action }) {
                         <input type="datetime-local" id="dateTimePicker" className="form-control" />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
-                        <input type="search" id="vetPicker" className="form-control"  list="vetPicker-datalist" placeholder="Buscar..." />
-                        <datalist id="vetPicker-datalist" />
-                    </div>
-                    <div className="mb-3 col-auto">
                         <label htmlFor="duration" className="form-label">Duración estimada:</label>
                         <div className="input-group">
-                            <input type="text" id="duration" className="form-control" defaultValue="15" readOnly/>
-                                <button type="button" className=" btn btn-outline-secondary" onClick={sumDuration}>+</button>
-                                <button type="button" className="btn btn-outline-secondary" onClick={restDuration}>-</button>
+                            <input type="text" id="duration" className="form-control" defaultValue="15" style={{ width: '70px' }} readOnly />
+                            <span className="input-group-text"> min</span>
+                            <button type="button" className=" btn btn-outline-secondary" onClick={sumDuration}>+</button>
+                            <button type="button" className="btn btn-outline-secondary" onClick={restDuration}>-</button>
                         </div>
                     </div>
                     <div className="mb-3 col-auto">
@@ -244,6 +307,11 @@ function VisitForm({ action }) {
                     <div className="mb-3 col-auto">
                         <label htmlFor="category" className="form-label">Categoría:</label>
                         <input type="text" id="category" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
+                        <input type="search" id="vetPicker" className="form-control" list="vetPicker-datalist" placeholder="Buscar..." />
+                        <datalist id="vetPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientPicker" className="form-label">Paciente:</label>
@@ -264,15 +332,15 @@ function VisitForm({ action }) {
                             <label htmlFor="description" className="form-label">Descripción:</label>
                             <textarea type="" id="description" className="form-control" rows="5" />
                         </div>
-                        <div className="row">
-                            <div className="mb-3">
-                                <label htmlFor="treatment" className="form-label">Tratamiento:</label>
-                                <textarea type="" id="treatment" className="form-control" rows="5" />
-                            </div>
+                    </div>
+                    <div className="row">
+                        <div className="mb-3">
+                            <label htmlFor="treatment" className="form-label">Tratamiento:</label>
+                            <textarea type="" id="treatment" className="form-control" rows="5" />
                         </div>
                     </div>
                 </div>
-                { modal }
+                {modal}
             </form>
         </>
     )
@@ -284,13 +352,13 @@ function Form({ selector, action }) {
 
     switch (selector) {
         case 'customer':
-            form = <CustomerForm action={ action } />;
+            form = <CustomerForm action={action} />;
             break;
         case 'patient':
-            form = <PatientForm action={ action }/>;
+            form = <PatientForm action={action} />;
             break;
         default:
-            form = <VisitForm action={ action }/>;
+            form = <VisitForm action={action} />;
             break;
     }
 
