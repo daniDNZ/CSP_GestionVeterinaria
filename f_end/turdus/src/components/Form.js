@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { addUpdateCustomer, addUpdatePatient, addUpdateVisit, findRaces, getCustomers, getRaces, getSpecies, getVets } from "./ApiFetch";
+import { addUpdateCustomer, addUpdatePatient, addUpdateVisit, findPatients, findTime, findRaces, getCustomers, getPatients, getRaces, getSpecies, getVets } from "./ApiFetch";
 import { FormModal, handleClean } from "./FormController";
+import OpenTime from "./OpenTime";
 
 // Listeners
 const addEvents = (callback) => {
@@ -16,7 +17,7 @@ const setModal = (action) => {
 
 // Crea las options de las datalist
 const handleDatalist = ( id, name, identifier = '') => {
-    const datalist = document.getElementById(`${id}-datalist`);
+    const datalist = document.getElementById(id);
     const option = document.createElement('option');
 
     identifier == '' ? option.value = name : option.value = `${name} - ${identifier}`;
@@ -26,7 +27,7 @@ const handleDatalist = ( id, name, identifier = '') => {
 
 // Limpia una datalist
 const cleanDatalist = (id) => {
-    const datalist = document.getElementById(`${id}-datalist`);
+    const datalist = document.getElementById(id);
     datalist.innerHTML = '';
 }
 
@@ -111,7 +112,7 @@ function PatientForm({ action }) {
             const name = e.name;
             const identifier = e.username; 
 
-            handleDatalist('vetPicker', name, identifier)
+            handleDatalist('vetPicker-datalist', name, identifier)
         });
     }
 
@@ -120,7 +121,7 @@ function PatientForm({ action }) {
             const name = e.name;
             const identifier = e.email; 
 
-            handleDatalist('customerPicker', name, identifier)
+            handleDatalist('customerPicker-datalist', name, identifier)
         });
     }
 
@@ -128,7 +129,7 @@ function PatientForm({ action }) {
         data.forEach(e => {
             const name = e.name;
 
-            handleDatalist('speciesPicker', name)
+            handleDatalist('speciesPicker-datalist', name)
         });
     }
 
@@ -136,7 +137,7 @@ function PatientForm({ action }) {
         data.forEach(e => {
             const name = e.name;
 
-            handleDatalist('racePicker', name)
+            handleDatalist('racePicker-datalist', name)
         });
     }
 
@@ -145,7 +146,7 @@ function PatientForm({ action }) {
 
         const species = e.target.value;
 
-        cleanDatalist('racePicker');
+        cleanDatalist('racePicker-datalist');
         findRaces(handleRaces, species);
     }
 
@@ -273,8 +274,92 @@ function VisitForm({ action }) {
         if (input.value < 15) input.value = 15;
     }
 
+    const handleVets = (data) => {
+        data.forEach(e => {
+            const name = e.name;
+            const identifier = e.username; 
+
+            handleDatalist('vetPicker-datalist', name, identifier)
+        });
+    }
+
+    const handleCustomers = (data) => {
+        data['allData'].forEach(e => {
+            const name = e.name;
+            const identifier = e.email; 
+
+            handleDatalist('customerPicker-datalist', name, identifier)
+        });
+    }
+
+    const handlePatients = (data) => {
+        data['allData'].forEach(e => {
+            const name = e.name;
+
+            handleDatalist('patientPicker-datalist', name)
+        });
+    }
+
+    const handleCustomersFromPatients = (data) => {
+        if (data['allData'].length > 0) {
+            data['allData'].forEach(e => {
+                const name = e.customer;
+                const identifier = e.customerEmail;
+
+                handleDatalist('customerPicker-datalist', name, identifier);
+            }) 
+        } else {
+            getCustomers(handleCustomers);
+        }
+            
+    }
+
+    const handleTime = (data) => {
+        let options = document.querySelectorAll('#timePicker option');
+        console.log(options)
+        // RECOGER LOS OPTIONS Y COMPARARLO CON LAS HORAS DEL DATA, SI COINCIDE PONER A ESE OPTION DISABLED
+        data.forEach(e => {
+            
+        });
+    }
+
+    const capturePatient = (e) => {
+        e.preventDefault();
+
+        const patient = e.target.value;
+
+        cleanDatalist('customerPicker-datalist');
+        findPatients(handleCustomersFromPatients, 1, {namePicker: patient});
+    }
+
+    const captureCustomer = (e) => {
+        e.preventDefault();
+
+        const customer = e.target.value.split(' - ')[0];
+
+        cleanDatalist('patientPicker-datalist');
+        findPatients(handlePatients, 1, {customerPicker: customer});
+    }
+
+    const captureDate = (e) => {
+        e.preventDefault();
+
+        const date = e.target.value;
+        cleanDatalist('timePicker');
+
+        findTime(handleTime, date);
+    }
+
+    const fetchDatalists = () => {
+        getVets(handleVets);
+        getCustomers(handleCustomers);
+        getPatients(handlePatients);
+    }
+
     useEffect(() => {
         addEvents(handleFData);
+        fetchDatalists();
+        OpenTime();
     }, [])
     return (
         <>
@@ -284,8 +369,14 @@ function VisitForm({ action }) {
                         <h3 className="col-auto">Visita</h3>
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="dateTimePicker" className="form-label">Fecha/Hora:</label>
-                        <input type="datetime-local" id="dateTimePicker" className="form-control" />
+                        <label htmlFor="dateTimePicker" className="form-label">Fecha:</label>
+                        <input type="date" id="datePicker" className="form-control" onInput={captureDate}/>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="timePicker" className="form-label">Hora:</label>
+                        <select id="timePicker" className="form-select" >
+                           
+                        </select>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="duration" className="form-label">Duración estimada:</label>
@@ -298,7 +389,7 @@ function VisitForm({ action }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="completedPicker" className="form-label">Completada:</label>
-                        <select type="" id="completedPicker" className="form-select" >
+                        <select id="completedPicker" className="form-select" >
                             <option id="co-null" value="">Select...</option>
                             <option id="co-0" value="0">No</option>
                             <option id="co-1" value="1">Sí</option>
@@ -315,12 +406,12 @@ function VisitForm({ action }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientPicker" className="form-label">Paciente:</label>
-                        <input type="search" id="patientPicker" className="form-control" list="patientPicker-datalist" placeholder="Buscar..." />
+                        <input type="search" id="patientPicker" className="form-control" list="patientPicker-datalist" placeholder="Buscar..." onInput={capturePatient}/>
                         <datalist id="patientPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerPicker" className="form-label">Cliente:</label>
-                        <input type="search" id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." />
+                        <input type="search" id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." onInput={captureCustomer}/>
                         <datalist id="customerPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">

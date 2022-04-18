@@ -44,6 +44,7 @@ class PatientsController extends AbstractController
 
             $patient['vet'] = $patientEntity->getVet()->getName();
             $patient['customer'] = $patientEntity->getResponsible()->getName();
+            $patient['customerEmail'] = $patientEntity->getResponsible()->getEmail();
 
             $patients[] = $patient;
         }

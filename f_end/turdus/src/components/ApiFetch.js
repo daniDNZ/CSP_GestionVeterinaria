@@ -329,6 +329,29 @@ const findRaces = (callback, value, id = '') => {
         });
 }
 
+const findTime = (callback, date) => {
+    const bodyData = {
+        date: date
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/visits/time", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
 // FIND ONE
 
 const findOneCustomer = (callback, id ) => {
@@ -517,6 +540,7 @@ export {
     findVets,
     findSpecies,
     findRaces, 
+    findTime,
     findCustomers, 
     findOneCustomer,
     addUpdateCustomer, 

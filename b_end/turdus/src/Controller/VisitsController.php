@@ -176,6 +176,34 @@ class VisitsController extends AbstractController
         
     }
 
+     /**
+     * @Route("/api/visits/time", name="app_visits_time", methods="POST")
+     */
+    public function findTime( VisitRepository $visitRepository, Request $request ): Response
+    {
+        $visits = [];
+        $data = $request->toArray();
+
+        $query = array();
+
+        if (array_key_exists('date', $data))          {$query['date'] = $data['date'];} else {$query['date'] = '%';}
+
+        $entities = $visitRepository->findByDate($query['date']);
+        $visits = [];
+
+        foreach ($entities as $entity) {
+            $visit = [];
+
+            $dateTime = $visitRepository->getDateTime();
+            $time = $dateTime->format('H:i');
+            $visit['time'] = $time;
+
+            $visits[] = $visit;
+        }
+
+        return $this->json($visits);
+    }
+
     /**
      * @Route("/api/week_schedule", name="app_schedule", methods="POST" )
      */
