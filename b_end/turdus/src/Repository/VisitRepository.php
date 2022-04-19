@@ -114,13 +114,14 @@ class VisitRepository extends ServiceEntityRepository
         ->getResult();
     }
 
-    public function findByDateAndUser($value, $user)
+    public function findByDateAndUser($q)
     {
         return $this->createQueryBuilder('v')
-        ->andWhere('v.user = :usr')
+        ->innerJoin('v.user', 'u')
+        ->andWhere('u.username = :usr')
         ->andWhere('v.date_time LIKE :val')
-        ->setParameter('usr', $user)
-        ->setParameter('val', $value)
+        ->setParameter('usr', $q['user'])
+        ->setParameter('val', $q['date'].'%')
         ->getQuery()
         ->getResult();
     }
@@ -139,8 +140,9 @@ class VisitRepository extends ServiceEntityRepository
     public function findByDateAndVet($date, $vet)
     {
         return $this->createQueryBuilder('v')
+        ->innerJoin('v.user', 'u')
         ->andWhere('v.date_time LIKE :date')
-        ->andWhere('v.user = :vet')
+        ->andWhere('u.username = :vet')
         ->setParameter('date', $date)
         ->setParameter('vet', $vet)
         ->getQuery()

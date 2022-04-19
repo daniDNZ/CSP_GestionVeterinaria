@@ -27,7 +27,6 @@ function OpenTime() {
              
             for (m ; m < 100; m+=25) {
                 let min = (m / 25)*15;  // Reconvertimos los minutos del decimal
-                console.log(min)
                 let mStr;
                 min == 0 ? mStr = '00' : mStr = String(min);
 
@@ -46,7 +45,6 @@ function OpenTime() {
         
 
     });
-    console.log(arrTime)
     arrTime.forEach(e => {
         const op = document.createElement('option');
         op.value = e;

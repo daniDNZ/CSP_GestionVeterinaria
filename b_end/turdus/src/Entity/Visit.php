@@ -57,7 +57,7 @@ class Visit
     private $treatment;
 
     /**
-     * @ORM\Column(type="float", nullable=true)
+     * @ORM\Column(type="string", length=128)
      */
     private $weight;
 
@@ -183,12 +183,12 @@ class Visit
         return $this;
     }
 
-    public function getWeight(): ?float
+    public function getWeight(): ?string
     {
         return $this->weight;
     }
 
-    public function setWeight(?float $weight): self
+    public function setWeight(?string $weight): self
     {
         $this->weight = $weight;
 

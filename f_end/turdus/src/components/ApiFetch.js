@@ -329,10 +329,8 @@ const findRaces = (callback, value, id = '') => {
         });
 }
 
-const findTime = (callback, date) => {
-    const bodyData = {
-        date: date
-    }
+const findTime = (callback, filter) => {
+    const bodyData = filter;
     const config = {
         method: 'POST',
         mode: 'cors',
@@ -375,6 +373,52 @@ const findOneCustomer = (callback, id ) => {
   
 }
 
+const findOnePatient = (callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/patients/${id}`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+// UTILITIES
+
+const findCustomerPatients = ( callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/customers/${id}/patients`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { 
+            callback(data)
+            // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) 
+        })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
 
 // INSERTS / UPDATES
 
@@ -426,8 +470,10 @@ const addUpdateCustomer = (fData, action, id = '') => {
 
 const addUpdatePatient = (fData, action, id = '') => {
 
-    const birthday = `${fData.patientBirthday.value.split('T')[0]}`;
-    
+    let birthday = `${fData.patientBirthday.value}`;
+    if (birthday.length == 0) birthday = '1111-11-1';
+    console.log(birthday)
+
     const bodyData = {
             patientId: id,
             name: fData.patientName.value,
@@ -438,10 +484,10 @@ const addUpdatePatient = (fData, action, id = '') => {
             weight: fData.patientWeight.value,
             gender: fData.genderPicker.value,
             sterilised: fData.sterilisedPicker.value,
-            vet: fData.vetPicker.value,
+            vet: fData.vetPicker.value.split(' - ')[1],
             race: fData.racePicker.value,
             species: fData.speciesPicker.value,
-            customer: fData.customerPicker.value,
+            customer: fData.customerPicker.value.split(' - ')[1],
             birthday: birthday
     }
 
@@ -478,7 +524,7 @@ const addUpdatePatient = (fData, action, id = '') => {
 
 const addUpdateVisit = (fData, action, id = '') => {
 
-    const dateTime = `${fData.dateTimePicker.value.split('T')[0]} ${fData.dateTimePicker.value.split('T')[1]}`;
+    const dateTime = `${fData.datePicker.value} ${fData.timePicker.value}`;
     
     const bodyData = {
             patientId: id,
@@ -487,8 +533,8 @@ const addUpdateVisit = (fData, action, id = '') => {
             treatment: fData.treatment.value,
             patientWeight: fData.patientWeight.value,
             description: fData.description.value,
-            patient: fData.patientPicker.value.split(' #')[1],
-            vet: fData.vetPicker.value.split(' @')[1],
+            patient: fData.patientPicker.value.split('#')[1],
+            vet: fData.vetPicker.value.split(' - ')[1],
             duration: parseInt(fData.duration.value) / 15,
             date_time: dateTime
     }
@@ -543,6 +589,8 @@ export {
     findTime,
     findCustomers, 
     findOneCustomer,
+    findOnePatient,
+    findCustomerPatients,
     addUpdateCustomer, 
     addUpdatePatient,
     addUpdateVisit 

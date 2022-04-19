@@ -188,6 +188,10 @@ function PatientsTable() {
     }
 
     const handleData = (d, fetchMethod) => {
+        d.data.forEach(e => {       // No necesitamos el email 
+            delete e.customerEmail;
+        });
+        
         handleTable(d, 'patients');
         Pagination(d, fetchMethod, handleData);
 
@@ -198,6 +202,7 @@ function PatientsTable() {
             i.addEventListener('input', captureData);
 
         });
+        
         getDataDatalist(d, arrIds)
     }
 
@@ -213,8 +218,7 @@ function PatientsTable() {
     useEffect(() => {
         findPatients(handleData);
 
-    }
-        , []);
+    }, []);
     return (
         <>
             <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">

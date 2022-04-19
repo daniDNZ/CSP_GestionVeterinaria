@@ -138,7 +138,6 @@ class CustomersController extends AbstractController
         $data = $request->toArray();
         $customer = $customerRepository->find($data['id']);
 
-        $customer->setRoles([]);
         $customer->setDni($data['dni']);
         $customer->setName($data['name']);
         $customer->setInfo($data['info']);

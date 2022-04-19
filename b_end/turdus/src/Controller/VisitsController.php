@@ -12,11 +12,12 @@ use App\Repository\UserRepository;
 use App\Repository\PatientRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\SpeciesRepository;
+use App\Entity\Visit;
 
 class VisitsController extends AbstractController
 {
     function maker($visitEntities) {
-
+        $visits = [];
         foreach ($visitEntities as $visitEntity) 
         {
             $visit = [];
@@ -120,7 +121,7 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/visit/add", name="app_visit_add", methods="POST" )
      */
-    public function add(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function add(VisitRepository $visitRepository, UserRepository $userRepository, PatientRepository $patientRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = $request->toArray();
         $visit = New Visit;
@@ -130,8 +131,8 @@ class VisitsController extends AbstractController
         $visit->setTreatment($data['treatment']);
         $visit->setWeight($data['patientWeight']);
         $visit->setDescription($data['description']);
-        $visit->setPatient($data['patient']);
-        $visit->setUser($userRepository->find($data['vet']));
+        $visit->setPatient($patientRepository->find($data['patient']));
+        $visit->setUser($userRepository->findOneBy(array('username' => $data['vet'])));
         $visit->setDuration($data['duration']);
 
         $dateString = $data['date_time'];
@@ -187,16 +188,18 @@ class VisitsController extends AbstractController
         $query = array();
 
         if (array_key_exists('date', $data))          {$query['date'] = $data['date'];} else {$query['date'] = '%';}
+        if (array_key_exists('vet', $data))          {$query['user'] = $data['vet'];} else {$query['user'] = '%';}
 
-        $entities = $visitRepository->findByDate($query['date']);
+        $entities = $visitRepository->findByDateAndUser($query);
         $visits = [];
 
         foreach ($entities as $entity) {
             $visit = [];
 
-            $dateTime = $visitRepository->getDateTime();
+            $dateTime = $entity->getDateTime();
             $time = $dateTime->format('H:i');
             $visit['time'] = $time;
+            $visit['duration'] = $entity->getDuration();
 
             $visits[] = $visit;
         }
@@ -213,6 +216,7 @@ class VisitsController extends AbstractController
         $data = $request->toArray();
         // Recogermos el usuario
         $userEntities = $userRepository->findBy(array('username' => $data['username']));
+        $query['user'] = $userEntities[0]->getUsername();
 
         // Pasamos el String de días de la semana a un Array
         $days = explode (',', $data['week']);
@@ -222,7 +226,8 @@ class VisitsController extends AbstractController
         // Buscamos las visitas por día y las añadimos a un Array
         foreach ($days as $day) 
         {
-            $dayEntities[] = $visitRepository->findByDateAndUser($day.'%', $userEntities[0]->getId());
+            $query['date'] = $day;
+            $dayEntities[] = $visitRepository->findByDateAndUser($query);
         }
 
         // Recorremos el array de días y recorremos cada día para sacar cada visita

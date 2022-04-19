@@ -31,7 +31,7 @@ const cleanDatalist = (id) => {
     datalist.innerHTML = '';
 }
 
-function CustomerForm({ action }) {
+function CustomerForm({ action, id }) {
 
     const modal = setModal(action);
 
@@ -39,8 +39,8 @@ function CustomerForm({ action }) {
     const handleFData = (e) => {
         e.preventDefault();
 
-        const fData = e.target;             // Asignamos el formulario
-        addUpdateCustomer(fData, action);   // Llamamos a la petición indicando la acción (add | update)
+        const fData = e.target;   
+        addUpdateCustomer(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
     }
 
     useEffect(() => {
@@ -95,7 +95,7 @@ function CustomerForm({ action }) {
     )
 }
 
-function PatientForm({ action }) {
+function PatientForm({ action, id = '' }) {
 
     const modal = setModal(action);
 
@@ -104,7 +104,7 @@ function PatientForm({ action }) {
         e.preventDefault();
 
         const fData = e.target;             // Asignamos el formulario
-        addUpdatePatient(fData, action);   // Llamamos a la petición indicando la acción (add | update)
+        addUpdatePatient(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
     }
 
     const handleVets = (data) => {
@@ -245,7 +245,9 @@ function PatientForm({ action }) {
     )
 }
 
-function VisitForm({ action }) {
+function VisitForm({ action, id = '' }) {
+
+    const filter = {};
 
     const modal = setModal(action);
 
@@ -254,7 +256,7 @@ function VisitForm({ action }) {
         e.preventDefault();
 
         const fData = e.target;             // Asignamos el formulario
-        addUpdateVisit(fData, action);      // Llamamos a la petición indicando la acción (add | update)
+        addUpdateVisit(fData, action, id);      // Llamamos a la petición indicando la acción (add | update)
     }
 
     const sumDuration = (e) => {
@@ -295,8 +297,9 @@ function VisitForm({ action }) {
     const handlePatients = (data) => {
         data['allData'].forEach(e => {
             const name = e.name;
+            const identifier = '#'+e.id;
 
-            handleDatalist('patientPicker-datalist', name)
+            handleDatalist('patientPicker-datalist', name, identifier)
         });
     }
 
@@ -315,11 +318,28 @@ function VisitForm({ action }) {
     }
 
     const handleTime = (data) => {
-        let options = document.querySelectorAll('#timePicker option');
-        console.log(options)
-        // RECOGER LOS OPTIONS Y COMPARARLO CON LAS HORAS DEL DATA, SI COINCIDE PONER A ESE OPTION DISABLED
-        data.forEach(e => {
-            
+
+        let options = document.querySelectorAll('#timePicker>option');  // Recogemos los options
+
+        options.forEach(o => {
+            if (o.hasAttribute('disabled')) o.removeAttribute('disabled'); // Eliminamos el atributo disabled 
+        })
+        data.forEach(v => {                                  // Recorremos las visitas
+            let dur = 0;                                     // Variable que recoge la duración de las visitas previas
+            options.forEach(o => {
+                if (dur > 1) {
+
+                    o.setAttribute('disabled', 'true');     // Si la duración > 1 quiere decir que está ocupado por otra visita, desabilitamos.
+                    dur--;                                  // Decrementamos la duración.
+
+                } else {
+
+                    if (v.time == o.value) {                // Si coincide la hora con una de las visitas, desabilitamos.
+                        o.setAttribute('disabled', 'true');
+                        dur = v.duration;                   // Asignamos la duración a la variable para no pisar una visita con otra.
+                    } 
+                }
+            });
         });
     }
 
@@ -341,13 +361,31 @@ function VisitForm({ action }) {
         findPatients(handlePatients, 1, {customerPicker: customer});
     }
 
+    const captureVet = (e) => {
+        e.preventDefault();
+
+        const vet = e.target.value.split(' - ')[1];
+        Object.defineProperty(filter, 'vet', 
+            {
+                value: vet,
+                enumerable: true,
+                configurable: true,
+                writable: true
+            })
+    }
+
     const captureDate = (e) => {
         e.preventDefault();
 
         const date = e.target.value;
-        cleanDatalist('timePicker');
-
-        findTime(handleTime, date);
+        Object.defineProperty(filter, 'date', 
+            {
+                value: date,
+                enumerable: true,
+                configurable: true,
+                writable: true
+            })
+        findTime(handleTime, filter);
     }
 
     const fetchDatalists = () => {
@@ -367,6 +405,11 @@ function VisitForm({ action }) {
                 <div id="form-row-1" className="row">
                     <div className="row justify-content-between" id="form-title">
                         <h3 className="col-auto">Visita</h3>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
+                        <input type="search" id="vetPicker" className="form-control" list="vetPicker-datalist" placeholder="Buscar..." onInput={captureVet}/>
+                        <datalist id="vetPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="dateTimePicker" className="form-label">Fecha:</label>
@@ -398,11 +441,6 @@ function VisitForm({ action }) {
                     <div className="mb-3 col-auto">
                         <label htmlFor="category" className="form-label">Categoría:</label>
                         <input type="text" id="category" className="form-control" />
-                    </div>
-                    <div className="mb-3 col-auto">
-                        <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
-                        <input type="search" id="vetPicker" className="form-control" list="vetPicker-datalist" placeholder="Buscar..." />
-                        <datalist id="vetPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientPicker" className="form-label">Paciente:</label>
@@ -437,19 +475,19 @@ function VisitForm({ action }) {
     )
 }
 
-function Form({ selector, action }) {
+function Form({ selector, action, id = ''}) {
 
     let form;
 
     switch (selector) {
         case 'customer':
-            form = <CustomerForm action={action} />;
+            form = <CustomerForm action={action} id={id}/>;
             break;
         case 'patient':
-            form = <PatientForm action={action} />;
+            form = <PatientForm action={action} id={id}/>;
             break;
         default:
-            form = <VisitForm action={action} />;
+            form = <VisitForm action={action} id={id}/>;
             break;
     }
 

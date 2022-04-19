@@ -132,17 +132,35 @@ class PatientsController extends AbstractController
         $patient['birthday'] = $patientEntity->getBirthday();
         $patient['sterilised'] = $patientEntity->getSterilised();
 
-        $patient['vet'] = $patientEntity->getVet()->getId();
-        $patient['species'] = $patientEntity->getSpecies()->getId();
+        $patient['vetName'] = $patientEntity->getVet()->getName();
+        $patient['vetUsername'] = $patientEntity->getVet()->getUsername();
+        $patient['species'] = $patientEntity->getSpecies()->getName();
         $patient['responsible'] = $patientEntity->getResponsible()->getName();
-        $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
+        $patient['responsibleEmail'] = $patientEntity->getResponsible()->getEmail();
 
         if ( $patientEntity->getRace() != null) 
         {
-            $patient['race'] = $patientEntity->getRace()->getId();
+            $patient['race'] = $patientEntity->getRace()->getName();
         }
 
         return $this->json($patient);
+    }
+
+    /**
+     * @Route("/api/customers/{id}/patients", name="app_customer_patients", methods="GET" )
+     */
+    public function customerPatients(
+        CustomerRepository $customerRepository, 
+        PatientRepository $patientRepository, 
+        int $id
+    ): Response
+    {
+        $entities = $patientRepository->findBy(array('responsible' => $id));
+
+        $patients = $this->maker($entities);
+
+        return $this->json($patients);
+        
     }
 
     /**
@@ -218,9 +236,12 @@ class PatientsController extends AbstractController
         $patient->setResponsible($customerRepository->findOneBy(array('email' => $data['customer'])));
         $patient->setFamily($customerRepository->findOneBy(array('email' => $data['customer']))->getFamily());
 
-        $dateString = $data['birthday'];
-        $dateReconverted = \DateTime::createFromFormat('Y-m-d', $dateString);
-        $patient->setBirthday($dateReconverted);
+        if ($data['birthday'] != '')
+        {
+            $dateString = $data['birthday'];
+            $dateReconverted = \DateTime::createFromFormat('Y-m-d', $dateString);
+            $patient->setBirthday($dateReconverted);
+        }
 
         $entityManager->persist($patient);
         $entityManager->flush();
@@ -230,4 +251,6 @@ class PatientsController extends AbstractController
         return $this->json($data);
         
     }
+
+
 }
