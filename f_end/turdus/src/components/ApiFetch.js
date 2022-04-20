@@ -394,6 +394,27 @@ const findOnePatient = (callback, id ) => {
   
 }
 
+const findOneVisit = (callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/visits/${id}`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
 // UTILITIES
 
 const findCustomerPatients = ( callback, id ) => {
@@ -407,6 +428,30 @@ const findCustomerPatients = ( callback, id ) => {
         },
     }
     const request = new Request(`http://192.168.1.81:8888/api/customers/${id}/patients`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { 
+            callback(data)
+            // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) 
+        })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+const findPatientVisits = ( callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/patients/${id}/visits`, config);
     fetch(request)
         .then(response => response.json())
         .then(data => { 
@@ -472,10 +517,9 @@ const addUpdatePatient = (fData, action, id = '') => {
 
     let birthday = `${fData.patientBirthday.value}`;
     if (birthday.length == 0) birthday = '1111-11-1';
-    console.log(birthday)
 
     const bodyData = {
-            patientId: id,
+            id: id,
             name: fData.patientName.value,
             info: fData.patientInfo.value,
             chip: fData.patientChip.value,
@@ -487,7 +531,7 @@ const addUpdatePatient = (fData, action, id = '') => {
             vet: fData.vetPicker.value.split(' - ')[1],
             race: fData.racePicker.value,
             species: fData.speciesPicker.value,
-            customer: fData.customerPicker.value.split(' - ')[1],
+            customer: fData.responsiblePicker.value.split(' - ')[1],
             birthday: birthday
     }
 
@@ -523,22 +567,20 @@ const addUpdatePatient = (fData, action, id = '') => {
 }
 
 const addUpdateVisit = (fData, action, id = '') => {
-
     const dateTime = `${fData.datePicker.value} ${fData.timePicker.value}`;
     
     const bodyData = {
-            patientId: id,
+            id: id,
             done: fData.completedPicker.value,
             category: fData.category.value,
             treatment: fData.treatment.value,
             patientWeight: fData.patientWeight.value,
             description: fData.description.value,
             patient: fData.patientPicker.value.split('#')[1],
-            vet: fData.vetPicker.value.split(' - ')[1],
+            vet: fData.userPicker.value.split(' - ')[1],
             duration: parseInt(fData.duration.value) / 15,
             date_time: dateTime
     }
-
     const config = {
         method: 'POST',
         mode: 'cors',
@@ -570,6 +612,100 @@ const addUpdateVisit = (fData, action, id = '') => {
     
 }
 
+// const openVisit = (id) => {
+
+//     console.log(id)
+
+//     const config = {
+//         method: 'GET',
+//         mode: 'cors',
+//         headers: {
+//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
+//             'Content-Type': 'application/json'
+//         },
+//     }
+//     let request = new Request(`http://192.168.1.81:8888/api/visit/${id}/open`, config);
+    
+//     fetch(request)
+//         .then(response => response.json())
+//         .then(data => {
+//             window.location = `/turdus/visits/${id}`;
+//         })
+//         .catch(e => {
+//             handleAlert(false);
+//             console.log(e, 'Esto es un error')
+//             // localStorage.clear();
+//             // window.location = '/turdus/login'
+//         })
+    
+// }
+
+// const closeVisit = (id, location) => {
+
+//     const config = {
+//         method: 'GET',
+//         mode: 'cors',
+//         headers: {
+//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
+//             'Content-Type': 'application/json'
+//         },
+//     }
+//     let request = new Request(`http://192.168.1.81:8888/api/visit/${id}/close`, config);
+    
+//     fetch(request)
+//         .then(response => response.json())
+//         .then(data => {
+//             window.location = location;
+//         })
+//         .catch(e => {
+//             handleAlert(false);
+//             console.log(e, 'Esto es un error')
+//             // localStorage.clear();
+//             // window.location = '/turdus/login'
+//         })
+    
+// }
+const closeVisit = (fData, id, location) => {
+    const dateTime = `${fData.datePicker.value} ${fData.timePicker.value}`;
+    
+    const bodyData = {
+            id: id,
+            done: fData.completedPicker.value,
+            category: fData.category.value,
+            treatment: fData.treatment.value,
+            patientWeight: fData.patientWeight.value,
+            description: fData.description.value,
+            patient: fData.patientPicker.value.split('#')[1],
+            vet: fData.userPicker.value.split(' - ')[1],
+            duration: parseInt(fData.duration.value) / 15,
+            date_time: dateTime
+    }
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    let request = new Request("http://192.168.1.81:8888/api/visit/update", config);
+
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            window.location = location;
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
 
 
 export { 
@@ -590,7 +726,11 @@ export {
     findCustomers, 
     findOneCustomer,
     findOnePatient,
+    findOneVisit,
     findCustomerPatients,
+    findPatientVisits,
+    // openVisit,
+    closeVisit,
     addUpdateCustomer, 
     addUpdatePatient,
     addUpdateVisit 

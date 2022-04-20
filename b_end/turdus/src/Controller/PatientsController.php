@@ -112,13 +112,11 @@ class PatientsController extends AbstractController
     }
 
       /**
-     * @Route("/api/patient", name="app_one_patient", methods="POST")
+     * @Route("/api/patients/{id}", name="app_one_patient", methods="GET")
      */
-    public function singlePatient(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, Request $request): Response
+    public function singlePatient(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, int $id, Request $request): Response
     {
-        $data = $request->toArray();
-
-        $patientEntity = $patientRepository->findOneBy(array('id' => $data['id']));
+        $patientEntity = $patientRepository->findOneBy(array('id' => $id));
     
         $patient = [];
         $patient['id'] = $patientEntity->getId();
@@ -129,13 +127,14 @@ class PatientsController extends AbstractController
         $patient['color'] = $patientEntity->getColor();
         $patient['weight'] = $patientEntity->getWeight();
         $patient['gender'] = $patientEntity->getGender();
-        $patient['birthday'] = $patientEntity->getBirthday();
+        $patient['birthday'] = $patientEntity->getBirthday()->format('Y-m-d');
         $patient['sterilised'] = $patientEntity->getSterilised();
 
         $patient['vetName'] = $patientEntity->getVet()->getName();
         $patient['vetUsername'] = $patientEntity->getVet()->getUsername();
         $patient['species'] = $patientEntity->getSpecies()->getName();
         $patient['responsible'] = $patientEntity->getResponsible()->getName();
+        $patient['responsibleId'] = $patientEntity->getResponsible()->getId();
         $patient['responsibleEmail'] = $patientEntity->getResponsible()->getEmail();
 
         if ( $patientEntity->getRace() != null) 

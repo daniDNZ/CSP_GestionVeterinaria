@@ -4,9 +4,7 @@ import Home from '../components/Home';
 import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
 import VisitsList from '../components/VisitsList';
-import Visit from '../components/Visit';
-import Patient from '../components/Patient';
-import { Customer } from '../components/View';
+import { Customer, Patient, Visit } from '../components/View';
 import Registrations from '../components/Registrations';
 import Search from '../components/Search';
 

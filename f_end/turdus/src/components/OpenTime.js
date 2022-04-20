@@ -1,6 +1,7 @@
 function OpenTime() {
-
-    const intervals = [
+ // En este objeto definimos las horas de apertura y cierre, con los intervalos que se quieran.
+ // Después se construyen los option de los select del formulario de visitas con las horas disponibles.
+    const intervals = [ 
         {
             openT: '10:00',
             closeT: '13:30'
@@ -14,6 +15,7 @@ function OpenTime() {
   
     const options = document.getElementById('timePicker');
     let arrTime = [];
+
     intervals.forEach(e => {
         let openH = parseInt(e.openT.split(':')[0]);
         let openM = parseInt(e.openT.split(':')[1]);

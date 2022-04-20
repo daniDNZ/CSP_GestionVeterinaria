@@ -31,6 +31,34 @@ const cleanDatalist = (id) => {
     datalist.innerHTML = '';
 }
 
+// Desabilita las horas cogidas para las visitas
+const handleTime = (data) => {
+    console.log(data)
+
+    let options = document.querySelectorAll('#timePicker>option');  // Recogemos los options
+
+    options.forEach(o => {
+        if (o.hasAttribute('disabled')) o.removeAttribute('disabled'); // Eliminamos el atributo disabled 
+    })
+    data.forEach(v => {                                  // Recorremos las visitas
+        let dur = 0;                                     // Variable que recoge la duración de las visitas previas
+        options.forEach(o => {
+            if (dur > 1) {
+
+                o.setAttribute('disabled', 'true');     // Si la duración > 1 quiere decir que está ocupado por otra visita, desabilitamos.
+                dur--;                                  // Decrementamos la duración.
+
+            } else {
+
+                if (v.time == o.value) {                // Si coincide la hora con una de las visitas, desabilitamos.
+                    o.setAttribute('disabled', 'true');
+                    dur = v.duration;                   // Asignamos la duración a la variable para no pisar una visita con otra.
+                } 
+            }
+        });
+    });
+}
+
 function CustomerForm({ action, id }) {
 
     const modal = setModal(action);
@@ -121,7 +149,7 @@ function PatientForm({ action, id = '' }) {
             const name = e.name;
             const identifier = e.email; 
 
-            handleDatalist('customerPicker-datalist', name, identifier)
+            handleDatalist('responsiblePicker-datalist', name, identifier)
         });
     }
 
@@ -175,9 +203,9 @@ function PatientForm({ action, id = '' }) {
                         </datalist>
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="customerPicker" className="form-label">Cliente:</label>
-                        <input type="search" id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." />
-                        <datalist id="customerPicker-datalist">
+                        <label htmlFor="responsiblePicker" className="form-label">Cliente:</label>
+                        <input type="search" id="responsiblePicker" className="form-control" list="responsiblePicker-datalist" placeholder="Buscar..." />
+                        <datalist id="responsiblePicker-datalist">
                         </datalist>
                     </div>
                     <div className="mb-3 col-auto">
@@ -208,8 +236,8 @@ function PatientForm({ action, id = '' }) {
                         <label htmlFor="sterilisedPicker" className="form-label">Esterilizad@:</label>
                         <select type="" id="sterilisedPicker" className="form-select">
                             <option id="st-null" value="">Select...</option>
-                            <option id="st-0" value="0">No</option>
-                            <option id="st-1" value="1">Sí</option>
+                            <option id="st-0" value="false">No</option>
+                            <option id="st-1" value="true">Sí</option>
                         </select>
                     </div>
                     <div className="mb-3 col-auto">
@@ -218,7 +246,10 @@ function PatientForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientWeight" className="form-label">Peso:</label>
-                        <input type="text" id="patientWeight" className="form-control" />
+                        <div className="input-group">
+                            <input type="text" id="patientWeight" className="form-control" style={{ width: '70px' }}/>   
+                            <span className="input-group-text">Kg</span>
+                        </div>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientChip" className="form-label">CHIP:</label>
@@ -276,12 +307,12 @@ function VisitForm({ action, id = '' }) {
         if (input.value < 15) input.value = 15;
     }
 
-    const handleVets = (data) => {
+    const handleUsers = (data) => {
         data.forEach(e => {
             const name = e.name;
             const identifier = e.username; 
 
-            handleDatalist('vetPicker-datalist', name, identifier)
+            handleDatalist('userPicker-datalist', name, identifier)
         });
     }
 
@@ -304,6 +335,7 @@ function VisitForm({ action, id = '' }) {
     }
 
     const handleCustomersFromPatients = (data) => {
+        console.log(data)
         if (data['allData'].length > 0) {
             data['allData'].forEach(e => {
                 const name = e.customer;
@@ -317,36 +349,10 @@ function VisitForm({ action, id = '' }) {
             
     }
 
-    const handleTime = (data) => {
-
-        let options = document.querySelectorAll('#timePicker>option');  // Recogemos los options
-
-        options.forEach(o => {
-            if (o.hasAttribute('disabled')) o.removeAttribute('disabled'); // Eliminamos el atributo disabled 
-        })
-        data.forEach(v => {                                  // Recorremos las visitas
-            let dur = 0;                                     // Variable que recoge la duración de las visitas previas
-            options.forEach(o => {
-                if (dur > 1) {
-
-                    o.setAttribute('disabled', 'true');     // Si la duración > 1 quiere decir que está ocupado por otra visita, desabilitamos.
-                    dur--;                                  // Decrementamos la duración.
-
-                } else {
-
-                    if (v.time == o.value) {                // Si coincide la hora con una de las visitas, desabilitamos.
-                        o.setAttribute('disabled', 'true');
-                        dur = v.duration;                   // Asignamos la duración a la variable para no pisar una visita con otra.
-                    } 
-                }
-            });
-        });
-    }
-
     const capturePatient = (e) => {
         e.preventDefault();
 
-        const patient = e.target.value;
+        const patient = e.target.value.split(' - ')[0];
 
         cleanDatalist('customerPicker-datalist');
         findPatients(handleCustomersFromPatients, 1, {namePicker: patient});
@@ -361,13 +367,13 @@ function VisitForm({ action, id = '' }) {
         findPatients(handlePatients, 1, {customerPicker: customer});
     }
 
-    const captureVet = (e) => {
+    const captureUser = (e) => {
         e.preventDefault();
 
-        const vet = e.target.value.split(' - ')[1];
-        Object.defineProperty(filter, 'vet', 
+        const user = e.target.value.split(' - ')[1];
+        Object.defineProperty(filter, 'user', 
             {
-                value: vet,
+                value: user,
                 enumerable: true,
                 configurable: true,
                 writable: true
@@ -385,19 +391,23 @@ function VisitForm({ action, id = '' }) {
                 configurable: true,
                 writable: true
             })
+            console.log(filter)
         findTime(handleTime, filter);
     }
 
     const fetchDatalists = () => {
-        getVets(handleVets);
+        getVets(handleUsers);
         getCustomers(handleCustomers);
         getPatients(handlePatients);
+
+        // Horario
+        OpenTime();
     }
 
     useEffect(() => {
         addEvents(handleFData);
         fetchDatalists();
-        OpenTime();
+        
     }, [])
     return (
         <>
@@ -407,9 +417,9 @@ function VisitForm({ action, id = '' }) {
                         <h3 className="col-auto">Visita</h3>
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
-                        <input type="search" id="vetPicker" className="form-control" list="vetPicker-datalist" placeholder="Buscar..." onInput={captureVet}/>
-                        <datalist id="vetPicker-datalist" />
+                        <label htmlFor="userPicker" className="form-label">Verinaria/o:</label>
+                        <input type="search" id="userPicker" className="form-control" list="userPicker-datalist" placeholder="Buscar..." onInput={captureUser}/>
+                        <datalist id="userPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="dateTimePicker" className="form-label">Fecha:</label>
@@ -434,8 +444,8 @@ function VisitForm({ action, id = '' }) {
                         <label htmlFor="completedPicker" className="form-label">Completada:</label>
                         <select id="completedPicker" className="form-select" >
                             <option id="co-null" value="">Select...</option>
-                            <option id="co-0" value="0">No</option>
-                            <option id="co-1" value="1">Sí</option>
+                            <option id="co-0" value="false">No</option>
+                            <option id="co-1" value="true">Sí</option>
                         </select>
                     </div>
                     <div className="mb-3 col-auto">
@@ -498,4 +508,4 @@ function Form({ selector, action, id = ''}) {
     )
 }
 
-export default Form;
+export { Form, handleTime };

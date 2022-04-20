@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Repository\PatientRepository;
 use App\Repository\CustomerRepository;
 use App\Repository\SpeciesRepository;
+use App\Repository\RaceRepository;
 use App\Entity\Visit;
 
 class VisitsController extends AbstractController
@@ -93,29 +94,45 @@ class VisitsController extends AbstractController
     }
 
     /**
-     * @Route("/api/visit", name="app_visit", methods="POST" )
+     * @Route("/api/visits/{id}", name="app_visit", methods="GET" )
      */
-    public function index(VisitRepository $visitRepository, Request $request): Response
+    public function index(VisitRepository $visitRepository, int $id): Response
     {
-        $data = $request->toArray();
-        $visitEntity = $visitRepository->findOneBy(array('id' => $data['id']));
+
+        $visitEntity = $visitRepository->find($id);
 
         $visit = [];
         $visit['id'] = $visitEntity->getId();
-        $visit['vet'] = $visitEntity->getUser()->getId();
+        $visit['vetName'] = $visitEntity->getUser()->getName();
+        $visit['vetUsername'] = $visitEntity->getUser()->getUsername();
         $visit['done'] = $visitEntity->getDone();
         $visit['race'] = $visitEntity->getPatient()->getRace();
         $visit['weight'] = $visitEntity->getWeight();
         $visit['patient'] = $visitEntity->getPatient()->getName();
+        $visit['patientId'] = $visitEntity->getPatient()->getId();
         $visit['species'] = $visitEntity->getPatient()->getSpecies()->getName();
         $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
+        $visit['customerEmail'] = $visitEntity->getPatient()->getResponsible()->getEmail();
         $visit['category'] = $visitEntity->getCategory();
         $visit['duration'] = $visitEntity->getDuration();
-        $visit['date_time'] = $visitEntity->getDateTime();
+        $visit['date'] = $visitEntity->getDateTime()->format('Y-m-d');
+        $visit['time'] = $visitEntity->getDateTime()->format('H:i');
         $visit['treatment'] = $visitEntity->getTreatment();
         $visit['description'] = $visitEntity->getDescription();
             
         return $this->json($visit);
+    }
+
+     /**
+     * @Route("/api/patients/{id}/visits", name="app_patient_visits", methods="GET" )
+     */
+    public function patientVisits(VisitRepository $visitRepository, int $id): Response
+    {
+        $entities = $visitRepository->findBy(array('patient' => $id), array('date_time' => 'DESC'));
+
+        $visits = $this->maker($entities);
+            
+        return $this->json($visits);
     }
 
     /**
@@ -126,7 +143,10 @@ class VisitsController extends AbstractController
         $data = $request->toArray();
         $visit = New Visit;
 
-        $visit->setDone($data['done']);
+        $done = false;
+        if($data['done'] == 'true') $done = true;
+
+        $visit->setDone($done);
         $visit->setCategory($data['category']);
         $visit->setTreatment($data['treatment']);
         $visit->setWeight($data['patientWeight']);
@@ -151,19 +171,21 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/visit/update", name="app_visit_update", methods="POST" )
      */
-    public function update(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function update(VisitRepository $visitRepository, UserRepository $userRepository, SpeciesRepository $speciesRepository, RaceRepository $raceRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = $request->toArray();
         $visit = $visitRepository->find($data['id']);
 
-        $visit->setDone($data['done']);
+        $done = false;
+        if($data['done'] == 'true') $done = true;
+
+        $visit->setDone($done);
         $visit->setCategory($data['category']);
         $visit->setTreatment($data['treatment']);
         $visit->setWeight($data['patientWeight']);
+        $visit->getPatient()->setWeight($data['patientWeight']);
         $visit->setDescription($data['description']);
-        $visit->getPatient()->setRace($data['patientRace']);
-        $visit->setUser($userRepository->find($data['vet']));
-        $visit->getPatient()->setSpecies($data['patientSpecies']);
+        $visit->setUser($userRepository->findOneBy(array('username' => $data['vet'])));
 
         $dateString = $data['date_time'];
         $dateReconverted = \DateTime::createFromFormat('Y-m-d H:i', $dateString);
@@ -177,6 +199,38 @@ class VisitsController extends AbstractController
         
     }
 
+    /**
+     * @Route("/api/visit/{id}/open", name="app_visit_open", methods="GET" )
+     */
+    public function open(VisitRepository $visitRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $visit = $visitRepository->find($id);
+
+        $visit->setDone(false);
+
+        $entityManager->persist($visit);
+        $entityManager->flush();
+    
+
+        return $this->json($visit);
+    }
+
+    /**
+     * @Route("/api/visit/{id}/close", name="app_visit_close", methods="GET" )
+     */
+    public function close(VisitRepository $visitRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $visit = $visitRepository->find($id);
+
+        $visit->setDone(true);
+
+        $entityManager->persist($visit);
+        $entityManager->flush();
+    
+
+        return $this->json($visit);
+    }
+
      /**
      * @Route("/api/visits/time", name="app_visits_time", methods="POST")
      */
@@ -187,8 +241,8 @@ class VisitsController extends AbstractController
 
         $query = array();
 
-        if (array_key_exists('date', $data))          {$query['date'] = $data['date'];} else {$query['date'] = '%';}
-        if (array_key_exists('vet', $data))          {$query['user'] = $data['vet'];} else {$query['user'] = '%';}
+        if (array_key_exists('date', $data) && $data['date'] != '')          {$query['date'] = $data['date'];} else {$query['date'] = '%';}
+        if (array_key_exists('user', $data) && $data['user'] != '')          {$query['user'] = $data['user'];} else {$query['user'] = '%';}
 
         $entities = $visitRepository->findByDateAndUser($query);
         $visits = [];
