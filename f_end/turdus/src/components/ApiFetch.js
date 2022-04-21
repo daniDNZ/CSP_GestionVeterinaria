@@ -1,40 +1,5 @@
 import bcrypt from "bcryptjs/dist/bcrypt";
-import { assignData } from "./TableController";
-import { getDataDatalist } from "./Datalist";
 import { handleAlert } from "./FormController";
-import { activePagination } from "./TablePagination";
-
-const fetchPatient = (id = '', userId = '', customer = '', species = '', sterilised = '') => {
-    let arrPatients;
-    const bodyData = {
-        id: id,
-        userid: userId,
-        customer: customer,
-        species: species,
-        sterilised: sterilised
-    }
-
-    const config = {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-    }
-    const request = new Request("http://192.168.1.81:8888/api/patients", config);
-    fetch(request)
-        .then(response => response.json())
-        .then(data => { arrPatients = data })
-        .catch(e => {
-            console.log(e)
-            // localStorage.clear();
-            // window.location = '/turdus/login'
-        })
-
-    return arrPatients;
-}
 
 const getVisits = ( callback, currentPage = 1 ) => {
 
@@ -162,7 +127,6 @@ const getCustomers = ( callback, currentPage = 1 ) => {
     fetch(request)
         .then(response => response.json())
         .then(data => { callback(data, getCustomers)
-            // assignData( data, arr ); getDataDatalist( data, arr.ids ); activePagination( data, arr, getCustomers ) 
         })
         .catch(e => {
             console.log(e)
@@ -206,7 +170,6 @@ const findVisits = ( callback, currentPage = 1, bodyData = {} ) => {
         .then(response => response.json())
         .then(data => {
             callback(data, findVisits)
-            //  assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findVisits, bodyData ) 
             })
         .catch(e => {
             console.log(e)
@@ -255,7 +218,6 @@ const findCustomers = ( callback, currentPage = 1, bodyData = {}) => {
     fetch(request)
         .then(response => response.json())
         .then(data => { callback(data, findCustomers)
-            // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findCustomers, bodyData )
          })
         .catch(e => {
             console.log(e)
@@ -432,7 +394,6 @@ const findCustomerPatients = ( callback, id ) => {
         .then(response => response.json())
         .then(data => { 
             callback(data)
-            // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) 
         })
         .catch(e => {
             console.log(e)
@@ -458,6 +419,33 @@ const findPatientVisits = ( callback, id ) => {
             callback(data)
             // assignData(data, arr); getDataDatalist(data, arr.ids); activePagination( data, arr, findPatients, bodyData ) 
         })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+const findTodayVisits = ( callback, date ) => {
+    const bodyData = {
+        datePicker: date
+    }
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/visits/today`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            callback(data)
+            })
         .catch(e => {
             console.log(e)
             // localStorage.clear();
@@ -612,59 +600,6 @@ const addUpdateVisit = (fData, action, id = '') => {
     
 }
 
-// const openVisit = (id) => {
-
-//     console.log(id)
-
-//     const config = {
-//         method: 'GET',
-//         mode: 'cors',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//             'Content-Type': 'application/json'
-//         },
-//     }
-//     let request = new Request(`http://192.168.1.81:8888/api/visit/${id}/open`, config);
-    
-//     fetch(request)
-//         .then(response => response.json())
-//         .then(data => {
-//             window.location = `/turdus/visits/${id}`;
-//         })
-//         .catch(e => {
-//             handleAlert(false);
-//             console.log(e, 'Esto es un error')
-//             // localStorage.clear();
-//             // window.location = '/turdus/login'
-//         })
-    
-// }
-
-// const closeVisit = (id, location) => {
-
-//     const config = {
-//         method: 'GET',
-//         mode: 'cors',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//             'Content-Type': 'application/json'
-//         },
-//     }
-//     let request = new Request(`http://192.168.1.81:8888/api/visit/${id}/close`, config);
-    
-//     fetch(request)
-//         .then(response => response.json())
-//         .then(data => {
-//             window.location = location;
-//         })
-//         .catch(e => {
-//             handleAlert(false);
-//             console.log(e, 'Esto es un error')
-//             // localStorage.clear();
-//             // window.location = '/turdus/login'
-//         })
-    
-// }
 const closeVisit = (fData, id, location) => {
     const dateTime = `${fData.datePicker.value} ${fData.timePicker.value}`;
     
@@ -701,7 +636,6 @@ const closeVisit = (fData, id, location) => {
             handleAlert(false);
             console.log(e, 'Esto es un error')
             // localStorage.clear();
-            // window.location = '/turdus/login'
         })
     
 }
@@ -709,7 +643,6 @@ const closeVisit = (fData, id, location) => {
 
 
 export { 
-    fetchPatient, 
     getVets, 
     getSpecies, 
     getRaces, 
@@ -729,7 +662,7 @@ export {
     findOneVisit,
     findCustomerPatients,
     findPatientVisits,
-    // openVisit,
+    findTodayVisits,
     closeVisit,
     addUpdateCustomer, 
     addUpdatePatient,

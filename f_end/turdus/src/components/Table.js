@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { findCustomers, findPatients, findVisits, getCustomers, getPatients, getVisits } from "./ApiFetch";
+import { findCustomers, findPatients, findVisits } from "./ApiFetch";
 import { getDataDatalist } from "./Datalist";
 import { Pagination } from "./TablePagination";
-import { handleClean } from "./FormController";
 
 // Método con el que rellenamos las tablas
 const handleTable = (d, destiny) => {
@@ -395,21 +394,18 @@ function VisitsTable() {
                             <label htmlFor="vetPicker" className="form-label">Veterinaria/o:</label>
                             <input type="search" id="vetPicker" className="form-control" list="vetPicker-datalist" placeholder="Buscar..." />
                             <datalist id="vetPicker-datalist">
-                                <option id="ve-Colette" value="Colette">Colette</option>
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="customerPicker" className="form-label">Cliente:</label>
                             <input type="search" id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." />
                             <datalist id="customerPicker-datalist">
-                                <option id="cu-Nicko" value="Nicko">Nicko</option>
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="patientPicker" className="form-label">Paciente:</label>
                             <input type="search" id="patientPicker" className="form-control" list="patientPicker-datalist" placeholder="Buscar..." />
                             <datalist id="patientPicker-datalist">
-                                <option id="pa-Croqueta" value="Croqueta">Croqueta</option>
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto">

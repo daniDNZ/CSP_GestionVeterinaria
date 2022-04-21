@@ -278,6 +278,9 @@ function Visit() {
         document.getElementById("description").value = data.description;
         document.getElementById("treatment").value = data.treatment;
 
+        document.getElementById("viewPatientButton").setAttribute('href', `/turdus/patients/${data.patientId}`);
+
+
         // Desabilitamos las horas cogidas por otras visitas
         const date = data.date;
         const user = data.vetUsername;
@@ -285,7 +288,6 @@ function Visit() {
         let filter = {};
         filter.date = date;
         filter.user = user;
-        console.log(filter)
         
         findTime(handleTime, filter);
 
@@ -336,9 +338,13 @@ function Visit() {
 
     const addButtons = () => {
         const formTitle = document.querySelector("#form-title");
+        const allBContainer = document.createElement('div');
+        allBContainer.classList.add('col-auto', 'justify-content-between');
         let bContainer = document.createElement("div");
-        bContainer.classList.add('btn', 'btn-light', 'col-auto', 'p-0');
-
+        bContainer.classList.add('btn', 'btn-light', 'col-auto', 'p-0', 'mx-1');
+        let bPatientCont = document.createElement("div");
+        bPatientCont.classList.add('btn', 'btn-light', 'col-auto', 'p-0', 'mx-1');
+        
         let pButton = document.createElement("a");
         pButton.setAttribute('id', 'addPatientButton');
         pButton.setAttribute('type', 'button');
@@ -348,8 +354,17 @@ function Visit() {
         pButton.classList.add('btn', 'col-auto');
         pButton.textContent = 'Cerrar / Cobrar';
 
+        let patButton = document.createElement("a");
+        patButton.setAttribute('id', 'viewPatientButton');
+        patButton.classList.add('btn', 'col-auto');
+        patButton.textContent = ' Paciente ';
+    
+        bPatientCont.append(patButton);
         bContainer.append(pButton);
-        formTitle.append(bContainer);
+        allBContainer.append(bPatientCont);
+        allBContainer.append(bContainer);
+
+        formTitle.append(allBContainer);
     }
 
     return (

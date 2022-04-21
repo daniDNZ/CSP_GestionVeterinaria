@@ -107,16 +107,6 @@ class PatientRepository extends ServiceEntityRepository
 
         return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
-    
-    public function findByVets($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.vet IN (:val)')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 
     /*
     public function findOneBySomeField($value): ?Patient

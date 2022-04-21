@@ -3,10 +3,10 @@ import DashboardSidebar from '../components/DashboardSidebar';
 import Home from '../components/Home';
 import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
-import VisitsList from '../components/VisitsList';
 import { Customer, Patient, Visit } from '../components/View';
 import Registrations from '../components/Registrations';
 import Search from '../components/Search';
+import WaitingRoom from '../components/WaitingRoom';
 
 function Dashboard({ comp }) {
   document.body.removeAttribute('data-bs-spy');
@@ -21,17 +21,17 @@ function Dashboard({ comp }) {
       case 3:
         return <Schedule />
       case 4:
-        return <VisitsList />
-      case 5:
         return <Visit />
-      case 6:
+      case 5:
         return <Search />
-      case 7:
+      case 6:
         return <Patient />
-      case 8:
+      case 7:
         return <Customer />
-      case 9:
+      case 8:
         return <Registrations />  
+      case 9:
+        return <WaitingRoom />  
       default:
         break;
     }

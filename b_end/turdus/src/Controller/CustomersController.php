@@ -8,33 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CustomerRepository;
-use App\Repository\PatientRepository;
 use App\Repository\PostalCodeRepository;
-use App\Repository\SpeciesRepository;
-use App\Repository\FamilyRepository;
-use App\Repository\UserRepository;
 use App\Entity\Customer;
 use App\Entity\Family;
 
 class CustomersController extends AbstractController
 {
-    /**
-     * @Route("/api/customers_all", name="app_customers_all")
-     */
-    public function allCustomers(CustomerRepository $customerRepository): Response
-    {
-        $customerEntities = $customerRepository->findAll();
-
-        foreach ($customerEntities as $customerEntity) 
-        {
-            $oneCustomer = [];
-            $oneCustomer['name'] = $customerEntity->getName();
-            $oneCustomer['id'] = $customerEntity->getId();
-            $customer[] = $oneCustomer;
-        }
-
-        return $this->json($customer);
-    }
 
     function maker($customerEntities)
         {
@@ -89,7 +68,7 @@ class CustomersController extends AbstractController
      /**
      * @Route("/api/{currentPage}/customers", name="app_customers_get", methods="GET")
      */
-    public function getCustomers(CustomerRepository $customerRepository, int $currentPage, Request $request): Response
+    public function getCustomers(CustomerRepository $customerRepository, int $currentPage ): Response
     {   
         $limit = 10;
         $customersFound = $customerRepository->findAll($currentPage, $limit);
@@ -111,7 +90,7 @@ class CustomersController extends AbstractController
    /**
      * @Route("/api/customers/{id}", name="app_one_customer", methods="GET")
      */
-    public function singleCustomer(PatientRepository $patientRepository, CustomerRepository $customerRepository, int $id, Request $request): Response
+    public function singleCustomer( CustomerRepository $customerRepository, int $id ): Response
     {
     
         $customerEntity = $customerRepository->findOneBy(array('id' => $id));
@@ -158,7 +137,7 @@ class CustomersController extends AbstractController
     /**
      * @Route("/api/customer/add", name="app_customer_add", methods="POST" )
      */
-    public function add(CustomerRepository $customerRepository, PostalCodeRepository $postalCodeRepository, FamilyRepository $familyRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function add( PostalCodeRepository $postalCodeRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = $request->toArray();
 

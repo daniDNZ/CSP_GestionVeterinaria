@@ -10,9 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\VisitRepository;
 use App\Repository\UserRepository;
 use App\Repository\PatientRepository;
-use App\Repository\CustomerRepository;
-use App\Repository\SpeciesRepository;
-use App\Repository\RaceRepository;
 use App\Entity\Visit;
 
 class VisitsController extends AbstractController
@@ -94,6 +91,40 @@ class VisitsController extends AbstractController
     }
 
     /**
+     * @Route("/api/visits/today", name="app_visits_today", methods="POST")
+     */
+    public function findTodayVisits( VisitRepository $visitRepository, Request $request ): Response
+    {
+        $visits = [];
+        $data = $request->toArray();
+
+        $query = array();
+
+        if (array_key_exists('datePicker', $data))          {$query['date'] = $data['datePicker'];} else {$query['date'] = '%';}
+       
+        $visitEntities = $visitRepository->findByDate($query);
+
+        foreach ($visitEntities as $visitEntity) 
+        {
+            $visit = [];
+            $visit['id'] = $visitEntity->getId();
+            $visit['vetName'] = $visitEntity->getUser()->getName();
+            $visit['done'] = $visitEntity->getDone();
+            $visit['race'] = $visitEntity->getPatient()->getRace();
+            $visit['patient'] = $visitEntity->getPatient()->getName();
+            $visit['species'] = $visitEntity->getPatient()->getSpecies()->getName();
+            $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
+            $visit['category'] = $visitEntity->getCategory();
+            $visit['date'] = $visitEntity->getDateTime()->format('Y-m-d');
+            $visit['time'] = $visitEntity->getDateTime()->format('H:i');
+
+            $visits[] = $visit;
+        }
+
+        return $this->json($visits);
+    }
+
+    /**
      * @Route("/api/visits/{id}", name="app_visit", methods="GET" )
      */
     public function index(VisitRepository $visitRepository, int $id): Response
@@ -138,7 +169,7 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/visit/add", name="app_visit_add", methods="POST" )
      */
-    public function add(VisitRepository $visitRepository, UserRepository $userRepository, PatientRepository $patientRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function add( UserRepository $userRepository, PatientRepository $patientRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = $request->toArray();
         $visit = New Visit;
@@ -171,7 +202,7 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/visit/update", name="app_visit_update", methods="POST" )
      */
-    public function update(VisitRepository $visitRepository, UserRepository $userRepository, SpeciesRepository $speciesRepository, RaceRepository $raceRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function update(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = $request->toArray();
         $visit = $visitRepository->find($data['id']);
@@ -197,38 +228,6 @@ class VisitsController extends AbstractController
 
         return $this->json($data);
         
-    }
-
-    /**
-     * @Route("/api/visit/{id}/open", name="app_visit_open", methods="GET" )
-     */
-    public function open(VisitRepository $visitRepository, int $id, EntityManagerInterface $entityManager): Response
-    {
-        $visit = $visitRepository->find($id);
-
-        $visit->setDone(false);
-
-        $entityManager->persist($visit);
-        $entityManager->flush();
-    
-
-        return $this->json($visit);
-    }
-
-    /**
-     * @Route("/api/visit/{id}/close", name="app_visit_close", methods="GET" )
-     */
-    public function close(VisitRepository $visitRepository, int $id, EntityManagerInterface $entityManager): Response
-    {
-        $visit = $visitRepository->find($id);
-
-        $visit->setDone(true);
-
-        $entityManager->persist($visit);
-        $entityManager->flush();
-    
-
-        return $this->json($visit);
     }
 
      /**
@@ -264,7 +263,7 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/week_schedule", name="app_schedule", methods="POST" )
      */
-    public function week(VisitRepository $visitRepository, Request $request, UserRepository $userRepository): Response
+    public function week(VisitRepository $visitRepository, UserRepository $userRepository, Request $request ): Response
     {
         $visits = [];
         $data = $request->toArray();
@@ -302,99 +301,6 @@ class VisitsController extends AbstractController
                 $visits[] = $visit;
             }
             
-        }
-
-        return $this->json($visits);
-    }
-
-    /**
-     * @Route("/api/list_visits", name="app_day_schedule", methods="POST" )
-     */
-    public function day(VisitRepository $visitRepository, UserRepository $userRepository, PatientRepository $patientRepository, Request $request): Response
-    {
-        $visits = [];
-        $data = $request->toArray();
-
-        $day = $data['day'];
-        $vet = $data['userid'];
-        $patient = $data['patient'];
-        $customer = $data['customer'];
-        $completed = $data['completed'];
-
-        function maker($singleVisit)
-        {
-            $visit = [];
-            $visit['id'] = $singleVisit->getId();
-            $visit['vet'] = $singleVisit->getUser()->getName();
-            $visit['patient'] = $singleVisit->getPatient()->getName();
-            $visit['species'] = $singleVisit->getPatient()->getSpecies()->getName();
-            $visit['customer'] = $singleVisit->getPatient()->getResponsible()->getName();
-            $visit['category'] = $singleVisit->getCategory();
-            $visit['duration'] = $singleVisit->getDuration();
-            $visit['date_time'] = $singleVisit->getDateTime();
-            $visit['completed'] = $singleVisit->getDone();
-
-            return $visit;
-        }
-        
-        if ($customer == '' || $patient != '') 
-        {
-            if ($day != '') 
-            {
-                if ( $patient != '' )   { $visitEntities = $visitRepository->findByDateAndPatient($day.'%', $patient); }
-                else if ( $vet != '' )  { $visitEntities = $visitRepository->findByDateAndVet($day.'%', $vet); }
-                else                    { $visitEntities = $visitRepository->findByDate($day.'%'); }
-            } 
-            else
-            {
-                $query = array();
-
-                if ( $vet != '')        { $query['user'] = $vet; }
-                if ( $patient != '')    { $query['patient'] = $patient; }
-
-                if (!empty($query))
-                {
-                    $visitEntities = $visitRepository->findBy($query);
-                }
-                else 
-                {
-                    $visitEntities = $visitRepository->findAll();
-                }
-            }
-
-            foreach ($visitEntities as $singleVisit)
-            {
-                if ($singleVisit->getDone() == $completed) 
-                {
-                    $visits[] = maker($singleVisit);
-                }
-            }
-        }
-        else
-        {
-            $patientEntities = $patientRepository->findBy(array('responsible' => $customer));
-
-            foreach ($patientEntities as $patientEntity) 
-            {
-                $patientIds[] = $patientEntity->getId();
-            }
-
-            foreach ($patientIds as $patient) 
-            {
-                if ($day != '') { $patientVisitEntities[] = $visitRepository->findByDateAndPatient($day.'%', $patient); }
-                else            { $patientVisitEntities[] = $visitRepository->findBy(array('patient' => $patient)); }
-            }
-            
-            foreach ($patientVisitEntities as $visitEntities)
-            { 
-                foreach ($visitEntities as $singleVisit)
-                {
-                    if ($singleVisit->getDone() == $completed) 
-                    {
-                        $visits[] = maker($singleVisit);
-                    } 
-                }
-            }
         }
 
         return $this->json($visits);

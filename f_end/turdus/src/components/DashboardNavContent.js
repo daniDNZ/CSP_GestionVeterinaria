@@ -16,12 +16,12 @@ function DashboardNavContent() {
                     <span className="d-inline">Horario</span>
                 </NavLink>
             </li>
-            {/* <li className="mx-0 nav-item">
-                <NavLink to="/turdus/visits" className="nav-link px-2">
-                    <i className="bi bi-card-text fs-5 me-2"></i>
-                    <span className="d-inline">Visitas</span>
+            <li className="mx-0 nav-item">
+                <NavLink to="/turdus/waiting_room" className="nav-link px-2">
+                    <i className="bi bi-signpost-2 fs-5 me-2"></i>
+                    <span className="d-inline">Recepción</span>
                 </NavLink>
-            </li> */}
+            </li> 
             <li className="mx-0 nav-item">
                 <NavLink to="/turdus/search" className="nav-link px-2">
                     <i className="bi bi-search fs-5 me-2"></i>

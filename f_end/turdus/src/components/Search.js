@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { getPatients, getCustomers, getVisits } from "./ApiFetch";
-import { TableGenerator } from "./TableController";
 import Table from "./Table";
 
 function Search() {

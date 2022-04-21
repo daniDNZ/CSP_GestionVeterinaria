@@ -114,18 +114,6 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
         
         return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
-    
-    public function findByName($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.name LIKE :val')
-            ->setParameter('val', '%'.$value.'%')
-            ->orderBy('c.name', 'ASC')
-            // ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 
     /*
     public function findOneBySomeField($value): ?Customer

@@ -40,6 +40,11 @@ class Bill
      */
     private $productsLogs;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=visit::class, inversedBy="bills")
+     */
+    private $visit;
+
     public function __construct()
     {
         $this->servicesLogs = new ArrayCollection();
@@ -131,6 +136,18 @@ class Bill
                 $productsLog->setBill(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getVisit(): ?visit
+    {
+        return $this->visit;
+    }
+
+    public function setVisit(?visit $visit): self
+    {
+        $this->visit = $visit;
 
         return $this;
     }

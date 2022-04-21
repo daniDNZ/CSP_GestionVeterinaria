@@ -48,17 +48,7 @@ class RaceRepository extends ServiceEntityRepository
     // /**
     //  * @return Race[] Returns an array of Race objects
     //  */
-    public function findByName($value)
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.name LIKE :val')
-            ->setParameter('val', '%'.$value.'%')
-            ->orderBy('r.name', 'ASC')
-            // ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+    
     /*
     public function findByExampleField($value)
     {

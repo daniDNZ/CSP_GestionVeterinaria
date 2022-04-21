@@ -56,4 +56,4 @@ function datalistGenerator (id, data) {
 }
 
 
-export { handleDatalist, getDataDatalist, datalistGenerator };
+export { getDataDatalist };

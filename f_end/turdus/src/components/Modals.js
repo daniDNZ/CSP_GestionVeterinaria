@@ -1,6 +1,32 @@
-import { useEffect } from "react";
 import { addUpdatePatient, addUpdateVisit } from "./ApiFetch";
 import { Form } from "./Form"
+
+function AlertModal() {
+    return (
+        <>
+            {/* Button trigger modal  */}
+            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Añadir</button>
+            {/* Modal  */}
+            <div className="modal fade" id="warningModal" tabIndex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="warningModalLabel">¿Quieres actualizar?</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            Esta acción no se puede deshacer
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
 
 function NewPatient(){
     const handleData = (e) => {
@@ -88,4 +114,30 @@ function NewVisit(){
     )
 }
 
-export { NewPatient, NewVisit }
+function ViewVisitsList(){
+   
+
+
+    return (
+        <>
+            <div className="modal fade" id="viewVisitsListModal" tabIndex="-1" aria-labelledby="viewVisitsListModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="viewVisitsListModalLabel">Visita Ref</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-primary" >Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export { AlertModal, NewPatient, NewVisit, ViewVisitsList }

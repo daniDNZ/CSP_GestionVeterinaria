@@ -105,15 +105,6 @@ class VisitRepository extends ServiceEntityRepository
         return array('paginator' => $paginator, 'query' => $query, 'all' => $all);
     }
 
-    public function findByDate($value)
-    {
-        return $this->createQueryBuilder('v')
-        ->andWhere('v.date_time LIKE :val')
-        ->setParameter('val', $value)
-        ->getQuery()
-        ->getResult();
-    }
-
     public function findByDateAndUser($q)
     {
         return $this->createQueryBuilder('v')
@@ -126,67 +117,24 @@ class VisitRepository extends ServiceEntityRepository
         ->getResult();
     }
 
-    public function findByDateAndPatient($date, $patient)
+    public function findByDate($q)
     {
         return $this->createQueryBuilder('v')
-        ->andWhere('v.date_time LIKE :date')
-        ->andWhere('v.patient = :pat')
-        ->setParameter('date', $date)
-        ->setParameter('pat', $patient)
+        ->andWhere('v.date_time LIKE :val')
+        ->setParameter('val', $q['date'].'%')
         ->getQuery()
         ->getResult();
     }
 
-    public function findByDateAndVet($date, $vet)
-    {
-        return $this->createQueryBuilder('v')
-        ->innerJoin('v.user', 'u')
-        ->andWhere('v.date_time LIKE :date')
-        ->andWhere('u.username = :vet')
-        ->setParameter('date', $date)
-        ->setParameter('vet', $vet)
-        ->getQuery()
-        ->getResult();
-    }
     
-    public function findByPatients($value)
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.patient IN (:val)')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
-    public function findByUsers($value)
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.user IN (:val)')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
-    // public function findByCustomers($value)
+    // public function findOneBySomeField($value): ?Visit
     // {
     //     return $this->createQueryBuilder('v')
-    //         ->andWhere('v.customer IN (:val)')
+    //         ->andWhere('v.exampleField = :val')
     //         ->setParameter('val', $value)
     //         ->getQuery()
-    //         ->getResult()
+    //         ->getOneOrNullResult()
     //     ;
     // }
-    /*
-    public function findOneBySomeField($value): ?Visit
-    {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+    
 }

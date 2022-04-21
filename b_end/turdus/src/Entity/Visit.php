@@ -76,10 +76,16 @@ class Visit
      */
     private $Duration;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Bill::class, mappedBy="visit")
+     */
+    private $bills;
+
     public function __construct()
     {
         $this->diagnosis = new ArrayCollection();
         $this->documents = new ArrayCollection();
+        $this->bills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -245,6 +251,36 @@ class Visit
     public function setDuration(int $Duration): self
     {
         $this->Duration = $Duration;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bill>
+     */
+    public function getBills(): Collection
+    {
+        return $this->bills;
+    }
+
+    public function addBill(Bill $bill): self
+    {
+        if (!$this->bills->contains($bill)) {
+            $this->bills[] = $bill;
+            $bill->setVisit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBill(Bill $bill): self
+    {
+        if ($this->bills->removeElement($bill)) {
+            // set the owning side to null (unless already changed)
+            if ($bill->getVisit() === $this) {
+                $bill->setVisit(null);
+            }
+        }
 
         return $this;
     }

@@ -1,8 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Form } from "./Form";
-import { handleDatalist } from "./Datalist";
-import { FormGenerator, FormArray, handleClean } from "./FormController";
-import { addUpdatePatient, getVets, getAllCustomers, getSpecies, getRaces, findRaces, addUpdateCustomer } from "./ApiFetch";
 
 function Registrations() {
 

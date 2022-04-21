@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { addUpdateCustomer, addUpdatePatient, addUpdateVisit, findPatients, findTime, findRaces, getCustomers, getPatients, getRaces, getSpecies, getVets } from "./ApiFetch";
-import { FormModal, handleClean } from "./FormController";
 import OpenTime from "./OpenTime";
+import { AlertModal } from "./Modals";
 
 // Listeners
 const addEvents = (callback) => {
@@ -11,7 +11,7 @@ const addEvents = (callback) => {
 
 // Si el formulario es para update utilizamos un modal
 const setModal = (action) => {
-    if (action == 'update') return <FormModal />
+    if (action == 'update') return <AlertModal />
     else return <button type="submit" className="btn btn-primary">Añadir</button>
 }
 
@@ -33,7 +33,6 @@ const cleanDatalist = (id) => {
 
 // Desabilita las horas cogidas para las visitas
 const handleTime = (data) => {
-    console.log(data)
 
     let options = document.querySelectorAll('#timePicker>option');  // Recogemos los options
 
@@ -391,7 +390,6 @@ function VisitForm({ action, id = '' }) {
                 configurable: true,
                 writable: true
             })
-            console.log(filter)
         findTime(handleTime, filter);
     }
 
@@ -441,7 +439,7 @@ function VisitForm({ action, id = '' }) {
                         </div>
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="completedPicker" className="form-label">Completada:</label>
+                        <label htmlFor="completedPicker" className="form-label">Cerrada:</label>
                         <select id="completedPicker" className="form-select" >
                             <option id="co-null" value="">Select...</option>
                             <option id="co-0" value="false">No</option>

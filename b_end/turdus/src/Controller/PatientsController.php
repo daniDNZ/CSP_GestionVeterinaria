@@ -92,7 +92,7 @@ class PatientsController extends AbstractController
     /**
      * @Route("/api/{currentPage}/patients", name="app_patients_get", methods="GET")
      */
-    public function getPatients(PatientRepository $patientRepository, int $currentPage, Request $request): Response
+    public function getPatients(PatientRepository $patientRepository, int $currentPage ): Response
     {
         $limit = 10;
         $patientsFound = $patientRepository->findAll($currentPage, $limit);
@@ -114,7 +114,7 @@ class PatientsController extends AbstractController
       /**
      * @Route("/api/patients/{id}", name="app_one_patient", methods="GET")
      */
-    public function singlePatient(PatientRepository $patientRepository, UserRepository $userRepository, CustomerRepository $customerRepository, int $id, Request $request): Response
+    public function singlePatient( PatientRepository $patientRepository, int $id ): Response
     {
         $patientEntity = $patientRepository->findOneBy(array('id' => $id));
     
@@ -149,7 +149,6 @@ class PatientsController extends AbstractController
      * @Route("/api/customers/{id}/patients", name="app_customer_patients", methods="GET" )
      */
     public function customerPatients(
-        CustomerRepository $customerRepository, 
         PatientRepository $patientRepository, 
         int $id
     ): Response
@@ -212,7 +211,6 @@ class PatientsController extends AbstractController
         RaceRepository $raceRepository, 
         SpeciesRepository $speciesRepository, 
         UserRepository $userRepository, 
-        PatientRepository $patientRepository, 
         Request $request, 
         EntityManagerInterface $entityManager
     ): Response
