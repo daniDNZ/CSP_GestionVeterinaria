@@ -1,18 +1,56 @@
 import { useEffect } from "react";
-import { findTodayVisits } from "./ApiFetch";
+import { closeVisitFast, findOneVisit, findTodayVisits } from "./ApiFetch";
 import { ViewVisitsList } from "./Modals";
 
 function WaitingRoom() {
     let date = new Date;
     date = date.toISOString().split('T')[0]
 
-    const handleModal = (e) => {
-        e.preventDefault();
-        console.log(e.target.textContent.split('#')[1])
-        // RELLENAR EL MODAL, ORDENAR LA BÚSQUEDA POR HORA Y ARREGLAR COSITAS
+    const fillModal = (v) => {
+        console.log(v)
 
         const mTitle = document.querySelector('.modal-title');
-        // mTitle.textContent
+        const mList = document.querySelector('.modal-body>ul');
+        const list = `
+            <li class='list-group-item'><b>Hora:</b> ${v.time}</li>
+            <li class='list-group-item'><b>Fecha:</b> ${v.date}</li>
+            <li class='list-group-item'><b>Veterinari@:</b> ${v.vetName}</li>
+            <li class='list-group-item'><b>Paciente:</b> ${v.patient}</li>
+            <li class='list-group-item'><b>Propietario:</b> ${v.customer}</li>
+            <li class='list-group-item'><b>Especie:</b> ${v.species}</li>
+            <li class='list-group-item'><b>Raza:</b> ${v.race}</li>
+            `;
+        mList.innerHTML = list
+
+        mTitle.textContent = v.category;
+        
+        // Listeners botones
+        const viewBtn = document.querySelector('#view-visit');
+        viewBtn.setAttribute('href', `/turdus/visits/${v.id}`);
+
+        const closeBtn = document.querySelector('#close-visit');
+
+        // viewBtn.addEventListener('click', (e) => {
+        //     e.preventDefault();
+        //     viewBtn.setAttribute('href', `/turdus/visits/${v.id}`);
+        //     viewBtn.click
+        //     // window.location = `/turdus/visits/${v.id}`;
+        // })
+
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeVisitFast(v.id, '/turdus/waiting_room');
+        })
+
+    }
+
+    const handleModal = (e) => {
+        e.preventDefault();
+        const id = parseInt(e.target.textContent.split('#')[1]);
+
+        // RELLENAR EL MODAL, ORDENAR LA BÚSQUEDA POR HORA Y ARREGLAR COSITAS
+        findOneVisit(fillModal, id);
+
     }
 
     const handleData = (data) => {
@@ -38,7 +76,6 @@ function WaitingRoom() {
         });
     }
     useEffect(()=> {
-
         findTodayVisits( handleData, date)
     }, []);
     return (

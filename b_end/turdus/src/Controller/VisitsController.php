@@ -137,7 +137,7 @@ class VisitsController extends AbstractController
         $visit['vetName'] = $visitEntity->getUser()->getName();
         $visit['vetUsername'] = $visitEntity->getUser()->getUsername();
         $visit['done'] = $visitEntity->getDone();
-        $visit['race'] = $visitEntity->getPatient()->getRace();
+        $visit['race'] = $visitEntity->getPatient()->getRace()->getName();
         $visit['weight'] = $visitEntity->getWeight();
         $visit['patient'] = $visitEntity->getPatient()->getName();
         $visit['patientId'] = $visitEntity->getPatient()->getId();
@@ -227,6 +227,22 @@ class VisitsController extends AbstractController
     
 
         return $this->json($data);
+        
+    }
+
+    /**
+     * @Route("/api/visit/{id}/close", name="app_visit_close", methods="GET" )
+     */
+    public function close(VisitRepository $visitRepository, int $id, EntityManagerInterface $entityManager): Response
+    {
+        $visit = $visitRepository->find($id);
+
+        $visit->setDone(true);
+
+        $entityManager->persist($visit);
+        $entityManager->flush();
+
+        return $this->json($visit);
         
     }
 

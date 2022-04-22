@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { Form, handleTime } from "./Form";
 import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit } from "./ApiFetch";
-import { NewPatient, NewVisit } from "./Modals";
+import { AddProducts, NewPatient, NewVisit } from "./Modals";
 
 function Customer() {
     const { id } = useParams();
@@ -34,8 +34,6 @@ function Customer() {
 
     const addButtons = () => {
         const formTitle = document.querySelector("#form-title");
-        let bContainer = document.createElement("div");
-        bContainer.classList.add('btn', 'btn-light', 'col-auto', 'p-0');
 
         let pButton = document.createElement("a");
         pButton.setAttribute('id', 'addPatientButton');
@@ -43,11 +41,11 @@ function Customer() {
         pButton.setAttribute('data-bs-toggle', 'offcanvas');
         pButton.setAttribute('data-bs-target', '#offcanvas');
         pButton.setAttribute('aria-controls', 'offcanvas');
-        pButton.classList.add('btn', 'col-auto');
+        pButton.setAttribute('role', 'button');
+        pButton.classList.add('btn', 'btn-light');
         pButton.textContent = 'Pacientes';
 
-        bContainer.append(pButton);
-        formTitle.append(bContainer);
+        formTitle.append(pButton);
     }
 
     const addPatients = (data) => {
@@ -130,28 +128,24 @@ function Patient() {
         const formTitle = document.getElementById("form-title");
         const allBContainer = document.createElement('div');
         allBContainer.classList.add('col-auto', 'justify-content-between');
-        let bContainer = document.createElement("div");
-        bContainer.classList.add('btn', 'btn-light', 'col-auto', 'p-0', 'mx-1');
-        let bCustomerCont = document.createElement("div");
-        bCustomerCont.classList.add('btn', 'btn-light', 'col-auto', 'p-0', 'mx-1');
 
         let pButton = document.createElement("a");
         pButton.setAttribute('id', 'addPatientButton');
         pButton.setAttribute('data-bs-toggle', 'offcanvas');
         pButton.setAttribute('data-bs-target', '#offcanvas');
         pButton.setAttribute('aria-controls', 'offcanvas');
-        pButton.classList.add('btn', 'col-auto');
+        pButton.setAttribute('role', 'button');
+        pButton.classList.add('btn', 'btn-light', 'mx-1');
         pButton.textContent = ' Visitas ';
 
         let custButton = document.createElement("a");
         custButton.setAttribute('id', 'viewCustomerButton');
-        custButton.classList.add('btn', 'col-auto');
+        custButton.setAttribute('role', 'button');
+        custButton.classList.add('btn', 'btn-light', 'mx-1');
         custButton.textContent = ' Responsable ';
 
-        bCustomerCont.append(custButton);
-        bContainer.append(pButton);
-        allBContainer.append(bCustomerCont);
-        allBContainer.append(bContainer);
+        allBContainer.append(custButton);
+        allBContainer.append(pButton);
 
         formTitle.append(allBContainer);
     }
@@ -340,31 +334,82 @@ function Visit() {
         const formTitle = document.querySelector("#form-title");
         const allBContainer = document.createElement('div');
         allBContainer.classList.add('col-auto', 'justify-content-between');
-        let bContainer = document.createElement("div");
-        bContainer.classList.add('btn', 'btn-light', 'col-auto', 'p-0', 'mx-1');
-        let bPatientCont = document.createElement("div");
-        bPatientCont.classList.add('btn', 'btn-light', 'col-auto', 'p-0', 'mx-1');
-        
+     
         let pButton = document.createElement("a");
         pButton.setAttribute('id', 'addPatientButton');
         pButton.setAttribute('type', 'button');
         pButton.setAttribute('data-bs-toggle', 'offcanvas');
         pButton.setAttribute('data-bs-target', '#offcanvas');
         pButton.setAttribute('aria-controls', 'offcanvas');
-        pButton.classList.add('btn', 'col-auto');
+        pButton.setAttribute('role', 'button');
+        pButton.classList.add('btn', 'btn-light', 'mx-1');
         pButton.textContent = 'Cerrar / Cobrar';
+
+        let iCart = document.createElement('i');
+        iCart.classList.add('bi', 'bi-cart3');
+
+        let pCart = document.createElement("a");
+        pCart.setAttribute('id', 'cartButton');
+        pCart.setAttribute('type', 'button');
+        pCart.setAttribute('data-bs-toggle', 'offcanvas');
+        pCart.setAttribute('data-bs-target', '#offcanvascart');
+        pCart.setAttribute('aria-controls', 'offcanvas');
+        pCart.setAttribute('role', 'button');
+        pCart.classList.add('btn', 'btn-outline-primary', 'mx-1');
+        pCart.append(iCart);
 
         let patButton = document.createElement("a");
         patButton.setAttribute('id', 'viewPatientButton');
-        patButton.classList.add('btn', 'col-auto');
+        patButton.setAttribute('role', 'button');
+
+        patButton.classList.add('btn', 'btn-light', 'mx-1');
         patButton.textContent = ' Paciente ';
     
-        bPatientCont.append(patButton);
-        bContainer.append(pButton);
-        allBContainer.append(bPatientCont);
-        allBContainer.append(bContainer);
+        allBContainer.append(pCart);
+        allBContainer.append(patButton);
+        allBContainer.append(pButton);
 
         formTitle.append(allBContainer);
+    }
+
+    const makeList = (item) => {
+        const ul = document.querySelector('#offcanvascart .offcanvas-body ul');
+
+        const li = 
+            `
+            <li class="list-group-item d-flex justify-content-between flex-row">
+                <div class="col-auto">
+                    <a href="#" role="button" class="btn" id="p-${item.id}">
+                        <i class="bi bi-x" style={{color: 'red'}}/>
+                    </a>
+                    ${item.name}
+                </div>
+                <div class="col-auto d-flex flex-row">
+                    <p class="my-auto mx-1"> ${item.price}€ x </p>    
+                    <input type="number" class="form-control product-quantity" style={{maxWidth: '60px'}} defaultValue='1'></input>               
+                </div>
+            </li>
+            `;
+        
+    }
+
+
+    // CREAR EN APIFETCH LOS METODOS DE BUSCAR PRODUCTOS
+    // HAY QUE VER COMO ALMACENAR LOS PRODUCTOS Y SERVICIOS EN UN ARRAY DE OBJETOS CON TODA LA INFO PARA BORRARLOS AL DAR A LA X
+
+    const addProduct = (cart) => {
+
+        // if (cart.products.length > 0) {
+        //     cart.products.forEach(p => {
+        //          findOneProduct(makeList, p);
+        //     });
+        // }
+
+        // if (cart.services.length > 0) {
+        //     cart.services.forEach(s => {
+        //         findOneService(makeList, s);
+        //    });;
+        // }
     }
 
     return (
@@ -379,8 +424,38 @@ function Visit() {
                     <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar y cobrar</button> */}
                 </div>
             </div>
+
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvascart" aria-labelledby="offcanvascartLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvascartLabel">Carrito</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                    <ul className="list-group">
+                        <li className="list-group-item d-flex justify-content-between flex-row">
+                            <div className="col-auto">
+                                <a href="#" role="button" className="btn px-0">
+                                    <i className="bi bi-x fs-4" style={{color: 'red'}}/>
+                                </a>
+                                Product Name
+                            </div>
+                            <div className="col-auto d-flex flex-row">
+                                <p className="my-auto mx-1"> 120.58€ x </p>    
+                                <input type="number" className="form-control product-quantity" style={{maxWidth: '60px'}} defaultValue='1'></input>               
+                            </div>
+                        </li>
+                    </ul>
+                    <hr />
+                    <div className="d-flex flex-row justify-content-end">
+                        <button type="button" className="btn btn-outline-primary" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>
+                    </div>
+                    {/* <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar Visita</button>
+                    <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar y cobrar</button> */}
+                </div>
+            </div>
             
             <Form selector='visit' action='update' id={id} />
+            <AddProducts callback={addProduct}/>
         </>
     )
 }

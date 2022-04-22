@@ -312,6 +312,55 @@ const findTime = (callback, filter) => {
         });
 }
 
+const findProducts = (callback, data) => {
+    const bodyData = {
+        category: data.category,
+        name: data.name,
+        species: data.species
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/products", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
+const findServices = (callback, data) => {
+    const bodyData = {
+        category: data.category,
+        name: data.name
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/services", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { callback(data) })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
 // FIND ONE
 
 const findOneCustomer = (callback, id ) => {
@@ -640,6 +689,32 @@ const closeVisit = (fData, id, location) => {
     
 }
 
+const closeVisitFast = (id, location) => { 
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+
+    let request = new Request(`http://192.168.1.81:8888/api/visit/${id}/close`, config);
+
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            window.location = location;
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+        })
+    
+}
+
 
 
 export { 
@@ -657,6 +732,8 @@ export {
     findRaces, 
     findTime,
     findCustomers, 
+    findProducts,
+    findServices,
     findOneCustomer,
     findOnePatient,
     findOneVisit,
@@ -664,6 +741,7 @@ export {
     findPatientVisits,
     findTodayVisits,
     closeVisit,
+    closeVisitFast,
     addUpdateCustomer, 
     addUpdatePatient,
     addUpdateVisit 

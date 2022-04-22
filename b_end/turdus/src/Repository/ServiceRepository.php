@@ -48,6 +48,18 @@ class ServiceRepository extends ServiceEntityRepository
     // /**
     //  * @return Service[] Returns an array of Service objects
     //  */
+    public function findByQuery($q)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.category LIKE :cat')
+            ->andWhere('s.name LIKE :name')
+            ->setParameter('cat', '%'.$q['category'].'%')
+            ->setParameter('name', '%'.$q['name'].'%')
+            ->orderBy('s.name', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
     /*
     public function findByExampleField($value)
     {

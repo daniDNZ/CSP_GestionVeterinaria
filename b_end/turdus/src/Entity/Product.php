@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -43,11 +45,6 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $species;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $stock;
@@ -77,6 +74,16 @@ class Product
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $subcategory;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Species::class)
+     */
+    private $species;
+
+    public function __construct()
+    {
+        $this->species = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -139,18 +146,6 @@ class Product
     public function setPrice(float $price): self
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getSpecies(): ?string
-    {
-        return $this->species;
-    }
-
-    public function setSpecies(?string $species): self
-    {
-        $this->species = $species;
 
         return $this;
     }
@@ -223,6 +218,30 @@ class Product
     public function setSubcategory(?string $subcategory): self
     {
         $this->subcategory = $subcategory;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Species>
+     */
+    public function getSpecies(): Collection
+    {
+        return $this->species;
+    }
+
+    public function addSpecies(Species $species): self
+    {
+        if (!$this->species->contains($species)) {
+            $this->species[] = $species;
+        }
+
+        return $this;
+    }
+
+    public function removeSpecies(Species $species): self
+    {
+        $this->species->removeElement($species);
 
         return $this;
     }

@@ -45,6 +45,16 @@ class Bill
      */
     private $visit;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $paid;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $amount;
+
     public function __construct()
     {
         $this->servicesLogs = new ArrayCollection();
@@ -148,6 +158,30 @@ class Bill
     public function setVisit(?visit $visit): self
     {
         $this->visit = $visit;
+
+        return $this;
+    }
+
+    public function getPaid(): ?bool
+    {
+        return $this->paid;
+    }
+
+    public function setPaid(bool $paid): self
+    {
+        $this->paid = $paid;
+
+        return $this;
+    }
+
+    public function getAmount(): ?int
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(int $amount): self
+    {
+        $this->amount = $amount;
 
         return $this;
     }
