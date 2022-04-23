@@ -144,30 +144,40 @@ function ViewVisitsList() {
 }
 
 function AddProducts({ callback }) {
-    let filter = {
+    let filter = {      // Guardamos los valores de los inputs para enviarlo como filtro.
         category: '',
         name: '',
         species: ''
     }
 
-    let item = 'Products';
-    let cartItems = {
-        products: [],
-        services: []
-    }
+    let item = 'products';  // Nos ayuda a distinguir entre productos y servicios.
+    let cart = []           // Array del carrito.
 
     const handleCartItems = () => {
 
-        callback(cartItems);
+        const chBox = document.querySelectorAll('input[type=checkbox]');    // Quitamos los checks
+        for (const i of chBox) {
+            if (i.checked == true) {
+                i.checked = false;
+            }
+        }
+        callback(cart);
+        cart = [];
     }
 
     const addItem = (e) => {
         e.preventDefault();
         const i = e.target;
         if (i.checked == true) {
-            item == 'Products' ?
-                cartItems.products.push(i.value) :
-                cartItems.services.push(i.value)
+            cart.push({
+                id: i.dataset.id, 
+                type: i.dataset.type,
+                name: i.dataset.name, 
+                price: i.dataset.price,
+                q: 1
+            });
+        } else if (i.checked == false) {
+            cart = cart.filter(item => item.id !== i.dataset.id || item.type !== i.dataset.type);
         }
 
     }
@@ -180,84 +190,92 @@ function AddProducts({ callback }) {
         }
     }
 
-    const fillProducts = (data) => {
+    const fillItems = (data) => {
 
         // Recogemos la tabla
         const tbody = document.querySelector('#auto-table-modal tbody');
         const thead = document.querySelector('#auto-table-modal thead');
 
-        thead.innerHTML = 
-            `
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Categoría</th>
-                    <th scope="col">Subcategoría</th>
-                    <th scope="col">Stock</th>
-                    <th scope="col">Ref.</th>
-                    <th scope="col">Precio</th>
-                    <th scope="col">Añadir</th>
-                </tr>
-            `;
         tbody.innerHTML = '';
+        thead.innerHTML = '';
+
+        const trHead = document.createElement('tr');
+        const thName = document.createElement('th');
+        const thCat = document.createElement('th');
+        const thPrice = document.createElement('th');
+        const thAdd = document.createElement('th');
+
+        thPrice.classList.add('text-end');
+        thAdd.classList.add('text-center');
+
+        thName.textContent = 'Nombre';
+        thCat.textContent = 'Categoría';
+        thPrice.textContent = 'Precio';
+        thAdd.textContent = 'Añadir';
+
+        if (item == 'products') {
+            const thSubcat = document.createElement('th');
+            const thStock = document.createElement('th');
+            const thRef = document.createElement('th');
+
+            thSubcat.textContent = 'Subcategoría';
+            thStock.textContent = 'Stock';
+            thRef.textContent = 'Ref.';
+
+            trHead.append( thName, thCat, thSubcat, thStock, thRef, thPrice, thAdd );
+        } else {
+            trHead.append( thName, thCat, thPrice, thAdd);
+        }
+
+        thead.append(trHead);
+
 
         data.forEach(p => {
             // Llenamos la tabla
             const tr = document.createElement('tr');
+            const tdName = document.createElement('td');
+            const tdCat = document.createElement('td');
+            const tdPrice = document.createElement('td');
+            const tdCheck = document.createElement('td');
+            const checkbox = document.createElement('input');
 
-            tr.innerHTML =
-                `
-                <td>${p.name}</td>
-                <td>${p.category}</td>
-                <td>${p.subcategory}</td>
-                <td class="text-end">${p.stock}</td>
-                <td>${p.code}</td>
-                <td class="text-end">${p.price}€</td>
-                <td>
-                    <input type="checkbox" class="form-check-input" value="${p.id}"/>
-                </td>
-            `
+            tdPrice.classList.add('text-end');
+            tdCheck.classList.add('text-center');
+            checkbox.classList.add('form-check-input');
+
+            checkbox.setAttribute('type', 'checkbox');
+            checkbox.dataset.id = p.id;
+            checkbox.dataset.type = item;
+            checkbox.dataset.name = p.name;
+            checkbox.dataset.price = p.price;
+
+            tdName.textContent = p.name;
+            tdCat.textContent = p.category;
+            tdPrice.textContent = p.price;
+
+            tdCheck.append(checkbox);
+
+            if (item == 'products') {
+                const tdSubcat = document.createElement('td');
+                const tdStock = document.createElement('td');
+                tdStock.classList.add('text-end');
+                const tdCode = document.createElement('td');
+
+                tdSubcat.textContent = p.subcategory;
+                tdStock.textContent = p.stock;
+                tdCode.textContent = p.code;
+
+                tr.append(tdName, tdCat, tdSubcat, tdStock, tdCode, tdPrice, tdCheck);
+
+            } else {
+                tr.append(tdName, tdCat, tdPrice, tdCheck);
+            }
+
             tbody.append(tr);
             
         });
         listeners();
         
-    }
-
-    const fillServices = (data) => {
-        
-        // Recogemos la tabla
-        const tbody = document.querySelector('#auto-table-modal tbody');
-        const thead = document.querySelector('#auto-table-modal thead');
-
-        thead.innerHTML = 
-            `
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Categoría</th>
-                    <th scope="col">Precio</th>
-                    <th scope="col">Añadir</th>
-                </tr>
-            `;
-        tbody.innerHTML = '';
-
-        data.forEach(s => {
-            // Llenamos la tabla
-            const tr = document.createElement('tr');
-
-            tr.innerHTML =
-                `
-                <td>${s.name}</td>
-                <td>${s.category}</td>
-                <td class="text-end">${s.price}€</td>
-                <td>
-                    <input type="checkbox" class="form-check-input" value="${s.id}"/>
-                </td>
-            `
-            tbody.append(tr);
-            
-        });
-
-        listeners();
     }
 
     const fillDatalist = (data) => {
@@ -266,7 +284,9 @@ function AddProducts({ callback }) {
         const speSelect = document.querySelector('#species-select');
         catSelect.innerHTML = `<option value="">Categoría</option>`;
         speSelect.innerHTML = `<option value="">Especie</option>`;
-        if (item == 'Services') speSelect.setAttribute('disabled', 'true');
+        item == 'services' ? 
+            speSelect.setAttribute('disabled', 'true') :
+            speSelect.removeAttribute('disabled');
 
         let arrCat = [];
         let arrSpe = [];
@@ -301,18 +321,16 @@ function AddProducts({ callback }) {
             catSelect.append(catOp);
         });
 
-        item == 'Services' ? 
-            fillServices(data) :
-            fillProducts(data)
+        fillItems(data)
         
     }
 
     // Busca productos o servicios según toque
     const findItems = () => {
 
-        item == 'Services' ? 
-            findServices(fillServices, filter) :
-            findProducts(fillProducts, filter)
+        item == 'services' ? 
+            findServices(fillItems, filter) :
+            findProducts(fillItems, filter)
 
     }
 
@@ -325,7 +343,7 @@ function AddProducts({ callback }) {
         }
 
         item = e.target.value;
-        item == 'Services' ? 
+        item == 'services' ? 
             findServices(fillDatalist, filter) :
             findProducts(fillDatalist, filter)
 
@@ -351,7 +369,7 @@ function AddProducts({ callback }) {
     }
 
     useEffect(() => {
-        findProducts(fillDatalist, filter)
+        findProducts(fillDatalist, filter);
     }, [])
     return (
         <>
@@ -367,8 +385,8 @@ function AddProducts({ callback }) {
                             <div id="filter-form">
                                 <div className="d-flex flex-row mb-3">
                                     <select className="form-select" onInput={changeItems}>
-                                        <option value="Products">Productos</option>
-                                        <option value="Services">Servicios</option>
+                                        <option value="products">Productos</option>
+                                        <option value="services">Servicios</option>
                                     </select>
                                     <select className="form-select mx-2" id="category-select" onInput={capCategory}>
                                         <option value="">Categoría</option>

@@ -192,6 +192,8 @@ function Patient() {
 
 function Visit() {
     const { id } = useParams();
+    let cart = []; // Array del carrito.
+    let currency = '€';
 
     useEffect(() => {
 
@@ -342,7 +344,7 @@ function Visit() {
         pButton.setAttribute('data-bs-target', '#offcanvas');
         pButton.setAttribute('aria-controls', 'offcanvas');
         pButton.setAttribute('role', 'button');
-        pButton.classList.add('btn', 'btn-light', 'mx-1');
+        pButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
         pButton.textContent = 'Cerrar / Cobrar';
 
         let iCart = document.createElement('i');
@@ -362,54 +364,106 @@ function Visit() {
         patButton.setAttribute('id', 'viewPatientButton');
         patButton.setAttribute('role', 'button');
 
-        patButton.classList.add('btn', 'btn-light', 'mx-1');
+        patButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
         patButton.textContent = ' Paciente ';
     
-        allBContainer.append(pCart);
-        allBContainer.append(patButton);
-        allBContainer.append(pButton);
+        allBContainer.append(patButton, pButton, pCart);
 
         formTitle.append(allBContainer);
     }
 
-    const makeList = (item) => {
+    const makeList = () => {
+        let total = 0;
         const ul = document.querySelector('#offcanvascart .offcanvas-body ul');
+        ul.innerHTML = '';
 
-        const li = 
-            `
-            <li class="list-group-item d-flex justify-content-between flex-row">
-                <div class="col-auto">
-                    <a href="#" role="button" class="btn" id="p-${item.id}">
-                        <i class="bi bi-x" style={{color: 'red'}}/>
-                    </a>
-                    ${item.name}
-                </div>
-                <div class="col-auto d-flex flex-row">
-                    <p class="my-auto mx-1"> ${item.price}€ x </p>    
-                    <input type="number" class="form-control product-quantity" style={{maxWidth: '60px'}} defaultValue='1'></input>               
-                </div>
-            </li>
-            `;
+        cart.forEach(i => {
+            
+            const li = document.createElement('li');
+            li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'flex-row');
+
+            const div1 = document.createElement('div');
+            const a1 = document.createElement('a');
+            const span1 = document.createElement('span');
+
+            div1.classList.add('col-auto', 'overflow-hidden');
+            div1.setAttribute('style', 'max-width: 180px; max-height: 50px');
+            a1.classList.add('btn', 'px-0');
+            a1.setAttribute('role', 'button');
+            a1.dataset.id = i.id;
+            a1.dataset.type = i.type
+            a1.dataset.price = i.price;
+            a1.addEventListener('click', removeItem);
+            span1.textContent = i.name;
+            // maxWidth135 para el div 1
+
+            const DOMi = document.createElement('i');
+            DOMi.classList.add('bi', 'bi-x', 'fs-4');
+            DOMi.setAttribute('style', 'color: red');
+
+            a1.append(DOMi);
+            div1.append(a1, span1);
+
+            const div2 = document.createElement('div');
+            const span2 = document.createElement('span');
+            const input2 = document.createElement('input');
+
+            div2.classList.add('col-auto', 'd-flex', 'flex-row');
+            span2.classList.add('my-auto', 'mx-1');
+            span2.textContent = `${i.price}${currency} x `;
+            input2.classList.add('form-control', 'product-quantity');
+            input2.setAttribute('type', 'number');
+            input2.setAttribute('style', 'max-width: 60px');
+            input2.dataset.id = i.id;
+            input2.dataset.type = i.type
+            input2.dataset.price = i.price;
+            input2.dataset.quantity = i.q;
+            input2.addEventListener('input', qModify);
+            input2.value = i.q;
+
+            div2.append(span2, input2);
+            li.append(div1, div2);
+            ul.append(li);
+
+            total += parseFloat(i.price*i.q);
+        });
+
+        const cartTotal = document.querySelector('#cartTotal');
+        cartTotal.textContent = `Total: ${total.toFixed(2)} ${currency}`;
+        
         
     }
 
+    // Modifica las cantidades
+    const qModify = (e) => {
+        let input = e.target;
+        cart.forEach(i => {
+            if (i.id === input.dataset.id && i.type === input.dataset.type) i.q = input.value;
+        });
 
-    // CREAR EN APIFETCH LOS METODOS DE BUSCAR PRODUCTOS
-    // HAY QUE VER COMO ALMACENAR LOS PRODUCTOS Y SERVICIOS EN UN ARRAY DE OBJETOS CON TODA LA INFO PARA BORRARLOS AL DAR A LA X
+        makeList();
+    }
 
-    const addProduct = (cart) => {
+    // Remueve el objeto
+    const removeItem = (e) => {
+        let input = e.currentTarget;
+        cart = cart.filter(i => i.id !== input.dataset.id || i.type !== input.dataset.type);  // Filtra el carrito, dejando pasar solo los objetos distintos del eliminado.
+        makeList(); // Volvemos a renderizar la lista
+    }
 
-        // if (cart.products.length > 0) {
-        //     cart.products.forEach(p => {
-        //          findOneProduct(makeList, p);
-        //     });
-        // }
+    const addProduct = (cartItems) => {
+        let cartTemp = [];
 
-        // if (cart.services.length > 0) {
-        //     cart.services.forEach(s => {
-        //         findOneService(makeList, s);
-        //    });;
-        // }
+        cartItems.forEach(i => {        // Filtra los objetos que ya están en el carrito
+            let comp = true;
+            cart.forEach(o => {
+                if (i.id === o.id && i.type === o.type) comp = false;
+            });
+            if (comp) cartTemp.push(i);
+        });
+
+        cart = cart.concat(cartTemp);
+        if (cart.length > 0) makeList();
     }
 
     return (
@@ -431,20 +485,10 @@ function Visit() {
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
-                    <ul className="list-group">
-                        <li className="list-group-item d-flex justify-content-between flex-row">
-                            <div className="col-auto">
-                                <a href="#" role="button" className="btn px-0">
-                                    <i className="bi bi-x fs-4" style={{color: 'red'}}/>
-                                </a>
-                                Product Name
-                            </div>
-                            <div className="col-auto d-flex flex-row">
-                                <p className="my-auto mx-1"> 120.58€ x </p>    
-                                <input type="number" className="form-control product-quantity" style={{maxWidth: '60px'}} defaultValue='1'></input>               
-                            </div>
-                        </li>
+                    <ul className="list-group overflow-scroll h-80">
+                        
                     </ul>
+                    <div id="cartTotal" className="text-end my-2 mx-2"></div>
                     <hr />
                     <div className="d-flex flex-row justify-content-end">
                         <button type="button" className="btn btn-outline-primary" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>

@@ -502,6 +502,59 @@ const findTodayVisits = ( callback, date ) => {
   
 }
 
+const findArrayProducts = (callback, array) => {
+    const bodyData = {
+        array: array
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/products/array", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { 
+            const items = { category: 'products', data: data};
+            callback(items);
+        })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
+const findArrayServices = (callback, array) => {
+    const bodyData = {
+        array: array
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request("http://192.168.1.81:8888/api/services/array", config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => { 
+            const items = { category: 'services', data: data};
+            callback(items);
+        })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
+
 // INSERTS / UPDATES
 
 const addUpdateCustomer = (fData, action, id = '') => {
