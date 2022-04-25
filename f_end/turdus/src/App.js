@@ -42,6 +42,7 @@ function App() {
             <Route path="turdus/customers/:id" element={jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_STAFF") ? <Dashboard comp={7} /> : <Navigate to="/turdus/login" />} />
             <Route path="turdus/registrations" element={jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_STAFF") ? <Dashboard comp={8} /> : <Navigate to="/turdus/login" />} />
             <Route path="turdus/waiting_room" element={jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_STAFF") ? <Dashboard comp={9} /> : <Navigate to="/turdus/login" />} />
+            <Route path="turdus/visits/:id/bill" element={jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_STAFF") ? <Dashboard comp={10} /> : <Navigate to="/turdus/login" />} />
           </Routes>
         </BrowserRouter>
 

@@ -150,6 +150,7 @@ class VisitsController extends AbstractController
         $visit['time'] = $visitEntity->getDateTime()->format('H:i');
         $visit['treatment'] = $visitEntity->getTreatment();
         $visit['description'] = $visitEntity->getDescription();
+        $visit['cart'] = $visitEntity->getCart();
             
         return $this->json($visit);
     }
@@ -167,7 +168,7 @@ class VisitsController extends AbstractController
     }
 
     /**
-     * @Route("/api/visit/add", name="app_visit_add", methods="POST" )
+     * @Route("/api/visits/add", name="app_visits_add", methods="POST" )
      */
     public function add( UserRepository $userRepository, PatientRepository $patientRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -200,7 +201,7 @@ class VisitsController extends AbstractController
     }
 
     /**
-     * @Route("/api/visit/update", name="app_visit_update", methods="POST" )
+     * @Route("/api/visits/update", name="app_visits_update", methods="POST" )
      */
     public function update(VisitRepository $visitRepository, UserRepository $userRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -231,7 +232,25 @@ class VisitsController extends AbstractController
     }
 
     /**
-     * @Route("/api/visit/{id}/close", name="app_visit_close", methods="GET" )
+     * @Route("/api/visits/{id}/cart", name="app_visits_cart", methods="POST" )
+     */
+    public function updateCart(VisitRepository $visitRepository, UserRepository $userRepository, int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $data = $request->toArray();
+        $visit = $visitRepository->find($id);
+
+        $visit->setCart($data['cart']);
+
+        $entityManager->persist($visit);
+        $entityManager->flush();
+    
+
+        return $this->json($visit);
+        
+    }
+
+    /**
+     * @Route("/api/visits/{id}/close", name="app_visits_close", methods="GET" )
      */
     public function close(VisitRepository $visitRepository, int $id, EntityManagerInterface $entityManager): Response
     {

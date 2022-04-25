@@ -81,6 +81,11 @@ class Visit
      */
     private $bills;
 
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $cart = [];
+
     public function __construct()
     {
         $this->diagnosis = new ArrayCollection();
@@ -281,6 +286,18 @@ class Visit
                 $bill->setVisit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCart(): ?array
+    {
+        return $this->cart;
+    }
+
+    public function setCart(?array $cart): self
+    {
+        $this->cart = $cart;
 
         return $this;
     }

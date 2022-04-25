@@ -7,6 +7,7 @@ import { Customer, Patient, Visit } from '../components/View';
 import Registrations from '../components/Registrations';
 import Search from '../components/Search';
 import WaitingRoom from '../components/WaitingRoom';
+import Bill from '../components/Bill.js';
 
 function Dashboard({ comp }) {
   document.body.removeAttribute('data-bs-spy');
@@ -32,6 +33,8 @@ function Dashboard({ comp }) {
         return <Registrations />  
       case 9:
         return <WaitingRoom />  
+      case 10:
+        return <Bill /> 
       default:
         break;
     }

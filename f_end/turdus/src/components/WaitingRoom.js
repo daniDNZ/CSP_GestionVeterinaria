@@ -85,30 +85,6 @@ function WaitingRoom() {
             <div className="container my-4">
                 <h5>Visitas pendientes</h5>
                 <div id="visitsList" className="list-group overflow-scroll" style={{maxHeight: "20em"}}>
-                    {/* <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                    </a> */}
                 </div>
             </div>
             <div className="container">

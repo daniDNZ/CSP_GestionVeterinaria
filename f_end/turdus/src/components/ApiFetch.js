@@ -502,58 +502,6 @@ const findTodayVisits = ( callback, date ) => {
   
 }
 
-const findArrayProducts = (callback, array) => {
-    const bodyData = {
-        array: array
-    }
-    const config = {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-    }
-    const request = new Request("http://192.168.1.81:8888/api/products/array", config);
-    fetch(request)
-        .then(response => response.json())
-        .then(data => { 
-            const items = { category: 'products', data: data};
-            callback(items);
-        })
-        .catch(e => {
-            console.log(e)
-            // localStorage.clear();
-        });
-}
-
-const findArrayServices = (callback, array) => {
-    const bodyData = {
-        array: array
-    }
-    const config = {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyData)
-    }
-    const request = new Request("http://192.168.1.81:8888/api/services/array", config);
-    fetch(request)
-        .then(response => response.json())
-        .then(data => { 
-            const items = { category: 'services', data: data};
-            callback(items);
-        })
-        .catch(e => {
-            console.log(e)
-            // localStorage.clear();
-        });
-}
-
 
 // INSERTS / UPDATES
 
@@ -682,9 +630,9 @@ const addUpdateVisit = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/visit/add", config);
+        request = new Request("http://192.168.1.81:8888/api/visits/add", config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/visit/update", config);
+        request = new Request("http://192.168.1.81:8888/api/visits/update", config);
     }
 
   
@@ -727,7 +675,7 @@ const closeVisit = (fData, id, location) => {
         },
         body: JSON.stringify(bodyData)
     }
-    let request = new Request("http://192.168.1.81:8888/api/visit/update", config);
+    let request = new Request("http://192.168.1.81:8888/api/visits/update", config);
 
     fetch(request)
         .then(response => response.json())
@@ -753,12 +701,43 @@ const closeVisitFast = (id, location) => {
         }
     }
 
-    let request = new Request(`http://192.168.1.81:8888/api/visit/${id}/close`, config);
+    let request = new Request(`http://192.168.1.81:8888/api/visits/${id}/close`, config);
 
     fetch(request)
         .then(response => response.json())
         .then(data => {
             window.location = location;
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+        })
+    
+}
+
+const updateCart = (id, cart) => { 
+
+    const bodyData = {
+        cart: cart
+    }
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify(bodyData)
+    }
+
+    let request = new Request(`http://192.168.1.81:8888/api/visits/${id}/cart`, config);
+
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            
         })
         .catch(e => {
             handleAlert(false);
@@ -797,5 +776,6 @@ export {
     closeVisitFast,
     addUpdateCustomer, 
     addUpdatePatient,
-    addUpdateVisit 
+    addUpdateVisit,
+    updateCart 
 }

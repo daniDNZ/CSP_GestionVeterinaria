@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { Form, handleTime } from "./Form";
-import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit } from "./ApiFetch";
+import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit, updateCart } from "./ApiFetch";
 import { AddProducts, NewPatient, NewVisit } from "./Modals";
 
 function Customer() {
@@ -255,7 +255,7 @@ function Visit() {
             }
             )
         }
-        closeVisit(fData, id, `/turdus/visits/${id}/receive`);
+        closeVisit(fData, id, `/turdus/visits/${id}/bill`);
     }
 
     const handleVisit = (data) => {
@@ -287,12 +287,20 @@ function Visit() {
         
         findTime(handleTime, filter);
 
+        // Rellenamos carrito
+        if (data.cart) {
+            cart = data.cart; 
+            makeList();
+        }
+
         // Creamos botones de cerrar o abrir visita
 
         const offCanvasBody = document.querySelector('.offcanvas-body');
 
         if(data.done) {
             const bOpen = document.createElement('button');
+            const bPay = document.createElement('a');
+
             bOpen.classList.add('btn', 'btn-danger', 'w-100','mb-3');
             bOpen.setAttribute('type', 'button');
             bOpen.setAttribute('data-bs-toggle', 'modal');
@@ -301,7 +309,12 @@ function Visit() {
             bOpen.textContent = 'Abrir visita';
             bOpen.addEventListener('click', opVisit);
 
-            offCanvasBody.append(bOpen);
+            bPay.classList.add('btn', 'btn-outline-primary', 'w-100','mb-3');
+            bPay.setAttribute('role', 'button');
+            bPay.setAttribute('href', `/turdus/visits/${id}/bill`);
+            bPay.textContent = 'Tramitar cobro';
+
+            offCanvasBody.append(bPay, bOpen);
 
             const inputs = document.querySelectorAll('input, select, textarea, .input-group button');
             for (const e of inputs) {
@@ -373,6 +386,7 @@ function Visit() {
     }
 
     const makeList = () => {
+        updateCart(id, cart);
         let total = 0;
         const ul = document.querySelector('#offcanvascart .offcanvas-body ul');
         ul.innerHTML = '';
@@ -391,15 +405,13 @@ function Visit() {
             a1.classList.add('btn', 'px-0');
             a1.setAttribute('role', 'button');
             a1.dataset.id = i.id;
-            a1.dataset.type = i.type
+            a1.dataset.type = i.type;
             a1.dataset.price = i.price;
             a1.addEventListener('click', removeItem);
             span1.textContent = i.name;
-            // maxWidth135 para el div 1
 
             const DOMi = document.createElement('i');
-            DOMi.classList.add('bi', 'bi-x', 'fs-4');
-            DOMi.setAttribute('style', 'color: red');
+            DOMi.classList.add('bi', 'bi-x', 'fs-4', 'eliminate');
 
             a1.append(DOMi);
             div1.append(a1, span1);
@@ -410,10 +422,9 @@ function Visit() {
 
             div2.classList.add('col-auto', 'd-flex', 'flex-row');
             span2.classList.add('my-auto', 'mx-1');
-            span2.textContent = `${i.price}${currency} x `;
-            input2.classList.add('form-control', 'product-quantity');
+            span2.textContent = `${parseFloat(i.price).toFixed(2)}${currency}`;
+            input2.classList.add('form-control', 'product-quantity', 'me-2');
             input2.setAttribute('type', 'number');
-            input2.setAttribute('style', 'max-width: 60px');
             input2.dataset.id = i.id;
             input2.dataset.type = i.type
             input2.dataset.price = i.price;
@@ -421,7 +432,7 @@ function Visit() {
             input2.addEventListener('input', qModify);
             input2.value = i.q;
 
-            div2.append(span2, input2);
+            div2.append(input2, span2);
             li.append(div1, div2);
             ul.append(li);
 
@@ -474,8 +485,6 @@ function Visit() {
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
-                    {/* <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar Visita</button>
-                    <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar y cobrar</button> */}
                 </div>
             </div>
 
@@ -490,11 +499,10 @@ function Visit() {
                     </ul>
                     <div id="cartTotal" className="text-end my-2 mx-2"></div>
                     <hr />
-                    <div className="d-flex flex-row justify-content-end">
+                    <div className="d-flex flex-row justify-content-between">
+                        <a href={`/turdus/visits/${id}/bill`} role="button" className="btn btn-outline-secondary">Cerrar y cobrar</a>
                         <button type="button" className="btn btn-outline-primary" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>
                     </div>
-                    {/* <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar Visita</button>
-                    <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas">Cerrar y cobrar</button> */}
                 </div>
             </div>
             
