@@ -426,6 +426,28 @@ const findOneVisit = (callback, id ) => {
   
 }
 
+const findBill = (callback, bData) => {
+    let fetchData;
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bData)
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/bill/find`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => callback(data) )
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
 // UTILITIES
 
 const findCustomerPatients = ( callback, id ) => {
@@ -604,6 +626,112 @@ const addUpdatePatient = (fData, action, id = '') => {
     
 }
 
+const addBill = (data) => {
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }
+    let request;
+
+    request = new Request("http://192.168.1.81:8888/api/bill/add", config);
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
+const payBill = (data) => {
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }
+    let request;
+
+    request = new Request("http://192.168.1.81:8888/api/bill/update", config);
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(e => {
+            handleAlert(false);
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
+const addProductsLog = (bodyData) => {
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    let request;
+
+    request = new Request("http://192.168.1.81:8888/api/products/log/add", config);
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(e => {
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
+const addServicesLog = (bodyData) => {
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    let request;
+
+    request = new Request("http://192.168.1.81:8888/api/services/log/add", config);
+  
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+        })
+        .catch(e => {
+            console.log(e, 'Esto es un error')
+            // localStorage.clear();
+            // window.location = '/turdus/login'
+        })
+    
+}
+
 const addUpdateVisit = (fData, action, id = '') => {
     const dateTime = `${fData.datePicker.value} ${fData.timePicker.value}`;
     
@@ -769,6 +897,7 @@ export {
     findOneCustomer,
     findOnePatient,
     findOneVisit,
+    findBill,
     findCustomerPatients,
     findPatientVisits,
     findTodayVisits,
@@ -777,5 +906,9 @@ export {
     addUpdateCustomer, 
     addUpdatePatient,
     addUpdateVisit,
+    addBill,
+    payBill,
+    addProductsLog,
+    addServicesLog,
     updateCart 
 }

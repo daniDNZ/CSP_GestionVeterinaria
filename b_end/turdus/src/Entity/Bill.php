@@ -46,14 +46,19 @@ class Bill
     private $visit;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="float")
      */
     private $paid;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="float")
      */
     private $amount;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $paymentCompleted;
 
     public function __construct()
     {
@@ -78,12 +83,12 @@ class Bill
         return $this;
     }
 
-    public function getDatetime(): ?\DateTimeInterface
+    public function getDatetime(): ?\DateTime
     {
         return $this->datetime;
     }
 
-    public function setDatetime(\DateTimeInterface $datetime): self
+    public function setDatetime(\DateTime $datetime): self
     {
         $this->datetime = $datetime;
 
@@ -162,26 +167,38 @@ class Bill
         return $this;
     }
 
-    public function getPaid(): ?bool
+    public function getPaid(): ?float
     {
         return $this->paid;
     }
 
-    public function setPaid(bool $paid): self
+    public function setPaid(float $paid): self
     {
         $this->paid = $paid;
 
         return $this;
     }
 
-    public function getAmount(): ?int
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    public function setAmount(int $amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getPaymentCompleted(): ?bool
+    {
+        return $this->paymentCompleted;
+    }
+
+    public function setPaymentCompleted(bool $paymentCompleted): self
+    {
+        $this->paymentCompleted = $paymentCompleted;
 
         return $this;
     }

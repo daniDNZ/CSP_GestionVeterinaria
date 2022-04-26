@@ -293,7 +293,7 @@ function Visit() {
             makeList();
         }
 
-        // Creamos botones de cerrar o abrir visita
+        // Creamos botones de cerrar o abrir visita en offcanvas
 
         const offCanvasBody = document.querySelector('.offcanvas-body');
 
@@ -500,7 +500,7 @@ function Visit() {
                     <div id="cartTotal" className="text-end my-2 mx-2"></div>
                     <hr />
                     <div className="d-flex flex-row justify-content-between">
-                        <a href={`/turdus/visits/${id}/bill`} role="button" className="btn btn-outline-secondary">Cerrar y cobrar</a>
+                        <a href="#" role="button" className="btn btn-outline-secondary" onClick={recVisit}>Cerrar y cobrar</a>
                         <button type="button" className="btn btn-outline-primary" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>
                     </div>
                 </div>

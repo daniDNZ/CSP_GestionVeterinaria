@@ -85,16 +85,6 @@ class Patient
     private $AllergiesLogs;
 
     /**
-     * @ORM\OneToMany(targetEntity=ServicesLog::class, mappedBy="patient", orphanRemoval=true)
-     */
-    private $servicesLogs;
-
-    /**
-     * @ORM\OneToMany(targetEntity=ProductsLog::class, mappedBy="patient")
-     */
-    private $productsLogs;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $gender;
@@ -357,66 +347,6 @@ class Patient
             // set the owning side to null (unless already changed)
             if ($allergiesLog->getPatient() === $this) {
                 $allergiesLog->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ServicesLog>
-     */
-    public function getServicesLogs(): Collection
-    {
-        return $this->servicesLogs;
-    }
-
-    public function addServicesLog(ServicesLog $servicesLog): self
-    {
-        if (!$this->servicesLogs->contains($servicesLog)) {
-            $this->servicesLogs[] = $servicesLog;
-            $servicesLog->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeServicesLog(ServicesLog $servicesLog): self
-    {
-        if ($this->servicesLogs->removeElement($servicesLog)) {
-            // set the owning side to null (unless already changed)
-            if ($servicesLog->getPatient() === $this) {
-                $servicesLog->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ProductsLog>
-     */
-    public function getProductsLogs(): Collection
-    {
-        return $this->productsLogs;
-    }
-
-    public function addProductsLog(ProductsLog $productsLog): self
-    {
-        if (!$this->productsLogs->contains($productsLog)) {
-            $this->productsLogs[] = $productsLog;
-            $productsLog->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProductsLog(ProductsLog $productsLog): self
-    {
-        if ($this->productsLogs->removeElement($productsLog)) {
-            // set the owning side to null (unless already changed)
-            if ($productsLog->getPatient() === $this) {
-                $productsLog->setPatient(null);
             }
         }
 

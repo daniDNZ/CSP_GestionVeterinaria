@@ -18,12 +18,6 @@ class ServicesLog
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Patient::class, inversedBy="servicesLogs")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $patient;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Service::class)
      * @ORM\JoinColumn(nullable=false)
      */
@@ -36,35 +30,13 @@ class ServicesLog
     private $bill;
 
     /**
-     * @ORM\Column(type="date")
-     */
-    private $date;
-
-    /**
      * @ORM\Column(type="float")
      */
     private $quantity;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $paid;
-
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getPatient(): ?Patient
-    {
-        return $this->patient;
-    }
-
-    public function setPatient(?Patient $patient): self
-    {
-        $this->patient = $patient;
-
-        return $this;
     }
 
     public function getService(): ?Service
@@ -91,18 +63,6 @@ class ServicesLog
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
     public function getQuantity(): ?float
     {
         return $this->quantity;
@@ -115,15 +75,4 @@ class ServicesLog
         return $this;
     }
 
-    public function getPaid(): ?bool
-    {
-        return $this->paid;
-    }
-
-    public function setPaid(bool $paid): self
-    {
-        $this->paid = $paid;
-
-        return $this;
-    }
 }
