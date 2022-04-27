@@ -36,12 +36,35 @@ class BillController extends AbstractController
         if ($entity) 
         {   
             $bill['id'] = $entity->getId();
-            $bill['visit'] = $entity->getVisit();
+            $bill['visit'] = $entity->getVisit()->getId();
             $bill['paid'] = $entity->getPaid();
             $bill['amount'] = $entity->getAmount();
         }
 
         return $this->json($bill);
+    }
+
+    /**
+     * @Route("/api/customer/{id}/debt", name="app_customer_debt", methods="GET")
+     */
+    public function findDebt( BillRepository $billRepository, int $id): Response
+    {
+        $entities = $billRepository->findBy(array('customer' => $id, 'paymentCompleted' => false));
+
+        $bills = [];
+        foreach ($entities as $entity) {
+            $bill = [];
+            $bill['id'] = $entity->getId();
+            $bill['visit'] = $entity->getVisit()->getId();
+            $bill['paid'] = $entity->getPaid();
+            $bill['amount'] = $entity->getAmount();
+            $debt = floatval($bill['amount']) - floatval($bill['paid']);
+            $bill['debt'] = number_format($debt, 2);
+            $bills[] = $bill;
+        }
+        
+
+        return $this->json($bills);
     }
 
     /**
@@ -89,7 +112,12 @@ class BillController extends AbstractController
         $em->persist($bill);
         $em->flush();
 
+        $returnBill = [];
+        $returnBill['id'] = $bill->getId();
+        $returnBill['visit'] = $bill->getVisit();
+        $returnBill['paid'] = $bill->getPaid();
+        $returnBill['amount'] = $bill->getAmount();
 
-        return $this->json($bill);
+        return $this->json($returnBill);
     }
 }

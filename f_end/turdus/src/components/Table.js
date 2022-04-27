@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { findCustomers, findPatients, findVisits } from "./ApiFetch";
 import { getDataDatalist } from "./Datalist";
 import { Pagination } from "./TablePagination";
+import global from "../global";
 
 // Método con el que rellenamos las tablas
 const handleTable = (d, destiny) => {
@@ -12,12 +13,32 @@ const handleTable = (d, destiny) => {
 
     data.forEach(e => {                                                 // Creamos las filas y los campos según los datos obtenidos.
         let tr = document.createElement('tr');
+        
         for (const k in e) {                                            // Recorremos las keys del objeto para rellenar la fila.
+            
             let td = document.createElement('td');
+            td.classList.add('align-middle')
 
-            k != 'id' ? td.textContent = e[k] : td.textContent = count // En vez de meter el id del elemento, metemos el contador
+            if (k !== 'debt') {                                         // Si k es debt lo tratamos distinto
 
-            tr.append(td);
+                k != 'id' ? td.textContent = e[k] : td.textContent = count // En vez de meter el id del elemento, metemos el contador
+                
+            } else {
+                if (e.debt > 0) {                                     // Creamos el badge solo si debt > 0;
+
+                let aDebt = document.createElement('a');
+                let spDebt = document.createElement('span');
+
+                aDebt.setAttribute('href', `/turdus/customers/${e.id}/pay_debt`); // MODIFICAR PARA QUE LLEVE AL COBRO DE DEUDA
+                aDebt.classList.add('nav-link', 'px-2', 'text-truncate');
+                spDebt.classList.add('badge', 'bg-danger', 'rounded-pill');
+                spDebt.textContent = parseFloat(e.debt).toFixed(2)+' '+global.currency;
+
+                aDebt.append(spDebt);
+                td.append(aDebt);
+                }
+            }   
+            tr.append(td);                                      
         }
         count++;
 
@@ -27,11 +48,11 @@ const handleTable = (d, destiny) => {
 
         a.setAttribute('href', `/turdus/${destiny}/${e.id}`);
         a.classList.add('nav-link', 'px-2', 'text-truncate');
-
         i.classList.add('bi', 'bi-card-text', 'fs-5', 'me-2');
-
+        
         a.append(i);
         td.append(a);
+
         tr.append(td);
         tbody.append(tr);
     });
@@ -110,29 +131,33 @@ function CustomersTable() {
                             <label htmlFor="namePicker" className="form-label">Nombre:</label>
                             <input type="search" id="namePicker" className="form-control" list="namePicker-datalist" placeholder="Buscar..." />
                             <datalist id="namePicker-datalist">
-                                <option id="na-cliente001" value="cliente001">cliente001</option>
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="lastnamePicker" className="form-label">Apellidos:</label>
                             <input type="search" id="lastnamePicker" className="form-control" list="lastnamePicker-datalist" placeholder="Buscar..." />
                             <datalist id="lastnamePicker-datalist">
-                                <option id="la-apellidos001" value="apellidos001">apellidos001</option>
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="phonePicker" className="form-label">Teléfono:</label>
                             <input type="search" id="phonePicker" className="form-control" list="phonePicker-datalist" placeholder="Buscar..." />
                             <datalist id="phonePicker-datalist">
-                                <option id="ph-245326326" value="245326326">245326326</option>
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto">
                             <label htmlFor="emailPicker" className="form-label">e-mail:</label>
                             <input type="search" id="emailPicker" className="form-control" list="emailPicker-datalist" placeholder="Buscar..." />
                             <datalist id="emailPicker-datalist">
-                                <option id="em-c001@gmail.com" value="c001@gmail.com">c001@gmail.com</option>
                             </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="debtPicker" className="form-label">Deuda pendiente:</label>
+                            <select id="debtPicker" className="form-select" >
+                                <option id="de-" value="">Select...</option>
+                                <option id="de-true" value="true">Sí</option>
+                                <option id="de-false" value="false">No</option>
+                            </select>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">
                             <input type="reset" id="cleanButton" className="btn btn-light" onClick={cleanFilters}></input>
@@ -149,6 +174,7 @@ function CustomersTable() {
                             <th scope="col">Apellidos</th>
                             <th scope="col">Teléfono</th>
                             <th scope="col">e-mail</th>
+                            <th scople="col"></th>
                             <th scope="col">Vista</th>
                         </tr>
                     </thead>

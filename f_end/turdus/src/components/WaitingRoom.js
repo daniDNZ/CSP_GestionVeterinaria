@@ -10,7 +10,7 @@ function WaitingRoom() {
         console.log(v)
 
         const mTitle = document.querySelector('.modal-title');
-        const mList = document.querySelector('.modal-body>ul');
+        const mList = document.querySelector('.modal-body ul');
         const list = `
             <li class='list-group-item'><b>Hora:</b> ${v.time}</li>
             <li class='list-group-item'><b>Fecha:</b> ${v.date}</li>
@@ -30,23 +30,22 @@ function WaitingRoom() {
 
         const closeBtn = document.querySelector('#close-visit');
 
-        // viewBtn.addEventListener('click', (e) => {
-        //     e.preventDefault();
-        //     viewBtn.setAttribute('href', `/turdus/visits/${v.id}`);
-        //     viewBtn.click
-        //     // window.location = `/turdus/visits/${v.id}`;
-        // })
-
-        closeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            closeVisitFast(v.id, '/turdus/waiting_room');
-        })
+        if (!v.done) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeVisitFast(v.id, '/turdus/waiting_room');
+            })
+        } else {
+            closeBtn.textContent = 'Cobrar';
+            closeBtn.setAttribute('href', `/turdus/visits/${v.id}/bill`);
+        }
+        
 
     }
 
     const handleModal = (e) => {
         e.preventDefault();
-        const id = parseInt(e.target.textContent.split('#')[1]);
+        const id = parseInt(e.currentTarget.dataset.id);
 
         // RELLENAR EL MODAL, ORDENAR LA BÚSQUEDA POR HORA Y ARREGLAR COSITAS
         findOneVisit(fillModal, id);
@@ -57,26 +56,57 @@ function WaitingRoom() {
         const visits = data;
         const vList = document.querySelector('#visitsList');
         const bList = document.querySelector('#billsList');
+
+        bList.innerHTML = '';
+        vList.innerHTML = '';
         
         visits.forEach(v => {
-            if (v.done == false) {
             const a = document.createElement('a');
             a.classList.add('list-group-item', 'list-group-item-action', 'd-flex', 'justify-content-between', 'align-items-center');
+            const span = document.createElement('span');
+            span.innerHTML =`<b>${v.time}</b> | <b>Cat:</b> ${v.category} | <b>Vet:</b> ${v.vetName} | <b>Pat:</b> ${v.patient} | <b>Prop:</b> ${v.customer} | <b>Ref:</b> #${v.id}`;
             a.setAttribute('href', '#');
             a.setAttribute('data-bs-toggle', 'modal');
             a.setAttribute('data-bs-target', '#viewVisitsListModal');
+            a.dataset.id = v.id;
             a.addEventListener('click', handleModal);
 
-            const span = document.createElement('span');
-            span.innerHTML =`<b>${v.time}</b> | <b>Cat:</b> ${v.category} | <b>Vet:</b> ${v.vet} | <b>Pat:</b> ${v.patient} | <b>Prop:</b> ${v.customer} | <b>Ref:</b> #${v.id}`;
-
             a.append(span);
-            vList.append(a);
+
+            if (v.done == false) {
+
+                vList.append(a);
+
+            } else {
+                if (v.existsBill == false) {
+                    bList.append(a);
+                }
             }
         });
     }
+
+    
     useEffect(()=> {
         findTodayVisits( handleData, date)
+
+    // Refrescamos las visitas cada minuto en caso de inactividad, para tenerla actualizada.
+        const refresh = () => findTodayVisits( handleData, date);
+        const intervalTime = 60000;
+        let interval = setInterval(refresh, intervalTime);
+
+        const resetInterval = () => {
+            clearInterval(interval);
+            interval = setInterval(refresh, intervalTime);
+        }
+
+        document.addEventListener('mousemove', resetInterval);
+        document.addEventListener('keypress', resetInterval);
+
+        return () => { 
+            clearInterval(interval);   // Elimina el intervalo cuando el componente se desmonte
+            document.removeEventListener('mousemove', resetInterval);
+            document.removeEventListener('keypress', resetInterval);
+        }
     }, []);
     return (
         <>
@@ -88,40 +118,9 @@ function WaitingRoom() {
                 </div>
             </div>
             <div className="container">
-                <h5>Tickets pendientes</h5>
+                <h5>Visitas cerradas a cobrar</h5>
                 <div id="billsList" className="list-group overflow-scroll"  style={{maxHeight: "20em"}}>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-primary rounded-pill"><i className="bi bi-check fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-warning rounded-pill"><i className="bi bi-x fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-primary rounded-pill"><i className="bi bi-check fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-warning rounded-pill"><i className="bi bi-x fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-primary rounded-pill"><i className="bi bi-check fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-warning rounded-pill"><i className="bi bi-x fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-primary rounded-pill"><i className="bi bi-check fs-6"></i></span>
-                    </a>
-                    <a href="#" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><b>18:45</b> | <b>Cat:</b> Consulta | <b>Vet:</b> Collette | <b>Pat:</b> Harry | <b>Prop:</b> Jose</span>
-                        <span className="badge bg-warning rounded-pill"><i className="bi bi-x fs-6"></i></span>
-                    </a>
+                    
                 </div>
             </div>
             <ViewVisitsList />

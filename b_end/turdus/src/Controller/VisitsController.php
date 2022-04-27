@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\VisitRepository;
 use App\Repository\UserRepository;
 use App\Repository\PatientRepository;
+use App\Repository\BillRepository;
 use App\Entity\Visit;
 
 class VisitsController extends AbstractController
@@ -93,7 +94,7 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/visits/today", name="app_visits_today", methods="POST")
      */
-    public function findTodayVisits( VisitRepository $visitRepository, Request $request ): Response
+    public function findTodayVisits( VisitRepository $visitRepository, BillRepository $billRepository, Request $request ): Response
     {
         $visits = [];
         $data = $request->toArray();
@@ -118,6 +119,17 @@ class VisitsController extends AbstractController
             $visit['date'] = $visitEntity->getDateTime()->format('Y-m-d');
             $visit['time'] = $visitEntity->getDateTime()->format('H:i');
 
+            $bill = $billRepository->findOneBy(array('visit' => $visit['id']));
+           
+            if ($bill) 
+            {
+                $visit['existsBill'] = true;
+            }
+            else
+            {
+                $visit['existsBill'] = false;
+            }
+ 
             $visits[] = $visit;
         }
 

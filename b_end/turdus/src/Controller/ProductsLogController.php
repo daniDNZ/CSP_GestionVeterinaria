@@ -14,7 +14,7 @@ use App\Entity\ProductsLog;
 class ProductsLogController extends AbstractController
 {
     /**
-     * @Route("/api/products/log/add", name="app_products_log_add", methods="POST")
+     * @Route("/api/products_log/add", name="app_products_log_add", methods="POST")
      */
     public function add(BillRepository $billRepository, ProductRepository $productRepository, Request $request, EntityManagerInterface $em): Response
     {

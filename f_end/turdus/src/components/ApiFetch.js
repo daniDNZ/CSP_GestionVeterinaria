@@ -427,7 +427,6 @@ const findOneVisit = (callback, id ) => {
 }
 
 const findBill = (callback, bData) => {
-    let fetchData;
     const config = {
         method: 'POST',
         mode: 'cors',
@@ -512,6 +511,29 @@ const findTodayVisits = ( callback, date ) => {
         body: JSON.stringify(bodyData)
     }
     const request = new Request(`http://192.168.1.81:8888/api/visits/today`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            callback(data)
+            })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
+const getDebt = ( callback, id ) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/customer/${id}/debt`, config);
     fetch(request)
         .then(response => response.json())
         .then(data => {
@@ -626,7 +648,7 @@ const addUpdatePatient = (fData, action, id = '') => {
     
 }
 
-const addBill = (data) => {
+const addBill = (callback, data) => {
     const config = {
         method: 'POST',
         mode: 'cors',
@@ -643,9 +665,9 @@ const addBill = (data) => {
     fetch(request)
         .then(response => response.json())
         .then(data => {
+            callback(data)
         })
         .catch(e => {
-            handleAlert(false);
             console.log(e, 'Esto es un error')
             // localStorage.clear();
             // window.location = '/turdus/login'
@@ -653,7 +675,7 @@ const addBill = (data) => {
     
 }
 
-const payBill = (data) => {
+const payBill = (data, location) => {
     const config = {
         method: 'POST',
         mode: 'cors',
@@ -670,9 +692,9 @@ const payBill = (data) => {
     fetch(request)
         .then(response => response.json())
         .then(data => {
+            window.location = location;
         })
         .catch(e => {
-            handleAlert(false);
             console.log(e, 'Esto es un error')
             // localStorage.clear();
             // window.location = '/turdus/login'
@@ -692,7 +714,7 @@ const addProductsLog = (bodyData) => {
     }
     let request;
 
-    request = new Request("http://192.168.1.81:8888/api/products/log/add", config);
+    request = new Request("http://192.168.1.81:8888/api/products_log/add", config);
   
     fetch(request)
         .then(response => response.json())
@@ -837,7 +859,6 @@ const closeVisitFast = (id, location) => {
             window.location = location;
         })
         .catch(e => {
-            handleAlert(false);
             console.log(e, 'Esto es un error')
             // localStorage.clear();
         })
@@ -885,6 +906,7 @@ export {
     getCustomers, 
     getAllCustomers,
     getPatients, 
+    getDebt,
     findVisits,
     findPatients, 
     findVets,

@@ -176,15 +176,13 @@ function Bill() {
     const setBill = billData => {
         bill = billData;
 
-        const data = {
-            visit_id: id,
-            paid: false,
-            amount: total
-        }
-
-        if (bill.length <= 0) {
-            addBill(data);
-            
+        if (bill.length === 0) {
+            const data = {
+                visit_id: id,
+                paid: false,
+                amount: total
+            }
+            addBill(setBill, data);
         }
     }
 
@@ -222,14 +220,14 @@ function Bill() {
             :
             paid = parseFloat(cashAmount.value).toFixed(2);
 
-            console.log(paid)
-
         const bData = {
             id: bill.id,
             paid: paid,
             amount: totalAmount
         }
-        payBill(bData);
+        const location = '/turdus/waiting_room';
+        payBill(bData, location);
+        
 
     }
     useEffect(() => {

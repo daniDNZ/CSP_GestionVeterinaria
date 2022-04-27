@@ -9,13 +9,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CustomerRepository;
 use App\Repository\PostalCodeRepository;
+use App\Repository\BillRepository;
 use App\Entity\Customer;
 use App\Entity\Family;
 
 class CustomersController extends AbstractController
 {
 
-    function maker($customerEntities)
+    function maker($customerEntities, $billRepository = [])
         {
             foreach ($customerEntities as $customerEntity)
             {
@@ -25,6 +26,26 @@ class CustomersController extends AbstractController
                 $customer['lastName'] = $customerEntity->getLastName();
                 $customer['phone'] = $customerEntity->getPhone();
                 $customer['email'] = $customerEntity->getEmail();
+
+                
+                $debt = 0;
+
+                if($billRepository != [])
+                {
+                    $billEntities = $billRepository->findBy(array('customer' => $customer['id']));
+                    foreach ($billEntities as $billEntity) {
+                        if (!$billEntity->getPaymentCompleted() && $billEntity->getPaid() > 0)
+                        {
+                            $paid = floatval($billEntity->getPaid());
+                            $amount = floatval($billEntity->getAmount());
+    
+                            $debt = $amount - $paid;
+                        }
+                    }
+                    
+                }
+                $customer['debt'] = $debt;
+                
                 $customers[] = $customer;
             }
             
@@ -35,7 +56,7 @@ class CustomersController extends AbstractController
     /**
      * @Route("/api/{currentPage}/customers", name="app_customers_post", methods="POST")
      */
-    public function findCustomers( CustomerRepository $customerRepository, int $currentPage, Request $request): Response
+    public function findCustomers( CustomerRepository $customerRepository, BillRepository $billRepository, int $currentPage, Request $request): Response
     {   
         $limit = 10;
         $customers = [];
@@ -54,8 +75,8 @@ class CustomersController extends AbstractController
 
         $maxPages = ceil($customersFound['paginator']->count() / $limit);
 
-        $customers = $this->maker($result);
-        $allCustomers = $this->maker($customersFound['all']);
+        $customers = $this->maker($result, $billRepository);
+        $allCustomers = $this->maker($customersFound['all'], $billRepository);
 
         return $this->json([
             'data' => $customers,
