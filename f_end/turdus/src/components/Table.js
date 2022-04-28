@@ -155,8 +155,8 @@ function CustomersTable() {
                             <label htmlFor="debtPicker" className="form-label">Deuda pendiente:</label>
                             <select id="debtPicker" className="form-select" >
                                 <option id="de-" value="">Select...</option>
-                                <option id="de-true" value="true">Sí</option>
-                                <option id="de-false" value="false">No</option>
+                                <option id="de-true" value="1">Sí</option>
+                                <option id="de-false" value="0">No</option>
                             </select>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">

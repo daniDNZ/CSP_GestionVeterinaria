@@ -1,14 +1,17 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import global from "../global";
-import { findOneVisit, getDebt } from "./ApiFetch";
+import { findOneVisit, getDebt, payDebt } from "./ApiFetch";
 import { ViewVisitsList } from "./Modals";
 
 function PayDebt() {
     const { id } = useParams();
     let debt = 0;
+    let paid = 0;
+    let change = 0;
 
     const fillList = (bills) => {
+        debt = 0;
         const list = document.querySelector('#billsList');
 
         list.innerHTML = '';
@@ -33,7 +36,16 @@ function PayDebt() {
         });
 
         const debtInput = document.querySelector('#debt-amount');
-        debtInput.value = debt;
+        const totalDebt = document.querySelector('#total-debt');
+        const cashAmount = document.querySelector('#cash-amount');
+        const cashChange = document.querySelector('#cash-change');
+        debtInput.value = debt.toFixed(2);
+        cashAmount.value = '';
+        cashChange.value = '';
+
+        debt > 0 ?
+            totalDebt.textContent = `${debt.toFixed(2)} ${global.currency}`:
+            totalDebt.textContent = `Al día`;
     }
 
     const fillModal = (v) => {
@@ -65,10 +77,20 @@ function PayDebt() {
 
     const giveChange = e => {
         e.preventDefault();
+        paid = e.target.value;
+        change = parseFloat(paid - debt).toFixed(2);
+        const chInput = document.querySelector('#cash-change');
+        chInput.value = change;
     }
 
     const completePay = e => {
         e.preventDefault();
+        const bodyData = {
+            paid: paid,
+        }
+
+        payDebt(fillList, id, bodyData);
+
     }
 
     useEffect(() => {
@@ -77,10 +99,16 @@ function PayDebt() {
 
     return (
         <>
-            <h3>Pendientes de Pago</h3>
+            <div id="debt-header" className="d-flex flex-row justify-content-between">
+                <h3 className="col-auto">Pendientes de Pago</h3>
+                <a href={`/turdus/customers/${id}`} role='button' className='btn btn-light'>Ficha Cliente</a>
+            </div>
             <hr />
-            <div className="container my-4">
+            <div className="my-4">
                 <div id="billsList" className="list-group overflow-scroll" style={{ maxHeight: "20em" }} />
+                <div className="d-flex flex-row mt-4">
+                    <h4>Deuda total: <span id="total-debt"></span></h4>
+                </div>
             </div>
             <hr />
             <div className="input-group col-auto mb-3">

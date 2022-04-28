@@ -77,8 +77,10 @@ function CustomerForm({ action, id }) {
         <>
             <form id="auto-form">
                 <div id="form-row-1" className="row">
-                    <div className="row justify-content-between" id="form-title">
-                        <h3 className="col-auto">Cliente</h3>
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                        <h3 className="col-auto" id="customerViewPage">Cliente </h3><span id="cus-debt-badge" className="fs-6"></span>
+                        </div>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerName" className="form-label">Nombre cliente:</label>

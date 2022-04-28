@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { Form, handleTime } from "./Form";
-import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit, updateCart } from "./ApiFetch";
+import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit, updateCart, getDebt } from "./ApiFetch";
 import { AddProducts, NewPatient, NewVisit } from "./Modals";
+import global from "../global";
 
 function Customer() {
     const { id } = useParams();
@@ -30,10 +31,32 @@ function Customer() {
         // Modal
         document.getElementById("responsiblePicker").value = `${data.name} - ${data.email}`;
 
+        // Badge
+        console.log(data)
+        if (data.debt > 0) {
+
+            const debtBadge = document.querySelector('span#cus-debt-badge');
+            let aDebt = document.createElement('a');
+            let spDebt = document.createElement('span');
+
+            aDebt.setAttribute('href', `/turdus/customers/${id}/pay_debt`); // MODIFICAR PARA QUE LLEVE AL COBRO DE DEUDA
+            aDebt.classList.add('nav-link', 'px-2', 'text-truncate', 'mb-auto');
+            spDebt.classList.add('badge', 'bg-danger', 'rounded-pill');
+            spDebt.textContent = parseFloat(data.debt).toFixed(2)+' '+global.currency;
+
+            aDebt.append(spDebt);
+            debtBadge.append(aDebt);
+        }
+
+        // Title
+        document.getElementById("customerViewPage").textContent = `${data.name} ${data.lastName}`;
+
+
     }
 
     const addButtons = () => {
         const formTitle = document.querySelector("#form-title");
+        document.querySelector("#form-title");
 
         let pButton = document.createElement("a");
         pButton.setAttribute('id', 'addPatientButton');

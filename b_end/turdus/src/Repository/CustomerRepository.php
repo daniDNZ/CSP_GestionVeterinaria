@@ -96,7 +96,7 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
     
     public function findByQuery($q, $currentPage = 1, $limit = 10)
     {
-        $query = $this->createQueryBuilder('c')
+        $qb = $this->createQueryBuilder('c')
             ->andWhere('c.name LIKE :name')
             ->andWhere('c.last_name LIKE :lname')
             ->andWhere('c.phone LIKE :phone')
@@ -104,7 +104,17 @@ class CustomerRepository extends ServiceEntityRepository implements PasswordUpgr
             ->setParameter('name', '%'.$q['name'].'%')
             ->setParameter('lname', '%'.$q['last_name'].'%')
             ->setParameter('phone', '%'.$q['phone'].'%')
-            ->setParameter('email', '%'.$q['email'].'%')
+            ->setParameter('email', '%'.$q['email'].'%');
+
+        if(array_key_exists('debt', $q))
+        {
+            $qb->select('c')
+                ->innerJoin('c.bills', 'b')
+                ->andWhere('b.paymentCompleted = :dbt')
+                ->setParameter('dbt', $q['debt']);
+        }
+        
+        $query = $qb->select('c')
             ->orderBy('c.name', 'ASC')
             ->getQuery();
 

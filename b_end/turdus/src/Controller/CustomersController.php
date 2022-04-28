@@ -12,6 +12,7 @@ use App\Repository\PostalCodeRepository;
 use App\Repository\BillRepository;
 use App\Entity\Customer;
 use App\Entity\Family;
+use App\Controller\BillController;
 
 class CustomersController extends AbstractController
 {
@@ -34,7 +35,7 @@ class CustomersController extends AbstractController
                 {
                     $billEntities = $billRepository->findBy(array('customer' => $customer['id']));
                     foreach ($billEntities as $billEntity) {
-                        if (!$billEntity->getPaymentCompleted() && $billEntity->getPaid() > 0)
+                        if (!$billEntity->getPaymentCompleted())
                         {
                             $paid = floatval($billEntity->getPaid());
                             $amount = floatval($billEntity->getAmount());
@@ -69,6 +70,15 @@ class CustomersController extends AbstractController
         if (array_key_exists('lastnamePicker', $data))  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
         if (array_key_exists('phonePicker', $data))     {$query['phone'] = $data['phonePicker'];} else {$query['phone'] = '%';}
         if (array_key_exists('emailPicker', $data))     {$query['email'] = $data['emailPicker'];} else {$query['email'] = '%';}
+        if (array_key_exists('debtPicker', $data))      
+        {
+            if ($data['debtPicker'] == true)
+            {
+                $query['debt'] = false;
+            }
+            
+        }
+
 
         $customersFound = $customerRepository->findByQuery($query, $currentPage, $limit);
         $result = $customersFound['paginator'];
@@ -89,7 +99,7 @@ class CustomersController extends AbstractController
      /**
      * @Route("/api/{currentPage}/customers", name="app_customers_get", methods="GET")
      */
-    public function getCustomers(CustomerRepository $customerRepository, int $currentPage ): Response
+    public function getCustomers(CustomerRepository $customerRepository, BillRepository $billRepository, int $currentPage ): Response
     {   
         $limit = 10;
         $customersFound = $customerRepository->findAll($currentPage, $limit);
@@ -97,7 +107,7 @@ class CustomersController extends AbstractController
 
         $maxPages = ceil($customersFound['paginator']->count() / $limit);
 
-        $customers = $this->maker($result);
+        $customers = $this->maker($result, $billRepository);
         $allCustomers = $this->maker($customersFound['all']);
 
         return $this->json([
@@ -111,7 +121,7 @@ class CustomersController extends AbstractController
    /**
      * @Route("/api/customers/{id}", name="app_one_customer", methods="GET")
      */
-    public function singleCustomer( CustomerRepository $customerRepository, int $id ): Response
+    public function singleCustomer( CustomerRepository $customerRepository, BillRepository $billRepository, int $id ): Response
     {
     
         $customerEntity = $customerRepository->findOneBy(array('id' => $id));
@@ -126,6 +136,21 @@ class CustomersController extends AbstractController
         $customer['address'] = $customerEntity->getAddress();
         $customer['lastName'] = $customerEntity->getLastName();
         $customer['postalCode'] = $customerEntity->getPostalCode()->getId();
+
+        $debt = 0;
+
+        $billEntities = $billRepository->findBy(array('customer' => $customer['id']));
+        foreach ($billEntities as $billEntity) {
+            if (!$billEntity->getPaymentCompleted())
+            {
+                $paid = floatval($billEntity->getPaid());
+                $amount = floatval($billEntity->getAmount());
+
+                $debt = $amount - $paid;
+            }
+        }
+            
+        $customer['debt'] = $debt;
 
         return $this->json($customer);
     }

@@ -31,6 +31,24 @@ class UsersController extends AbstractController
     }
 
     /**
+     * @Route("/api/users/get_current", name="app_users_get_current", )
+     */
+    public function getCurUser(UserRepository $userRepository, Request $request): Response
+    {   
+        $data = $request->toArray();
+        $users = [];
+        $userEntity = $userRepository->findOneBy(array('username' => $data['username']));
+
+        $user = [];
+        $user['id'] = $userEntity->getId();
+        $user['name'] = $userEntity->getName();
+        $user['roles'] = $userEntity->getRoles();;
+       
+
+        return $this->json($user);
+    }
+
+    /**
      * @Route("/api/vets", name="app_vets_get", methods="GET")
      */
     public function getVets( UserRepository $userRepository, Request $request ): Response

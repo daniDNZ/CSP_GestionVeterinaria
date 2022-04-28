@@ -68,6 +68,55 @@ class BillController extends AbstractController
     }
 
     /**
+     * @Route("/api/customer/{id}/debt/pay", name="app_customer_pay_debt", methods="POST")
+     */
+    public function payDebt( BillRepository $billRepository,int $id, Request $request, EntityManagerInterface $em)
+    {
+      
+        $d = $request->toArray();
+        $customer = $id;
+        $newPay = floatval($d['paid']);
+        
+        $entities = $billRepository
+            ->findBy(
+                array('customer' => $customer, 'paymentCompleted' => false),
+                array('datetime' => 'ASC')
+            );
+
+        foreach ($entities as $entity) {
+
+            if ($newPay > 0)
+            {
+                $amount = floatval($entity->getAmount());
+                $paid = floatval($entity->getPaid());
+                $toPay = $amount - $paid;
+
+                if($newPay < $toPay) 
+                {
+                    $paid = $newPay + $paid;
+                    $newPay = 0;
+                    $entity->setPaid($paid);
+                }
+                else
+                {
+                    $newPay = $newPay - $toPay;
+                    $entity->setPaid($amount);
+                    $entity->setPaymentCompleted(true);
+                }
+                
+                $em->persist($entity);
+            }
+            else
+            {
+                break;
+            }
+        }
+        $em->flush();
+
+        return $this->findDebt($billRepository, $customer);
+    }
+
+    /**
      * @Route("/api/bill/update", name="app_bill_update", methods="POST")
      */
     public function update(BillRepository $billRepository, Request $request, EntityManagerInterface $em): Response

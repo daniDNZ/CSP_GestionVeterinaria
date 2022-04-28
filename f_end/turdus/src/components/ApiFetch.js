@@ -1,6 +1,31 @@
 import bcrypt from "bcryptjs/dist/bcrypt";
 import { handleAlert } from "./FormController";
 
+const getCurUser = (callback, username) => {
+    const bodyData = {
+        username: username,
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/users/get_current`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {  
+            callback(data) 
+        })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+}
+
 const getVisits = ( callback, currentPage = 1 ) => {
 
     const config = {
@@ -546,6 +571,30 @@ const getDebt = ( callback, id ) => {
   
 }
 
+const payDebt = ( callback, id, bodyData ) => {
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/customer/${id}/debt/pay`, config);
+    fetch(request)
+        .then(response => response.json())
+        .then(data => {
+            callback(data)
+            })
+        .catch(e => {
+            console.log(e)
+            // localStorage.clear();
+        });
+  
+}
+
 
 // INSERTS / UPDATES
 
@@ -899,6 +948,7 @@ const updateCart = (id, cart) => {
 
 
 export { 
+    getCurUser,
     getVets, 
     getSpecies, 
     getRaces, 
@@ -907,6 +957,7 @@ export {
     getAllCustomers,
     getPatients, 
     getDebt,
+    payDebt,
     findVisits,
     findPatients, 
     findVets,

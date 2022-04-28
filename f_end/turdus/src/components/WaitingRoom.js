@@ -112,12 +112,13 @@ function WaitingRoom() {
         <>
             <h3>Recepción</h3>
             <hr />
-            <div className="container my-4">
+            <div className="my-4">
                 <h5>Visitas pendientes</h5>
                 <div id="visitsList" className="list-group overflow-scroll" style={{maxHeight: "20em"}}>
                 </div>
             </div>
-            <div className="container">
+            <hr />
+            <div className="">
                 <h5>Visitas cerradas a cobrar</h5>
                 <div id="billsList" className="list-group overflow-scroll"  style={{maxHeight: "20em"}}>
                     
