@@ -53,7 +53,7 @@ function Dashboard({ comp }) {
         <div className="row flex-grow-sm-1 flex-grow-0 vw-100">
           <DashboardSidebar />
           <main id="main-dashboard" className="col overflow-auto">
-            <div className="rounded-3 p-3">
+            <div className="rounded-3 p-3 h-100">
               {switchingComponents()}
             </div>
           </main>

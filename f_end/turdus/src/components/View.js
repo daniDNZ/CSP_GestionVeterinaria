@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { Form, handleTime } from "./Form";
-import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit, updateCart, getDebt } from "./ApiFetch";
+import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit, updateCart, getDebt, findBill } from "./ApiFetch";
 import { AddProducts, NewPatient, NewVisit } from "./Modals";
 import global from "../global";
 
@@ -344,6 +344,8 @@ function Visit() {
                 e.setAttribute('disabled', 'true');
             }
 
+            findBill(disableCart, {visit_id: id});
+
         } else {
             const bClose = document.createElement('button');
             bClose.classList.add('btn', 'btn-light', 'w-100','mb-3');
@@ -366,6 +368,33 @@ function Visit() {
             offCanvasBody.append(bClose);
             offCanvasBody.append(bReceive);
         }
+
+        // Listener Carrito
+        const payDebt = document.querySelector('#close-pay-button');
+        payDebt.addEventListener('click', recVisit);
+    }
+
+    const disableCart = (bill) => { // desabilitamos los botones del carrito para no modificar el bill
+        if (bill.paymentCompleted) {
+            const cartChilds = document.querySelectorAll('#offcanvascart a, #offcanvascart button');
+            cartChilds.forEach(child => {
+                console.log(child)
+                child.classList.add('disabled');
+            });
+        } else {
+            const cartChilds = document.querySelectorAll('#offcanvascart a, #offcanvascart button');
+            cartChilds.forEach(child => {
+                if (child.id !== 'close-pay-button') {
+
+                    console.log(child)
+                    child.classList.add('disabled');
+                }
+            });
+            // Si queda deuda pendiente, enviamos al cobro con el botón de cobrar
+            const payDebt = document.querySelector('#close-pay-button');
+            payDebt.removeEventListener('click', recVisit); // Quitamos el listener
+            payDebt.setAttribute('href', `/turdus/customers/${bill.customer}/pay_debt`);
+        }
     }
 
     const addButtons = () => {
@@ -381,7 +410,7 @@ function Visit() {
         pButton.setAttribute('aria-controls', 'offcanvas');
         pButton.setAttribute('role', 'button');
         pButton.classList.add('btn', 'btn-outline-secondary', 'mx-1');
-        pButton.textContent = 'Cerrar / Cobrar';
+        pButton.textContent = 'Abrir / Cerrar';
 
         let iCart = document.createElement('i');
         iCart.classList.add('bi', 'bi-cart3');
@@ -523,7 +552,7 @@ function Visit() {
                     <div id="cartTotal" className="text-end my-2 mx-2"></div>
                     <hr />
                     <div className="d-flex flex-row justify-content-between">
-                        <a href="#" role="button" className="btn btn-outline-secondary" onClick={recVisit}>Cerrar y cobrar</a>
+                        <a href="#" id="close-pay-button" role="button" className="btn btn-outline-secondary">Cerrar y cobrar</a>
                         <button type="button" className="btn btn-outline-primary" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>
                     </div>
                 </div>
@@ -531,6 +560,7 @@ function Visit() {
             
             <Form selector='visit' action='update' id={id} />
             <AddProducts callback={addProduct}/>
+         
         </>
     )
 }

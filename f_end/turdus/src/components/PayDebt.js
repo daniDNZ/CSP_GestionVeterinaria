@@ -89,8 +89,12 @@ function PayDebt() {
             paid: paid,
         }
 
-        payDebt(fillList, id, bodyData);
+        payDebt(goToCustomer, id, bodyData);
 
+    }
+
+    const goToCustomer = () => {
+        window.location.assign(`/turdus/customers/${id}`);
     }
 
     useEffect(() => {

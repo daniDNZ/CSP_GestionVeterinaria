@@ -452,6 +452,7 @@ const findOneVisit = (callback, id ) => {
 }
 
 const findBill = (callback, bData) => {
+    console.log(bData)
     const config = {
         method: 'POST',
         mode: 'cors',
@@ -521,9 +522,10 @@ const findPatientVisits = ( callback, id ) => {
   
 }
 
-const findTodayVisits = ( callback, date ) => {
+const findTodayVisits = ( callback, date, uId = '' ) => {
     const bodyData = {
-        datePicker: date
+        datePicker: date,
+        uId: uId
     }
 
     const config = {

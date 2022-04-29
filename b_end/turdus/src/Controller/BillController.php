@@ -39,6 +39,9 @@ class BillController extends AbstractController
             $bill['visit'] = $entity->getVisit()->getId();
             $bill['paid'] = $entity->getPaid();
             $bill['amount'] = $entity->getAmount();
+            $bill['paymentCompleted'] = $entity->getPaymentCompleted();
+            $bill['customer'] = $entity->getCustomer()->getId();
+
         }
 
         return $this->json($bill);

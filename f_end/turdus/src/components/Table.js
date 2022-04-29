@@ -29,7 +29,7 @@ const handleTable = (d, destiny) => {
                 let aDebt = document.createElement('a');
                 let spDebt = document.createElement('span');
 
-                aDebt.setAttribute('href', `/turdus/customers/${e.id}/pay_debt`); // MODIFICAR PARA QUE LLEVE AL COBRO DE DEUDA
+                aDebt.setAttribute('href', `/turdus/customers/${e.id}/pay_debt`);
                 aDebt.classList.add('nav-link', 'px-2', 'text-truncate');
                 spDebt.classList.add('badge', 'bg-danger', 'rounded-pill');
                 spDebt.textContent = parseFloat(e.debt).toFixed(2)+' '+global.currency;
@@ -117,9 +117,7 @@ function CustomersTable() {
 
     return (
         <>
-            <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
-                Filtros
-            </button>
+            
             <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
                 <div className="offcanvas-header">
                     <h5 id="offcanvasLabel">Filtrar</h5>
@@ -160,7 +158,7 @@ function CustomersTable() {
                             </select>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">
-                            <input type="reset" id="cleanButton" className="btn btn-light" onClick={cleanFilters}></input>
+                            <input type="reset" id="cleanButton" className="btn btn-secondary text-white" onClick={cleanFilters}></input>
                         </div>
                     </form>
                 </div>
@@ -246,9 +244,6 @@ function PatientsTable() {
     }, []);
     return (
         <>
-            <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
-                Filtros
-            </button>
             <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="1060" id="offcanvas" aria-labelledby="offcanvasLabel">
                 <div className="offcanvas-header">
                     <h5 id="offcanvasLabel">Filtrar</h5>
@@ -312,7 +307,7 @@ function PatientsTable() {
                             </datalist>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">
-                            <input type="reset" id="cleanButton" className="btn btn-light" onClick={cleanFilters}></input>
+                            <input type="reset" id="cleanButton" className="btn btn-secondary text-white" onClick={cleanFilters}></input>
                         </div>
                     </form>
                 </div>
@@ -396,9 +391,6 @@ function VisitsTable() {
         , []);
     return (
         <>
-            <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
-                Filtros
-            </button>
             <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="1060" id="offcanvas" aria-labelledby="offcanvasLabel">
                 <div className="offcanvas-header">
                     <h5 id="offcanvasLabel">Filtrar</h5>
@@ -443,7 +435,7 @@ function VisitsTable() {
                             </select>
                         </div>
                         <div className="mb-3 col-auto flex-column d-flex justify-content-end">
-                            <input type="reset" id="cleanButton" className="btn btn-light" onClick={cleanFilters}></input>
+                            <input type="reset" id="cleanButton" className="btn btn-secondary text-white" onClick={cleanFilters}></input>
                         </div>
                     </form>
                 </div>
@@ -458,7 +450,8 @@ function VisitsTable() {
                             <th scope="col">Veterinaria/o</th>
                             <th scope="col">Cliente</th>
                             <th scope="col">Paciente</th>
-                            <th scope="col">Completada</th>
+                            <th scope="col">Especie</th>
+                            <th scope="col">Cerrada</th>
                             <th scope="col">Vista</th>
                         </tr>
                     </thead>

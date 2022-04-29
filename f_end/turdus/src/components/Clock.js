@@ -24,33 +24,32 @@ function Clock() {
         });
         sDOM.textContent = ':';
 
-        color ? 
+        color ?
             sDOM.setAttribute('style', 'color: black') :
             sDOM.setAttribute('style', 'color: white');
-        
+
         color = !color;
 
     }
-    
+
     useEffect(() => {
         const timer = setInterval(changeHour, 1000);
 
         return () => clearInterval(timer);
     }, []);
-    
 
-    
+
+
 
     return (
         <>
-        <div className="d-flex justify-content-end">
-            <div className="">
-
-                <span id="hours" className="col-auto fs-2"></span>
-                <span id="seconds" className="col-auto fs-2"></span>
-                <span id="minutes" className="col-auto fs-2"></span>
+            <div>
+                <h3 className="fw-light">
+                    <span id="hours"></span>
+                    <span id="seconds"></span>
+                    <span id="minutes"></span>
+                </h3>
             </div>
-        </div>
         </>
     )
 }

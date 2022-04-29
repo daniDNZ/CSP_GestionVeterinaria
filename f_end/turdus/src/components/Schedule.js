@@ -15,7 +15,6 @@ function Schedule() {
             username: jwt_decode(localStorage.getItem('token')).username,
             week: week
         }
-        console.log(bodyData)
         const config = {
             method: 'POST',
             mode: 'cors',
@@ -88,7 +87,7 @@ function Schedule() {
             let currentDate = new Date(getWeek(moveWeek)[0]);
             document.getElementById('monthName').innerHTML =
                 `
-                    <h3 class="my-0">${String(currentDate).split(' ')[1]}</h3>
+                    <h3 class="fw-light">${String(currentDate).split(' ')[1]}</h3>
                 `
 
             // Añadimos las cabeceras de las columnas
@@ -97,12 +96,12 @@ function Schedule() {
             <tr className="bg-light-gray">
                 <th className="text-uppercase">Time
                 </th>
-                <th className="text-uppercase">Monday ${getWeek(moveWeek)[0].split('-')[2]}</th>
-                <th className="text-uppercase">Tuesday ${getWeek(moveWeek)[1].split('-')[2]}</th>
-                <th className="text-uppercase">Wednesday ${getWeek(moveWeek)[2].split('-')[2]}</th>
-                <th className="text-uppercase">Thursday ${getWeek(moveWeek)[3].split('-')[2]}</th>
-                <th className="text-uppercase">Friday ${getWeek(moveWeek)[4].split('-')[2]}</th>
-                <th className="text-uppercase">Saturday ${getWeek(moveWeek)[5].split('-')[2]}</th>
+                <th className="text-uppercase">Mon ${getWeek(moveWeek)[0].split('-')[2]}</th>
+                <th className="text-uppercase">Tue ${getWeek(moveWeek)[1].split('-')[2]}</th>
+                <th className="text-uppercase">Wed ${getWeek(moveWeek)[2].split('-')[2]}</th>
+                <th className="text-uppercase">Thu ${getWeek(moveWeek)[3].split('-')[2]}</th>
+                <th className="text-uppercase">Fri ${getWeek(moveWeek)[4].split('-')[2]}</th>
+                <th className="text-uppercase">Sat ${getWeek(moveWeek)[5].split('-')[2]}</th>
             </tr>
             `
             // Añadimos las filas al tbody
@@ -164,10 +163,12 @@ function Schedule() {
                         cell =
                             `
                             <td id="day${day}${timer}" rowSpan="${visit.duration}" class="bg-${visit.category.toLowerCase()}">
+                            <a href="/turdus/visits/${visit.id}" class="text-reset text-decoration-none h-100">
                                 <span className="padding-5px-tb padding-15px-lr border-radius-5 margin-10px-bottom text-white font-size16 xs-font-size13">${visit.category}</span>
                                 <div className="font-size13 text-light">${visit.patient} ${visit.species}</div>
                                 <div className="margin-10px-top font-size14">${timer.substr(0, 2) + ':' + timer.substr(2, 2)}</div>
-                            </td>
+                            </a>
+                                </td>
                             `
                     }
 
@@ -200,9 +201,10 @@ function Schedule() {
 
     return (
         <>
-        <div className="d-flex flex-row justify-content-between">
+        <div className="py-2 px-4">
+            <div className="d-flex flex-row justify-content-between">
                 <div id="monthName" className="d-flex align-items-center">
-                    <h3></h3>
+                    <h3 className="fw-light"></h3>
                 </div>
                 <div className="d-flex flex-row justify-content-end">
                     <button className="btn btn-outline-primary m-1" onClick={() => dataFetch(-7)}>Prev</button>
@@ -211,13 +213,14 @@ function Schedule() {
             </div>
             <div className="table-responsive d-flex flex-column">
                 <table className="table table-borderless text-center">
-                    <thead>
+                    <thead className="text-dark">
 
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
             </div>
+        </div>
         </>
     )
 

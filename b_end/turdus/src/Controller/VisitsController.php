@@ -26,6 +26,7 @@ class VisitsController extends AbstractController
             $visit['vet'] = $visitEntity->getUser()->getName();
             $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
             $visit['patient'] = $visitEntity->getPatient()->getName();
+            $visit['species'] = $visitEntity->getPatient()->getSpecies()->getName();
             $visit['completed'] = $visitEntity->getDone();
 
             $visits[] = $visit;
@@ -102,7 +103,8 @@ class VisitsController extends AbstractController
         $query = array();
 
         if (array_key_exists('datePicker', $data))          {$query['date'] = $data['datePicker'];} else {$query['date'] = '%';}
-       
+        if ( $data['uId'] !== '' )                          {$query['uId'] = $data['uId'];}
+
         $visitEntities = $visitRepository->findByDate($query);
 
         foreach ($visitEntities as $visitEntity) 
@@ -340,7 +342,7 @@ class VisitsController extends AbstractController
                 $visit['id'] = $singleVisit->getId();
                 $visit['done'] = $singleVisit->getDone();
                 $visit['patient'] = $singleVisit->getPatient()->getName();
-                $visit['species'] = $singleVisit->getPatient()->getSpecies();
+                $visit['species'] = $singleVisit->getPatient()->getSpecies()->getName();
                 $visit['category'] = $singleVisit->getCategory();
                 $visit['duration'] = $singleVisit->getDuration();
                 $visit['date_time'] = $singleVisit->getDateTime();

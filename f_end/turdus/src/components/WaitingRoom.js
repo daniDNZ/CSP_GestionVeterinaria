@@ -4,7 +4,7 @@ import { ViewVisitsList } from "./Modals";
 
 function WaitingRoom() {
     let date = new Date;
-    date = date.toISOString().split('T')[0]
+    date = date.toISOString().split('T')[0];
 
     const fillModal = (v) => {
         console.log(v)

@@ -119,11 +119,21 @@ class VisitRepository extends ServiceEntityRepository
 
     public function findByDate($q)
     {
-        return $this->createQueryBuilder('v')
+        $qb = $this->createQueryBuilder('v')
         ->andWhere('v.date_time LIKE :val')
-        ->setParameter('val', $q['date'].'%')
-        ->getQuery()
-        ->getResult();
+        ->setParameter('val', $q['date'].'%');
+
+        if(array_key_exists('uId', $q))
+        {
+            $qb->select('v')
+            ->andWhere('v.user = :usr')
+            ->setParameter('usr', $q['uId']);
+        }
+
+        return $qb->select('v')
+            ->orderBy('v.date_time', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     
