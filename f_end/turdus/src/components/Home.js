@@ -6,20 +6,19 @@ import { useEffect, useState } from "react";
 import Cards from "./Cards";
 import FastAccessBtns from "./FastAccessBtns";
 
-function Home() {
-    const username = jwt_decode(localStorage.getItem('token')).username;
-    const [user, setUser] = useState('');
+function Home({user}) {
 
     const handleUser = (u) => {
         document.querySelector('#say-hi').textContent = `Hola, ${u.name}!`;
-        setUser(u);
     }
 
     useEffect(() => {
-        getCurUser(handleUser, username);
+        if(user){
+            handleUser(user)
 
+        }
 
-    }, [])
+    }, [user])
 
 
     return (

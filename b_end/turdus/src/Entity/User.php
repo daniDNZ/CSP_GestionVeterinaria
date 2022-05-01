@@ -87,6 +87,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $patients;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $pic;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
@@ -329,6 +334,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $patient->setVet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPic(): ?string
+    {
+        return $this->pic;
+    }
+
+    public function setPic(?string $pic): self
+    {
+        $this->pic = $pic;
 
         return $this;
     }

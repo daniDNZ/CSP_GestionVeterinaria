@@ -1,5 +1,45 @@
 import { NavLink } from "react-router-dom";
-function DashboardNavContent() {
+import { useEffect } from "react";
+
+function DashboardNavContent({user}) {
+
+    const getProfilePic = () => {
+        const a = document.querySelector('#dropdownUser2');
+        const img = document.createElement('img');
+        img.setAttribute('src', '/img/profile/'+user.pic);
+        img.setAttribute('alt', 'user');
+        img.setAttribute('width', '32');
+        img.setAttribute('height', '32');
+        img.classList.add('rounded-circle', 'me-2');
+        a.innerHTML = '';
+        a.append(img);
+      }
+    
+      const handleRole = () => {
+        if (user.roles){
+          if (user.roles.includes('ROLE_ADMIN')) {
+            const userUl = document.querySelector('#dropdownUserUl2');
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.classList.add('dropdown-item');
+            a.setAttribute('href', '#');
+            a.textContent = 'Settings';
+    
+            li.append(a);
+            userUl.prepend(li);
+          }
+        }
+        
+      }
+    
+   
+    useEffect(() => {
+        if(user) {
+            getProfilePic();
+            handleRole();
+        }
+        
+    }, [user])
     return (
         <ul className="nav nav-pills flex-column">
             <li className="mx-0 nav-item">
@@ -92,15 +132,11 @@ function DashboardNavContent() {
 
             </li> */}
             <li className="mx-0 nav-item d-md-none">
-                <a href="#" className="nav-link px-2 dropdown-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-controls="#user-collapse" aria-expanded="false">
-                    <img src="https://via.placeholder.com/28?text=!" alt="user" width="24" height="24" className="rounded-circle me-1" />
-                    <span className="d-inline">Chellmer0</span>
+                <a href="#" className="nav-link px-2 dropdown-toggle collapsed" id="dropdownUser2" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-controls="#user-collapse" aria-expanded="false">
                 </a>
                 <div id="user-collapse" className="collapse navbar-collapse">
                     <hr className="m-0" />
-                    <ul className="nav nav-pills flex-column">
-                        <li><a className="dropdown-item" href="#">New project...</a></li>
-                        <li><a className="dropdown-item" href="#">Settings</a></li>
+                    <ul id="dropdownUserUl2" className="nav nav-pills flex-column">
                         <li><a className="dropdown-item" href="#">Profile</a></li>
                         <li>
                             <hr className="dropdown-divider" />

@@ -31,7 +31,7 @@ class UsersController extends AbstractController
     }
 
     /**
-     * @Route("/api/users/get_current", name="app_users_get_current", )
+     * @Route("/api/users/get_current", name="app_users_get_current", methods="POST")
      */
     public function getCurUser(UserRepository $userRepository, Request $request): Response
     {   
@@ -42,7 +42,9 @@ class UsersController extends AbstractController
         $user = [];
         $user['id'] = $userEntity->getId();
         $user['name'] = $userEntity->getName();
-        $user['roles'] = $userEntity->getRoles();;
+        $user['roles'] = $userEntity->getRoles();
+        $user['pic'] = $userEntity->getPic();
+        $user['username'] = $userEntity->getUsername();
        
 
         return $this->json($user);
