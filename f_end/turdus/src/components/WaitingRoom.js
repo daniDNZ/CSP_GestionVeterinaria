@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { closeVisitFast, findOneVisit, findTodayVisits } from "./ApiFetch";
+import { closeVisitFast, findOneVisit, findTodayVisits } from "./api/ApiVisits";
 import { ViewVisitsList } from "./Modals";
 
 function WaitingRoom() {

@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 
 function FastAccessBtns() {
     
     const changeUser = (e) => {
         e.preventDefault();
         localStorage.removeItem('token');
-        window.location.assign('/turdus/login');
+        window.location.assign('/login');
     }
 
     return (

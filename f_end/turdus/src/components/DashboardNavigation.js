@@ -1,14 +1,17 @@
 import { NavLink } from "react-router-dom";
 import DashboardNavContent from "./DashboardNavContent";
 import global from "../global";
-import { createElement, useEffect } from "react";
+import { createElement, useContext, useEffect } from "react";
+import { UserContext } from "../context/context";
 
-function DashboardNavigation({user}) {
+function DashboardNavigation() {
+
+  const { user } = useContext(UserContext);
 
   const getProfilePic = () => {
     const a = document.querySelector('#dropdownUser1');
     const img = document.createElement('img');
-    img.setAttribute('src', '/img/profile/'+user.pic);
+    img.setAttribute('src', '/img/profile/' + user.pic);
     img.setAttribute('alt', 'user');
     img.setAttribute('width', '32');
     img.setAttribute('height', '32');
@@ -24,25 +27,25 @@ function DashboardNavigation({user}) {
       const a = document.createElement('a');
       a.classList.add('dropdown-item');
       a.setAttribute('href', '/turdus/settings');
-      a.textContent = 'Settings';
+      a.textContent = 'Administrar Usuarios';
 
       li.append(a);
       userUl.prepend(li);
     }
-    
-    
+
+
   }
 
   useEffect(() => {
-    if(user){
+    if (user) {
       getProfilePic();
       handleRole();
     }
-    
-    
+
+
   }, [user])
-  
- 
+
+
 
   return (
     <>
@@ -60,11 +63,11 @@ function DashboardNavigation({user}) {
           </button>
           <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
             <div className="d-md-none">
-              <DashboardNavContent/>
+              <DashboardNavContent />
             </div>
             <div className="flex-shrink-0 dropdown d-none d-md-flex">
               <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                
+
               </a>
               <ul id="dropdownUserUl" className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser2" >
                 <li><a className="dropdown-item" href="#">Profile</a></li>
@@ -72,7 +75,7 @@ function DashboardNavigation({user}) {
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <NavLink to="/turdus/logout" className="dropdown-item">Sign out</NavLink>
+                  <NavLink to="/logout" className="dropdown-item">Sign out</NavLink>
                 </li>
               </ul>
             </div>

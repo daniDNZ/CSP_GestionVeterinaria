@@ -14,7 +14,7 @@ use App\Entity\ServicesLog;
 class ServicesLogController extends AbstractController
 {
     /**
-     * @Route("/api/services/log/add", name="app_services_log_add", methods="POST")
+     * @Route("/api/services_log/add", name="app_services_log_add", methods="POST")
      */
     public function add( BillRepository $billRepository, ServiceRepository $serviceRepository, Request $request, EntityManagerInterface $em): Response
     {

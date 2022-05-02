@@ -1,5 +1,8 @@
 import { useEffect } from "react";
-import { findCustomers, findPatients, findVisits } from "./ApiFetch";
+import { findCustomers } from "./api/ApiCustomers";
+import { findPatients } from "./api/ApiPatients";
+import { findVisits } from "./api/ApiVisits";
+import { getUsers } from "./api/ApiUser";
 import { getDataDatalist } from "./Datalist";
 import { Pagination } from "./TablePagination";
 import global from "../global";
@@ -173,6 +176,120 @@ function CustomersTable() {
                             <th scope="col">Teléfono</th>
                             <th scope="col">e-mail</th>
                             <th scople="col"></th>
+                            <th scope="col">Vista</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+
+                </ul>
+            </nav>
+        </>
+    )
+}
+
+export function UsersTable() {
+    let filter = {};                                        // Filtro con el que realizaremos las peticiones como body.
+
+    // Evento de los inputs
+    const captureData = (e) => {
+        e.preventDefault();
+
+        const id = e.target.id;
+        const value = e.target.value;
+
+        Object.defineProperty(filter, id,                   // Creamos una propiedad del objeto filter con el string a buscar.
+            {
+                value: value,
+                enumerable: true,
+                configurable: true,
+                writable: true
+            }
+        )
+
+        getUsers(handleData, 1, filter)                // Petición al servidor (callback, n página, filtro)
+    }
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'users');                        // Rellena la tabla
+        Pagination(d, getUsers, handleData, filter);   // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+
+        let arrIds = [];
+        const arrInputs = document.querySelectorAll('form .form-control, form .form-select');
+        arrInputs.forEach(i => {                            // Recogemos los campos para almacenar los ids y para añadir el evento.
+            arrIds.push(i.id);
+            i.addEventListener('input', captureData);
+        });
+        getDataDatalist(d, arrIds)                          // Creamos las datalist para facilitar las búsquedas.
+    }
+
+    // Método que limpia los filtros de búsqueda
+    const cleanFilters = (e) => {
+        // e.preventDefault();
+
+        // const fData = e.target.parentNode.parentNode.parentNode;
+        // handleClean(fData);                                 // Seleccionamos el formulario y llamamos al método que lo vacía.
+
+        for (const key in filter) {                         // Limpiamos el objeto filter.
+            filter[key] = '';
+        }
+
+        getUsers(handleData);                          // Volvemos a hacer la petición al servidor.
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getUsers(handleData);
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                    <form>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="namePicker" className="form-label">Nombre:</label>
+                            <input type="search" id="namePicker" className="form-control" list="namePicker-datalist" placeholder="Buscar..." />
+                            <datalist id="namePicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="lastnamePicker" className="form-label">Apellidos:</label>
+                            <input type="search" id="lastnamePicker" className="form-control" list="lastnamePicker-datalist" placeholder="Buscar..." />
+                            <datalist id="lastnamePicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="areaPicker" className="form-label">Área:</label>
+                            <input type="search" id="areaPicker" className="form-control" list="areaPicker-datalist" placeholder="Buscar..." />
+                            <datalist id="areaPicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto flex-column d-flex justify-content-end">
+                            <input type="reset" id="cleanButton" className="btn btn-secondary text-white" onClick={cleanFilters}></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Apellidos</th>
+                            <th scope="col">Área</th>
                             <th scope="col">Vista</th>
                         </tr>
                     </thead>
@@ -478,6 +595,9 @@ function Table({ selector }) {
             break;
         case 'patients':
             table = <PatientsTable />;
+            break;
+        case 'users':
+            table = <UsersTable />;
             break;
         default:
             table = <VisitsTable />;

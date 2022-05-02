@@ -1,5 +1,10 @@
 import { useEffect } from "react";
-import { addUpdateCustomer, addUpdatePatient, addUpdateVisit, findPatients, findTime, findRaces, getCustomers, getPatients, getRaces, getSpecies, getVets } from "./ApiFetch";
+import { addUpdateCustomer, getCustomers } from "./api/ApiCustomers";
+import { addUpdatePatient, findPatients, getPatients } from "./api/ApiPatients";
+import { addUpdateVisit, findTime } from "./api/ApiVisits";
+import { findRaces, getRaces } from "./api/ApiRaces";
+import { getSpecies } from "./api/ApiSpecies";
+import { getVets } from "./api/ApiUser";
 import OpenTime from "./OpenTime";
 import { AlertModal } from "./Modals";
 

@@ -1,28 +1,34 @@
 import { HandleLogin } from "./UserValidation";
 import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../context/context";
+
+function DropDownLogin() {
+  const { updateUser } = useContext(UserContext);
+  return (
+    <>
+      <a className="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        Login
+      </a>
+      <form className="dropdown-menu dropdown-menu-end p-4" onSubmit={e => HandleLogin(e, updateUser)}>
+        <div className="form-floating mb-3">
+          <input type="text" name="username" className="form-control" id="dropdownFormEmail2" placeholder="email@example.com" required />
+          <label htmlFor="dropdownFormEmail2" className="form-label">Email</label>
+        </div>
+        <div className="form-floating mb-3">
+          <input type="password" name="password" className="form-control" id="dropdownFormPassword2" placeholder="Password" required />
+          <label htmlFor="dropdownFormPassword2" className="form-label">Password</label>
+        </div>
+        <button type="submit" className="btn btn-primary">Enviar</button>
+      </form>
+    </>
+  );
+
+}
 
 function NavLandPage() {
-  function dropDownLogin() {
-    return (
-      <>
-        <a className="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          Login
-        </a>
-        <form className="dropdown-menu dropdown-menu-end p-4" onSubmit={HandleLogin}>
-          <div className="form-floating mb-3">
-            <input type="text" name="username" className="form-control" id="dropdownFormEmail2" placeholder="email@example.com" required />
-            <label htmlFor="dropdownFormEmail2" className="form-label">Email</label>
-          </div>
-          <div className="form-floating mb-3">
-            <input type="password" name="password" className="form-control" id="dropdownFormPassword2" placeholder="Password" required />
-            <label htmlFor="dropdownFormPassword2" className="form-label">Password</label>
-          </div>
-          <button type="submit" className="btn btn-primary">Enviar</button>
-        </form>
-      </>
-    );
-
-  }
+  const {user} = useContext(UserContext);
+  
   return (
     <>
       <header className="header-land-page px-5 py-3">
@@ -45,9 +51,9 @@ function NavLandPage() {
                 </li>
                 <li className="nav-item">
                   {
-                    localStorage.getItem("token") ?
-                      <NavLink to="/turdus/logout" className="nav-link">Logout</NavLink> :
-                      dropDownLogin()
+                    user.roles.includes('ROLE_USER') ?
+                      <NavLink to="/logout" className="nav-link">Logout</NavLink> :
+                      <DropDownLogin />
                   }
 
                 </li>

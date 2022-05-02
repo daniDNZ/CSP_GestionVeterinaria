@@ -1,5 +1,8 @@
 import { useEffect } from "react";
-import { addUpdatePatient, addUpdateVisit, findProducts, findServices } from "./ApiFetch";
+import { addUpdatePatient } from "./api/ApiPatients";
+import { addUpdateVisit } from "./api/ApiVisits";
+import { findProducts } from "./api/ApiProducts";
+import { findServices } from "./api/ApiServices";
 import { Form } from "./Form"
 
 function AlertModal() {

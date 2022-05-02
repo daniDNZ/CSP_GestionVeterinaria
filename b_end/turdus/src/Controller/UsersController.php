@@ -11,23 +11,39 @@ use App\Repository\UserRepository;
 
 class UsersController extends AbstractController
 {
-    /**
-     * @Route("/api/users", name="app_users")
-     */
-    public function index(UserRepository $userRepository): Response
-    {   
-        $users = [];
-        $userEntities = $userRepository->findAll();
-
+    function maker($userEntities)
+    {
         foreach ($userEntities as $userEntity) {
             $user = [];
             $user['id'] = $userEntity->getId();
             $user['name'] = $userEntity->getName();
+            $user['lastName'] = $userEntity->getLastName();
             $user['area'] = $userEntity->getArea();
             $users[] = $user;
         }
 
-        return $this->json($users);
+        return $users;
+    }
+    /**
+     * @Route("/api/{currentPage}/users", name="app_users")
+     */
+    public function index(UserRepository $userRepository, int $currentPage): Response
+    {   
+        $limit = 10;
+        $usersFound = $userRepository->findAll($currentPage, $limit);
+        $result = $usersFound['paginator'];
+
+        $maxPages = ceil($usersFound['paginator']->count() / $limit);
+
+        $users = $this->maker($result);
+        $allUsers = $this->maker($usersFound['all']);
+
+        return $this->json([
+            'data' => $users,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage,
+            'allData' => $allUsers
+        ]);
     }
 
     /**

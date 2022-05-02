@@ -1,4 +1,10 @@
 import jwt_decode from "jwt-decode";
+import { getCurUser } from "./api/ApiUser";
+import "../css/login.css";
+import { useContext } from "react";
+import { UserContext } from "../context/context";
+import { handleErrors } from "./api/ApiFetch";
+
 
 function Logout() {
     if (localStorage.getItem("token")) localStorage.removeItem("token");
@@ -8,8 +14,15 @@ function Logout() {
 }
 
 // Manejador del Login
-const HandleLogin = (e) => {
+const HandleLogin = (e, updateUser) => {
     e.preventDefault();
+
+    const handleCurUser = (u) => {
+        updateUser(u);
+        u.roles.includes('ROLE_STAFF') 
+            ? window.location = '/turdus/dashboard'
+            : window.location = '/'
+    }
 
     const data = {
         username: e.target.username.value,
@@ -27,18 +40,20 @@ const HandleLogin = (e) => {
 
     const request = new Request("http://192.168.1.81:8888/api/login_check", config);
     fetch(request)
-        .then(response => response.json())
-        .then(
-            response => {
+        .then(response => handleErrors(response))
+        .then(response => {
+              if(response.token.length > 0) {
                 localStorage.setItem("token", response.token);
-
-                if (jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_STAFF")) window.location = "/turdus/dashboard";
-                else if (jwt_decode(localStorage.getItem('token')).roles.includes("ROLE_USER")) window.location = "/";
-
+                const username = jwt_decode(response.token).username;
+                getCurUser(handleCurUser, username);
+              } 
             }
-
         )
-        .catch(e => console.log('Error: ', e))
+        .catch(e => {
+          if(e == 'Error: 401'){
+            window.alert('Credenciales no válidas.')
+          }
+        })
 
     e.target.username.value = '';
     e.target.password.value = '';
@@ -46,3 +61,37 @@ const HandleLogin = (e) => {
 
 
 export { Logout, HandleLogin };
+
+function Login() {
+  // Comprobamos si el usuario tiene sesión y le redirigimos
+  const {user, updateUser} = useContext(UserContext);
+
+    // if (user.roles.includes("ROLE_STAFF")) window.location = "/turdus/dashboard";
+    // else window.location = "/";
+
+  // Añadimos clases al body y html
+
+  document.body.classList.add("body-signin", "text-center");
+  document.getElementById("root").classList.add("form-signin");
+
+  return (
+    <>
+      <form onSubmit={ e => HandleLogin(e, updateUser)}>
+        <h1 className="h3 mb-3 fw-normal">Bienvenid@</h1>
+        <div className="form-floating">
+          <input type='text' id="floatingInput" name='username' placeholder='Username' className='form-control'></input>
+          <label htmlFor="floatingInput">Username</label>
+        </div>
+        <div className="form-floating">
+          <input type='password' id="floatingPassword" name='password' placeholder='Password' className='form-control' required></input>
+          <label htmlFor="floatingPassword">Password</label>
+        </div>
+        <button type='submit' className='w-100 btn btn-lg btn-primary'>Login</button>
+        <p className="mt-5 mb-3 text-muted">&copy; 2022 Turdus</p>
+      </form>
+    </>
+
+  );
+}
+
+export default Login;

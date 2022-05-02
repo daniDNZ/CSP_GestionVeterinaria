@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import global from "../global";
-import { findOneVisit, getDebt, payDebt } from "./ApiFetch";
+import { findOneVisit } from "./api/ApiVisits";
+import { getDebt, payDebt } from "./api/ApiCustomers";
 import { ViewVisitsList } from "./Modals";
 
 function PayDebt() {

@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { addServicesLog, addProductsLog, addBill, payBill, findBill, findOneVisit, updateCart } from "./ApiFetch";
+import { addServicesLog } from "./api/ApiServicesLog";
+import { addProductsLog } from "./api/ApiProductsLog";
+import { addBill, findBill } from "./api/ApiBills";
+import { payBill } from "./api/ApiBills";
+import { findOneVisit, updateCart } from "./api/ApiVisits";
 import global from "../global";
 
 function Bill() {

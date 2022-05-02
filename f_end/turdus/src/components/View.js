@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { Form, handleTime } from "./Form";
-import { findOneCustomer, findOnePatient, findOneVisit, findCustomerPatients, findPatientVisits, findTime, addUpdateVisit, closeVisit, updateCart, getDebt, findBill } from "./ApiFetch";
+import { findOneCustomer, findCustomerPatients } from "./api/ApiCustomers";
+import { findOnePatient, findPatientVisits } from "./api/ApiPatients";
+import { findOneVisit, findTime, addUpdateVisit, closeVisit, updateCart } from "./api/ApiVisits";
+import { findBill } from "./api/ApiBills";
 import { AddProducts, NewPatient, NewVisit } from "./Modals";
 import global from "../global";
 

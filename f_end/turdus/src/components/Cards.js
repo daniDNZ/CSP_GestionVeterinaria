@@ -1,7 +1,9 @@
-import { useEffect } from "react";
-import { findTodayVisits } from "./ApiFetch";
+import { useContext, useEffect } from "react";
+import { findTodayVisits } from "./api/ApiVisits";
+import { UserContext } from "../context/context";
 
-function Cards({user}) {
+function Cards() {
+    const {user} = useContext(UserContext);
     let date = new Date;
     date = date.toISOString().split('T')[0]
 
@@ -22,6 +24,7 @@ function Cards({user}) {
     }
 
     useEffect(() => {
+        if (user.roles.includes('ROLE_STAFF'))
         findTodayVisits(handleData, date, user.id);
     }, [user])
     return (
