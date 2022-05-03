@@ -118,6 +118,25 @@ class CustomersController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/api/customers/get_current", name="app_customers_get_current", methods="POST")
+     */
+    public function getCurUser(CustomerRepository $customerRepository, Request $request): Response
+    {   
+        $data = $request->toArray();
+        $customers = [];
+        $customerEntity = $customerRepository->findOneBy(array('email' => $data['email']));
+
+        $customer = [];
+        $customer['id'] = $customerEntity->getId();
+        $customer['name'] = $customerEntity->getName();
+        $customer['roles'] = $customerEntity->getRoles();
+        $customer['email'] = $customerEntity->getEmail();
+       
+
+        return $this->json($customer);
+    }
+
    /**
      * @Route("/api/customers/{id}", name="app_one_customer", methods="GET")
      */

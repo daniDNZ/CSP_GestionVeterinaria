@@ -25,12 +25,19 @@ class UsersController extends AbstractController
         return $users;
     }
     /**
-     * @Route("/api/{currentPage}/users", name="app_users")
+     * @Route("/api/{currentPage}/users", name="app_users", methods="POST")
      */
-    public function index(UserRepository $userRepository, int $currentPage): Response
+    public function index(UserRepository $userRepository, int $currentPage, Request $request): Response
     {   
+        $data = $request->toArray();
         $limit = 10;
-        $usersFound = $userRepository->findAll($currentPage, $limit);
+        $query = array();
+        if (array_key_exists('namePicker', $data))      {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
+        if (array_key_exists('lastnamePicker', $data))  {$query['last_name'] = $data['lastnamePicker'];} else {$query['last_name'] = '%';}
+        if (array_key_exists('areaPicker', $data))      {$query['area'] = $data['areaPicker'];} else {$query['area'] = '%';}
+            
+        
+        $usersFound = $userRepository->findByQuery($query, $currentPage, $limit);
         $result = $usersFound['paginator'];
 
         $maxPages = ceil($usersFound['paginator']->count() / $limit);
@@ -62,6 +69,30 @@ class UsersController extends AbstractController
         $user['pic'] = $userEntity->getPic();
         $user['username'] = $userEntity->getUsername();
        
+
+        return $this->json($user);
+    }
+
+    /**
+     * @Route("/api/user/{id}", name="app_one_user", methods="GET")
+     */
+    public function getOneUser( UserRepository $userRepository, int $id ): Response
+    {   
+        $entity = $userRepository->find($id);
+        
+        $user = [];
+        $user['id'] = $userEntity->getId();
+        $user['name'] = $userEntity->getName();
+        $user['last_name'] = $userEntity->getLastName();
+        $user['roles'] = $userEntity->getRoles();
+        $user['area'] = $userEntity->getArea();
+        $user['username'] = $userEntity->getUsername();
+        $user['email'] = $userEntity->getEmail();
+        $user['salary'] = $userEntity->getSalary();
+        $user['phone'] = $userEntity->getPhone();
+        $user['dni'] = $userEntity->getDni();
+        $user['collegiate'] = $userEntity->getCollegiateN();
+        
 
         return $this->json($user);
     }

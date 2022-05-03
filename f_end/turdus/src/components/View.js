@@ -6,8 +6,41 @@ import { findOneCustomer, findCustomerPatients } from "./api/ApiCustomers";
 import { findOnePatient, findPatientVisits } from "./api/ApiPatients";
 import { findOneVisit, findTime, addUpdateVisit, closeVisit, updateCart } from "./api/ApiVisits";
 import { findBill } from "./api/ApiBills";
+import { getOneUser } from "./api/ApiUser";
 import { AddProducts, NewPatient, NewVisit } from "./Modals";
 import global from "../global";
+
+export function User() {
+    const { id } = useParams();
+
+    useEffect(() => {
+
+        getOneUser(handleUser, id);
+
+    }, [])
+
+    const handleUser = (data) => {
+
+        document.getElementById("userDni").value = data.dni;
+        document.getElementById("userName").value = data.name;
+        document.getElementById("userInfo").value = data.info;
+        document.getElementById("userPhone").value = data.phone;
+        document.getElementById("userEmail").value = data.email;
+        document.getElementById("userPc").value = data.postalCode;
+        document.getElementById("userAddress").value = data.address;
+        document.getElementById("userLastname").value = data.lastName;
+
+        // Title
+        document.getElementById("userViewPage").textContent = `${data.name} ${data.lastName}`;
+
+    }
+
+    return (
+        <>
+            <Form selector='user' action='update' id={id} />
+        </>
+    )
+}
 
 function Customer() {
     const { id } = useParams();

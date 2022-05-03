@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
+import React from "react";
+import ReactDOM from "react-dom";
 import DashboardNavContent from "./DashboardNavContent";
-import global from "../global";
 import { createElement, useContext, useEffect } from "react";
 import { UserContext } from "../context/context";
 
@@ -8,44 +9,21 @@ function DashboardNavigation() {
 
   const { user } = useContext(UserContext);
 
-  const getProfilePic = () => {
-    const a = document.querySelector('#dropdownUser1');
-    const img = document.createElement('img');
-    img.setAttribute('src', '/img/profile/' + user.pic);
-    img.setAttribute('alt', 'user');
-    img.setAttribute('width', '32');
-    img.setAttribute('height', '32');
-    img.classList.add('rounded-circle', 'me-2');
-    a.innerHTML = '';
-    a.append(img);
-  }
+  const src = `/img/profile/${user.pic}`;
+  const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
 
-  const handleRole = () => {
-    if (user.roles.includes('ROLE_ADMIN')) {
-      const userUl = document.querySelector('#dropdownUserUl');
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.classList.add('dropdown-item');
-      a.setAttribute('href', '/turdus/settings');
-      a.textContent = 'Administrar Usuarios';
+  let li;
 
-      li.append(a);
-      userUl.prepend(li);
-    }
-
-
-  }
-
-  useEffect(() => {
-    if (user) {
-      getProfilePic();
-      handleRole();
-    }
-
-
-  }, [user])
-
-
+  user.roles.includes('ROLE_ADMIN')
+  ? li = 
+      <li>
+        <a 
+          href="/turdus/settings" 
+          className="dropdown-item">
+            Administrar Usuarios
+        </a>
+      </li>
+  : li = <></>;
 
   return (
     <>
@@ -67,9 +45,10 @@ function DashboardNavigation() {
             </div>
             <div className="flex-shrink-0 dropdown d-none d-md-flex">
               <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-
+                {img}
               </a>
-              <ul id="dropdownUserUl" className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser2" >
+              <ul id="dropdownUserUl" className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser1" >
+                {li}
                 <li><a className="dropdown-item" href="#">Profile</a></li>
                 <li>
                   <hr className="dropdown-divider" />

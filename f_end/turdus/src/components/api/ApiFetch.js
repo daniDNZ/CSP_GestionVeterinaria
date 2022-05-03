@@ -5,6 +5,6 @@ export const handleErrors = (response)=> {
 
 export const handleAuth = (e) => {
     if(/Error: 4[0-9][0-9]$/.test(e)){
-        window.location = '/login';
+        if(/\/turdus\/*/.test(window.location.pathname)) window.location.assign('/login');
     } 
 }

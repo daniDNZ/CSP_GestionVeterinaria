@@ -7,11 +7,15 @@ import './css/dashboard.css';
 import "./css/landPage.css";
 import './css/schedule.css';
 import { UserProvider } from "./context/context";
+import jwt_decode from 'jwt-decode';
 
 
 function App() {
+  let component = <Navigate to='/login' />
 
-
+  if (localStorage.getItem('token') && jwt_decode(localStorage.getItem('token')).roles.includes('ROLE_STAFF')) {
+    component = <Dashboard />
+  }
   return (
 
     <UserProvider>
@@ -20,7 +24,7 @@ function App() {
           <Route exact path="/" element={<LandPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
-          <Route exact path="turdus/*" element={localStorage.getItem('token') ? <Dashboard /> : <Navigate to='/login' />} />
+          <Route exact path="turdus/*" element={component} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

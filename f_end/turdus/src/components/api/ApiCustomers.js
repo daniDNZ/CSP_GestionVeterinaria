@@ -1,6 +1,26 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
 import bcrypt from "bcryptjs/dist/bcrypt";
 
+export const getCurCustomer = (callback, email) => {
+    const bodyData = {
+        email: email,
+    }
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyData)
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/customers/get_current`, config);
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => callback(data))
+        .catch(e => handleAuth(e));
+}
+
 export const getCustomers = (callback, currentPage = 1) => {
 
     const config = {

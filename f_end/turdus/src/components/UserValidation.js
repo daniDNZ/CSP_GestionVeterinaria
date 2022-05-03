@@ -16,8 +16,8 @@ function Logout() {
 // Manejador del Login
 const HandleLogin = (e, updateUser) => {
     e.preventDefault();
-
     const handleCurUser = (u) => {
+
         updateUser(u);
         u.roles.includes('ROLE_STAFF') 
             ? window.location = '/turdus/dashboard'
@@ -43,9 +43,16 @@ const HandleLogin = (e, updateUser) => {
         .then(response => handleErrors(response))
         .then(response => {
               if(response.token.length > 0) {
+                console.log('response token length')
+
                 localStorage.setItem("token", response.token);
-                const username = jwt_decode(response.token).username;
-                getCurUser(handleCurUser, username);
+                const username = jwt_decode(response.token).username; 
+
+                if (jwt_decode(response.token).roles.includes('ROLE_STAFF')) {
+                  getCurUser(handleCurUser, username);
+                } else {
+                  handleCurUser({username: username, roles: jwt_decode(response.token).roles});
+                }
               } 
             }
         )
@@ -63,15 +70,15 @@ const HandleLogin = (e, updateUser) => {
 export { Logout, HandleLogin };
 
 function Login() {
-  // Comprobamos si el usuario tiene sesión y le redirigimos
-  const {user, updateUser} = useContext(UserContext);
+  document.body.removeAttribute('data-bs-spy');
+  document.body.removeAttribute(' data-bs-target');
+  
+  const {updateUser} = useContext(UserContext);
 
-    // if (user.roles.includes("ROLE_STAFF")) window.location = "/turdus/dashboard";
-    // else window.location = "/";
 
-  // Añadimos clases al body y html
-
+  document.body.className = '';
   document.body.classList.add("body-signin", "text-center");
+  document.getElementById("root").className = '';
   document.getElementById("root").classList.add("form-signin");
 
   return (

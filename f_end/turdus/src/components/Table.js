@@ -210,7 +210,7 @@ export function UsersTable() {
             }
         )
 
-        getUsers(handleData, 1, filter)                // Petición al servidor (callback, n página, filtro)
+        getUsers(handleData, filter)                // Petición al servidor (callback, n página, filtro)
     }
 
     // Método que maneja los datos de la petición
@@ -230,21 +230,17 @@ export function UsersTable() {
 
     // Método que limpia los filtros de búsqueda
     const cleanFilters = (e) => {
-        // e.preventDefault();
-
-        // const fData = e.target.parentNode.parentNode.parentNode;
-        // handleClean(fData);                                 // Seleccionamos el formulario y llamamos al método que lo vacía.
 
         for (const key in filter) {                         // Limpiamos el objeto filter.
             filter[key] = '';
         }
 
-        getUsers(handleData);                          // Volvemos a hacer la petición al servidor.
+        getUsers(handleData, filter);                          // Volvemos a hacer la petición al servidor.
     }
 
     // Hacemos la petición al servidor, pasándole el callback.
     useEffect(() => {
-        getUsers(handleData);
+        getUsers(handleData, filter);
 
     }, []);
 

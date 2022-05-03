@@ -57,16 +57,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/login,         roles: PUBLIC_ACCESS }
-        - { path: ^/api/,              roles: ROLE_STAFF }
-        - { path: ^/api/customers,     roles: ROLE_STAFF }
-        - { path: ^/api/week_schedule, roles: ROLE_STAFF }
-        - { path: ^/api/bill,          roles: ROLE_STAFF }
-        - { path: ^/api/products_log,  roles: ROLE_STAFF }
-        - { path: ^/api/users,         roles: ROLE_ADMIN }
-        #- { path: ^/api,               roles: IS_AUTHENTICATED_FULLY }
-
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/login,                  roles: PUBLIC_ACCESS }
+        - { path: ^/api/customers/get_current,  roles: ROLE_USER }
+        - { path: ^/api/*,                      roles: ROLE_STAFF }
+        # - { path: ^/api/customers,              roles: ROLE_STAFF }
+        # - { path: ^/api/week_schedule,          roles: ROLE_STAFF }
+        # - { path: ^/api/bill,                   roles: ROLE_STAFF }
+        # - { path: ^/api/products_log,           roles: ROLE_STAFF }
+        - { path: ^/api/*/users,                  roles: ROLE_ADMIN }
 
 when@test:
     security:

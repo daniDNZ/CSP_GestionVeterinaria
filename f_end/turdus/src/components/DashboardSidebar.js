@@ -1,5 +1,4 @@
 import DashboardNavContent from "./DashboardNavContent";
-import { useEffect } from "react";
 function DashboardSidebar() {
 
     

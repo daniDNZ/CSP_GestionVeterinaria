@@ -63,6 +63,69 @@ const handleTime = (data) => {
     });
 }
 
+function UserForm({ action, id }) {
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+
+        const fData = e.target;   
+        // addUpdateUser(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+    console.log('hola')
+    useEffect(() => {
+        addEvents(handleFData);
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                        <h3 className="col-auto" id="userViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userName" className="form-label">Nombre cliente:</label>
+                        <input type="text" id="userName" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userLastname" className="form-label" >Apellidos cliente:</label>
+                        <input type="text" id="userLastname" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userPhone" className="form-label">Teléfono cliente:</label>
+                        <input type="text" id="userPhone" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userEmail" className="form-label">Email:</label>
+                        <input type="email" id="userEmail" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userDni" className="form-label">DNI:</label>
+                        <input type="text" id="userDni" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userPc" className="form-label">CP:</label>
+                        <input type="text" id="userPc" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userAddress" className="form-label">Dirección:</label>
+                        <input type="text" id="userAddress" className="form-control" />
+                    </div>
+                    <div className="row">
+                        <div className="mb-3">
+                            <label htmlFor="userInfo" className="form-label">Información cliente:</label>
+                            <textarea type="" id="userInfo" className="form-control" rows="5" />
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </>
+    )
+}
+
 function CustomerForm({ action, id }) {
 
     const modal = setModal(action);
@@ -500,6 +563,9 @@ function Form({ selector, action, id = ''}) {
             break;
         case 'patient':
             form = <PatientForm action={action} id={id}/>;
+            break;
+        case 'user':
+            form = <UserForm action={action} id={id}/>;
             break;
         default:
             form = <VisitForm action={action} id={id}/>;

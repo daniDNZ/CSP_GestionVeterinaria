@@ -3,48 +3,23 @@ import { useContext, useEffect } from "react";
 import { UserContext } from "../context/context";
 
 function DashboardNavContent() {
-
     const { user } = useContext(UserContext);
+    const src = `/img/profile/${user.pic}`;
+    const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
 
+    let li;
 
-    const getProfilePic = () => {
+    user.roles.includes('ROLE_ADMIN')
+    ? li = 
+        <li>
+          <a 
+            href="/turdus/settings" 
+            className="dropdown-item">
+              Administrar Usuarios
+          </a>
+        </li>
+    : li = <></>;
 
-        const a = document.querySelector('#dropdownUser2');
-        const img = document.createElement('img');
-        img.setAttribute('src', '/img/profile/' + user.pic);
-        img.setAttribute('alt', 'user');
-        img.setAttribute('width', '32');
-        img.setAttribute('height', '32');
-        img.classList.add('rounded-circle', 'me-2');
-        a.innerHTML = '';
-        a.append(img);
-    }
-
-    const handleRole = () => {
-        if (user.roles.includes('ROLE_ADMIN')) {
-            const userUl2 = document.querySelector('#dropdownUserUl2');
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.classList.add('dropdown-item');
-            a.setAttribute('href', '/turdus/settings');
-            a.textContent = 'Administrar Usuarios';
-
-            li.append(a);
-            userUl2.prepend(li);
-        }
-
-
-    }
-
-
-    useEffect(() => {
-        if (user) {
-            console.log(user)
-            getProfilePic();
-            handleRole();
-        }
-
-    }, [user])
     return (
         <ul className="nav nav-pills flex-column">
             <li className="mx-0 nav-item">
@@ -81,10 +56,12 @@ function DashboardNavContent() {
             </li>
             <li className="mx-0 nav-item d-md-none">
                 <a href="#" className="nav-link px-2 dropdown-toggle collapsed" id="dropdownUser2" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-controls="#user-collapse" aria-expanded="false">
+                    {img}
                 </a>
                 <div id="user-collapse" className="collapse navbar-collapse">
                     <hr className="m-0" />
                     <ul id="dropdownUserUl2" className="nav nav-pills flex-column">
+                        {li}
                         <li><a className="dropdown-item" href="#">Profile</a></li>
                         <li>
                             <hr className="dropdown-divider" />
