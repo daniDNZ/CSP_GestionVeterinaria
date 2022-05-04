@@ -68,7 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $dni;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $collegiate_n;
 
@@ -247,19 +247,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dni;
     }
 
-    public function setDni(string $phone): self
+    public function setDni(string $dni): self
     {
         $this->dni = $dni;
 
         return $this;
     }
 
-    public function getCollegiateN(): ?int
+    public function getCollegiateN(): ?string
     {
         return $this->collegiate_n;
     }
 
-    public function setCollegiateN(?int $collegiate_n): self
+    public function setCollegiateN(?string $collegiate_n): self
     {
         $this->collegiate_n = $collegiate_n;
 

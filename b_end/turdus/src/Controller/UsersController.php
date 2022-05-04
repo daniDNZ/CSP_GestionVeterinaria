@@ -6,8 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PatientRepository;
 use App\Repository\UserRepository;
+use App\Entity\User;
 
 class UsersController extends AbstractController
 {
@@ -81,17 +83,17 @@ class UsersController extends AbstractController
         $entity = $userRepository->find($id);
         
         $user = [];
-        $user['id'] = $userEntity->getId();
-        $user['name'] = $userEntity->getName();
-        $user['last_name'] = $userEntity->getLastName();
-        $user['roles'] = $userEntity->getRoles();
-        $user['area'] = $userEntity->getArea();
-        $user['username'] = $userEntity->getUsername();
-        $user['email'] = $userEntity->getEmail();
-        $user['salary'] = $userEntity->getSalary();
-        $user['phone'] = $userEntity->getPhone();
-        $user['dni'] = $userEntity->getDni();
-        $user['collegiate'] = $userEntity->getCollegiateN();
+        $user['id'] = $entity->getId();
+        $user['name'] = $entity->getName();
+        $user['lastName'] = $entity->getLastName();
+        $user['roles'] = $entity->getRoles();
+        $user['area'] = $entity->getArea();
+        $user['username'] = $entity->getUsername();
+        $user['email'] = $entity->getEmail();
+        $user['salary'] = $entity->getSalary();
+        $user['phone'] = $entity->getPhone();
+        $user['dni'] = $entity->getDni();
+        $user['collegiate'] = $entity->getCollegiateN();
         
 
         return $this->json($user);
@@ -170,5 +172,113 @@ class UsersController extends AbstractController
         }
 
         return $this->json($users);
+    }
+
+    /**
+     * @Route("/api/user/add", name="app_user_add", methods="POST")
+     */
+    public function add( Request $request, EntityManagerInterface $em ): Response
+    {   
+        $name       = $request->request->get('name');
+        $lastName   = $request->request->get('last_name');
+        $roles      = $request->request->get('roles');
+        $area       = $request->request->get('area');
+        $username   = $request->request->get('username');
+        $email      = $request->request->get('email');
+        $salary     = $request->request->get('salary');
+        $phone      = $request->request->get('phone');
+        $dni        = $request->request->get('dni');
+        $collegiate = $request->request->get('collegiate');
+        $password   = $request->request->get('password');
+        $photo      = $request->files->get('pic');
+        
+        $user = New User();
+        
+        $user->setName($name);
+        $user->setLastName($lastName);
+        $user->setRoles(explode(',', $roles));
+        $user->setArea($area);
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setSalary($salary);
+        $user->setPhone($phone);
+        $user->setDni($dni);
+        $user->setCollegiateN($collegiate);
+        $user->setPassword($password);
+        
+        $em->persist($user);
+        $em->flush();
+
+        if ($photo) {
+            $id = $user->getId();
+
+            $directory = $this->getParameter('pic_directory');
+            $fileName = 'profile_' . $id . '.' . $photo->getClientOriginalExtension();
+            $photo->move($directory, $fileName);
+    
+            $urlPhoto = '/img/users/'.$fileName;
+            $user->setPic($urlPhoto);
+    
+            $em->persist($user);
+            $em->flush();
+        }
+
+        $data['id'] = $user->getId();
+
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/api/user/update", name="app_user_update", methods="POST")
+     */
+    public function update( UserRepository $userRepository, Request $request, EntityManagerInterface $em ): Response
+    {   
+        $id         = $request->request->get('id');
+        $name       = $request->request->get('name');
+        $lastName   = $request->request->get('last_name');
+        $roles      = $request->request->get('roles');
+        $area       = $request->request->get('area');
+        $username   = $request->request->get('username');
+        $email      = $request->request->get('email');
+        $salary     = $request->request->get('salary');
+        $phone      = $request->request->get('phone');
+        $dni        = $request->request->get('dni');
+        $collegiate = $request->request->get('collegiate');
+        $photo      = $request->files->get('pic');
+        
+        $user = $userRepository->find($id);
+        
+        $user->setName($name);
+        $user->setLastName($lastName);
+        $user->setRoles(explode(',', $roles));
+        $user->setArea($area);
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setSalary($salary);
+        $user->setPhone($phone);
+        $user->setDni($dni);
+        $user->setCollegiateN($collegiate);
+        
+        $em->persist($user);
+        $em->flush();
+
+        if ($photo) {
+            $id = $user->getId();
+
+            $directory = $this->getParameter('pic_directory');
+            $fileName = 'profile_' . $id . '.' . $photo->getClientOriginalExtension();
+            $photo->move($directory, $fileName);
+    
+            $urlPhoto = '/img/users/'.$fileName;
+            $user->setPic($urlPhoto);
+    
+            $em->persist($user);
+            $em->flush();
+        }
+        
+
+        $data['id'] = $user->getId();
+
+        return $this->json($data);
     }
 }

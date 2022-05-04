@@ -4,7 +4,7 @@ import { addUpdatePatient, findPatients, getPatients } from "./api/ApiPatients";
 import { addUpdateVisit, findTime } from "./api/ApiVisits";
 import { findRaces, getRaces } from "./api/ApiRaces";
 import { getSpecies } from "./api/ApiSpecies";
-import { getVets } from "./api/ApiUser";
+import { getVets, addUpdateUser } from "./api/ApiUser";
 import OpenTime from "./OpenTime";
 import { AlertModal } from "./Modals";
 
@@ -17,11 +17,11 @@ const addEvents = (callback) => {
 // Si el formulario es para update utilizamos un modal
 const setModal = (action) => {
     if (action == 'update') return <AlertModal />
-    else return <button type="submit" className="btn btn-primary">Añadir</button>
+    else return <button type="submit" className="btn btn-primary">Guardar</button>
 }
 
 // Crea las options de las datalist
-const handleDatalist = ( id, name, identifier = '') => {
+const handleDatalist = (id, name, identifier = '') => {
     const datalist = document.getElementById(id);
     const option = document.createElement('option');
 
@@ -57,7 +57,7 @@ const handleTime = (data) => {
                 if (v.time == o.value) {                // Si coincide la hora con una de las visitas, desabilitamos.
                     o.setAttribute('disabled', 'true');
                     dur = v.duration;                   // Asignamos la duración a la variable para no pisar una visita con otra.
-                } 
+                }
             }
         });
     });
@@ -69,10 +69,13 @@ function UserForm({ action, id }) {
     const handleFData = (e) => {
         e.preventDefault();
 
-        const fData = e.target;   
-        // addUpdateUser(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+        const fData = new FormData(e.target);
+        addUpdateUser(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
     }
-    console.log('hola')
+
+    if (action === 'add') document.getElementById("userViewPage").textContent = `Nuevo usuario`;
+
+
     useEffect(() => {
         addEvents(handleFData);
     }, [])
@@ -82,45 +85,74 @@ function UserForm({ action, id }) {
                 <div id="form-row-1" className="row">
                     <div className="d-flex flex-row justify-content-between" id="form-title">
                         <div className="d-flex flex-row">
-                        <h3 className="col-auto" id="userViewPage"> </h3>
+                            <h3 className="col-auto" id="userViewPage"> </h3>
                         </div>
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userName" className="form-label">Nombre cliente:</label>
-                        <input type="text" id="userName" className="form-control" required />
+                        <label htmlFor="userName" className="form-label">Nombre:</label>
+                        <input type="text" id="userName" name="name" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userLastname" className="form-label" >Apellidos cliente:</label>
-                        <input type="text" id="userLastname" className="form-control" required />
+                        <label htmlFor="userLastname" className="form-label" >Apellidos:</label>
+                        <input type="text" id="userLastname" name="last_name" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userPhone" className="form-label">Teléfono cliente:</label>
-                        <input type="text" id="userPhone" className="form-control" required />
+                        <label htmlFor="userArea" className="form-label" >Area:</label>
+                        <input type="text" id="userArea" name="area" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userCollegiate" className="form-label" >Colegiado Nº:</label>
+                        <input type="text" id="userCollegiate" name="collegiate" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userUsername" className="form-label" >Usuario:</label>
+                        <input type="text" id="userUsername" name="username" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="userPhone" className="form-label">Teléfono:</label>
+                        <input type="text" id="userPhone" name="phone" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="userEmail" className="form-label">Email:</label>
-                        <input type="email" id="userEmail" className="form-control" required />
+                        <input type="email" id="userEmail" name="email" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="userDni" className="form-label">DNI:</label>
-                        <input type="text" id="userDni" className="form-control" />
+                        <input type="text" id="userDni" name="dni" className="form-control" />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userPc" className="form-label">CP:</label>
-                        <input type="text" id="userPc" className="form-control" />
+                        <label htmlFor="userSalary" className="form-label" >Salario:</label>
+                        <input type="text" id="userSalary" name="salary" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userAddress" className="form-label">Dirección:</label>
-                        <input type="text" id="userAddress" className="form-control" />
+                        <label htmlFor="userPic" className="form-label" >Foto:</label>
+                        <input type="file" id="userPic" name="pic" className="form-control" />
                     </div>
-                    <div className="row">
-                        <div className="mb-3">
-                            <label htmlFor="userInfo" className="form-label">Información cliente:</label>
-                            <textarea type="" id="userInfo" className="form-control" rows="5" />
+                </div>
+                <div id="form-row-2" className="row">
+
+                    <div className="mb-3 col-auto">
+                        <label className="form-label" >Roles:</label>
+
+                        <div className="form-check">
+                            <input className="form-check-input" type='checkbox' value='ROLE_VET' id="ROLE_VET"/>
+                            <label className="form-check-label" htmlFor="ROLE_VET">Veterinaria/o</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type='checkbox' value='ROLE_ATV' id="ROLE_ATV" />
+                            <label className="form-check-label" htmlFor="ROLE_ATV">ATV</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type='checkbox' value='ROLE_OFFICE' id="ROLE_OFFICE" />
+                            <label className="form-check-label" htmlFor="ROLE_OFFICE">Oficina</label>
+                        </div>
+                        <div className="form-check">
+                            <input className="form-check-input" type='checkbox' value='ROLE_ADMIN' id="ROLE_ADMIN" />
+                            <label className="form-check-label" htmlFor="ROLE_ADMIN">Admin</label>
                         </div>
                     </div>
                 </div>
-
+                <button type="submit" className="btn btn-primary">Guardar</button>
             </form>
         </>
     )
@@ -134,7 +166,7 @@ function CustomerForm({ action, id }) {
     const handleFData = (e) => {
         e.preventDefault();
 
-        const fData = e.target;   
+        const fData = e.target;
         addUpdateCustomer(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
     }
 
@@ -147,7 +179,7 @@ function CustomerForm({ action, id }) {
                 <div id="form-row-1" className="row">
                     <div className="d-flex flex-row justify-content-between" id="form-title">
                         <div className="d-flex flex-row">
-                        <h3 className="col-auto" id="customerViewPage">Cliente </h3><span id="cus-debt-badge" className="fs-6"></span>
+                            <h3 className="col-auto" id="customerViewPage">Cliente </h3><span id="cus-debt-badge" className="fs-6"></span>
                         </div>
                     </div>
                     <div className="mb-3 col-auto">
@@ -207,7 +239,7 @@ function PatientForm({ action, id = '' }) {
     const handleVets = (data) => {
         data.forEach(e => {
             const name = e.name;
-            const identifier = e.username; 
+            const identifier = e.username;
 
             handleDatalist('vetPicker-datalist', name, identifier)
         });
@@ -216,7 +248,7 @@ function PatientForm({ action, id = '' }) {
     const handleCustomers = (data) => {
         data['allData'].forEach(e => {
             const name = e.name;
-            const identifier = e.email; 
+            const identifier = e.email;
 
             handleDatalist('responsiblePicker-datalist', name, identifier)
         });
@@ -283,7 +315,7 @@ function PatientForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="speciesPicker" className="form-label">Especie:</label>
-                        <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." onInput={captureSpecies}/>
+                        <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." onInput={captureSpecies} />
                         <datalist id="speciesPicker-datalist">
                         </datalist>
                     </div>
@@ -295,7 +327,7 @@ function PatientForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="genderPicker" className="form-label">Género:</label>
-                        <select type="" id="genderPicker" className="form-select">
+                        <select id="genderPicker" className="form-select">
                             <option id="ge-null" value="">Select...</option>
                             <option id="ge-Male" value="Male">Macho</option>
                             <option id="ge-Female" value="Female">Hembra</option>
@@ -316,7 +348,7 @@ function PatientForm({ action, id = '' }) {
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientWeight" className="form-label">Peso:</label>
                         <div className="input-group">
-                            <input type="text" id="patientWeight" className="form-control" style={{ width: '70px' }}/>   
+                            <input type="text" id="patientWeight" className="form-control" style={{ width: '70px' }} />
                             <span className="input-group-text">Kg</span>
                         </div>
                     </div>
@@ -379,7 +411,7 @@ function VisitForm({ action, id = '' }) {
     const handleUsers = (data) => {
         data.forEach(e => {
             const name = e.name;
-            const identifier = e.username; 
+            const identifier = e.username;
 
             handleDatalist('userPicker-datalist', name, identifier)
         });
@@ -388,7 +420,7 @@ function VisitForm({ action, id = '' }) {
     const handleCustomers = (data) => {
         data['allData'].forEach(e => {
             const name = e.name;
-            const identifier = e.email; 
+            const identifier = e.email;
 
             handleDatalist('customerPicker-datalist', name, identifier)
         });
@@ -397,7 +429,7 @@ function VisitForm({ action, id = '' }) {
     const handlePatients = (data) => {
         data['allData'].forEach(e => {
             const name = e.name;
-            const identifier = '#'+e.id;
+            const identifier = '#' + e.id;
 
             handleDatalist('patientPicker-datalist', name, identifier)
         });
@@ -411,11 +443,11 @@ function VisitForm({ action, id = '' }) {
                 const identifier = e.customerEmail;
 
                 handleDatalist('customerPicker-datalist', name, identifier);
-            }) 
+            })
         } else {
             getCustomers(handleCustomers);
         }
-            
+
     }
 
     const capturePatient = (e) => {
@@ -424,7 +456,7 @@ function VisitForm({ action, id = '' }) {
         const patient = e.target.value.split(' - ')[0];
 
         cleanDatalist('customerPicker-datalist');
-        findPatients(handleCustomersFromPatients, 1, {namePicker: patient});
+        findPatients(handleCustomersFromPatients, 1, { namePicker: patient });
     }
 
     const captureCustomer = (e) => {
@@ -433,14 +465,14 @@ function VisitForm({ action, id = '' }) {
         const customer = e.target.value.split(' - ')[0];
 
         cleanDatalist('patientPicker-datalist');
-        findPatients(handlePatients, 1, {customerPicker: customer});
+        findPatients(handlePatients, 1, { customerPicker: customer });
     }
 
     const captureUser = (e) => {
         e.preventDefault();
 
         const user = e.target.value.split(' - ')[1];
-        Object.defineProperty(filter, 'user', 
+        Object.defineProperty(filter, 'user',
             {
                 value: user,
                 enumerable: true,
@@ -453,7 +485,7 @@ function VisitForm({ action, id = '' }) {
         e.preventDefault();
 
         const date = e.target.value;
-        Object.defineProperty(filter, 'date', 
+        Object.defineProperty(filter, 'date',
             {
                 value: date,
                 enumerable: true,
@@ -475,7 +507,7 @@ function VisitForm({ action, id = '' }) {
     useEffect(() => {
         addEvents(handleFData);
         fetchDatalists();
-        
+
     }, [])
     return (
         <>
@@ -486,17 +518,17 @@ function VisitForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="userPicker" className="form-label">Verinaria/o:</label>
-                        <input type="search" id="userPicker" className="form-control" list="userPicker-datalist" placeholder="Buscar..." onInput={captureUser}/>
+                        <input type="search" id="userPicker" className="form-control" list="userPicker-datalist" placeholder="Buscar..." onInput={captureUser} />
                         <datalist id="userPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="dateTimePicker" className="form-label">Fecha:</label>
-                        <input type="date" id="datePicker" className="form-control" onInput={captureDate}/>
+                        <input type="date" id="datePicker" className="form-control" onInput={captureDate} />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="timePicker" className="form-label">Hora:</label>
                         <select id="timePicker" className="form-select" >
-                           
+
                         </select>
                     </div>
                     <div className="mb-3 col-auto">
@@ -522,12 +554,12 @@ function VisitForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="patientPicker" className="form-label">Paciente:</label>
-                        <input type="search" id="patientPicker" className="form-control" list="patientPicker-datalist" placeholder="Buscar..." onInput={capturePatient}/>
+                        <input type="search" id="patientPicker" className="form-control" list="patientPicker-datalist" placeholder="Buscar..." onInput={capturePatient} />
                         <datalist id="patientPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerPicker" className="form-label">Cliente:</label>
-                        <input type="search" id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." onInput={captureCustomer}/>
+                        <input type="search" id="customerPicker" className="form-control" list="customerPicker-datalist" placeholder="Buscar..." onInput={captureCustomer} />
                         <datalist id="customerPicker-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
@@ -553,22 +585,22 @@ function VisitForm({ action, id = '' }) {
     )
 }
 
-function Form({ selector, action, id = ''}) {
+function Form({ selector, action, id = '' }) {
 
     let form;
 
     switch (selector) {
         case 'customer':
-            form = <CustomerForm action={action} id={id}/>;
+            form = <CustomerForm action={action} id={id} />;
             break;
         case 'patient':
-            form = <PatientForm action={action} id={id}/>;
+            form = <PatientForm action={action} id={id} />;
             break;
         case 'user':
-            form = <UserForm action={action} id={id}/>;
+            form = <UserForm action={action} id={id} />;
             break;
         default:
-            form = <VisitForm action={action} id={id}/>;
+            form = <VisitForm action={action} id={id} />;
             break;
     }
 

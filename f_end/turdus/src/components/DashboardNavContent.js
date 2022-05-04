@@ -1,10 +1,11 @@
 import { NavLink } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../context/context";
+import global from "../global";
 
 function DashboardNavContent() {
     const { user } = useContext(UserContext);
-    const src = `/img/profile/${user.pic}`;
+    const src = global.apiUri+user.pic;
     const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
 
     let li;

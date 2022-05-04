@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import bcrypt from "bcryptjs/dist/bcrypt";
 
 // export const getCurUser = (callback, username) => {
 //     const bodyData = {
@@ -36,7 +37,13 @@ export async function getCurUser(callback, username) {
     const request = new Request(`http://192.168.1.81:8888/api/users/get_current`, config);
     const response = await fetch(request);
     const data = await response.json();
-    callback(data)
+    
+    if(data.roles) {
+        callback(data)
+    } else if( /4[0-9][0-9]$/.test(data.code)) {
+        localStorage.removeItem('token');
+    } 
+    
 }
 
 export const getOneUser = (callback, id) => {
@@ -71,6 +78,45 @@ export const getUsers = (callback, filter = {}, currentPage = 1) => {
         .then(response => handleErrors(response))
         .then(data => callback(data))
         .catch(e => handleAuth(e));
+
+}
+
+export const addUpdateUser = (fData, action, id = '') => {
+
+    const rolesDOM = document.querySelectorAll('input[type=checkbox]');
+    let roles = [];
+    rolesDOM.forEach(r => {
+        if (r.checked) {
+            roles.push(r.value);
+        }
+    });
+    roles.push('ROLE_STAFF');
+    
+    const password = bcrypt.hashSync(fData.get('username'));
+    fData.append('password', password);
+    fData.append('roles', roles);
+    fData.append('id', id);
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: fData
+    }
+    let request;
+    if (action == 'add') {
+        request = new Request("http://192.168.1.81:8888/api/user/add", config);
+    } else {
+        request = new Request("http://192.168.1.81:8888/api/user/update", config);
+    }
+
+
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => { window.location = `/turdus/users/${data.id}`; })
+        .catch(e => console.log(e))
 
 }
 

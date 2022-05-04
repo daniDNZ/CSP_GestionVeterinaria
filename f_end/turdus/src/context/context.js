@@ -7,7 +7,7 @@ export const UserContext = React.createContext({roles: 'none'});
 
 export function UserProvider({children}){
     const [user, setUser] = useState({roles: 'none'});
-    
+
     const updateUser = (newUser) => {
         setUser(newUser);
     }

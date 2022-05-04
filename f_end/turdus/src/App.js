@@ -24,7 +24,7 @@ function App() {
           <Route exact path="/" element={<LandPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Logout />} />
-          <Route exact path="turdus/*" element={component} />
+          <Route path="/turdus/*" element={component} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

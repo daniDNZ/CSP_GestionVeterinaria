@@ -21,17 +21,23 @@ export function User() {
 
     const handleUser = (data) => {
 
-        document.getElementById("userDni").value = data.dni;
-        document.getElementById("userName").value = data.name;
-        document.getElementById("userInfo").value = data.info;
-        document.getElementById("userPhone").value = data.phone;
-        document.getElementById("userEmail").value = data.email;
-        document.getElementById("userPc").value = data.postalCode;
-        document.getElementById("userAddress").value = data.address;
-        document.getElementById("userLastname").value = data.lastName;
-
         // Title
         document.getElementById("userViewPage").textContent = `${data.name} ${data.lastName}`;
+
+
+        document.getElementById("userName").value = data.name;
+        document.getElementById("userLastname").value = data.lastName;
+        document.getElementById("userArea").value = data.area;
+        document.getElementById("userCollegiate").value = data.collegiate;
+        document.getElementById("userUsername").value = data.username;
+        document.getElementById("userPhone").value = data.phone;
+        document.getElementById("userEmail").value = data.email;
+        document.getElementById("userDni").value = data.dni;
+        document.getElementById("userSalary").value = data.salary;
+
+        data.roles.forEach(role => {
+            document.getElementById(role).checked = true;
+        });
 
     }
 

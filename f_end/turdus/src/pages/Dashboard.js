@@ -13,6 +13,7 @@ import Bill from '../components/Bill.js';
 import PayDebt from '../components/PayDebt';
 import UserProfile from '../components/user/UserProfile';
 import AdminSettings from '../components/user/AdminSettings';
+import { Form } from '../components/Form';
 import { UserContext } from '../context/context';
 import { useContext, useEffect } from 'react';
 
@@ -48,6 +49,7 @@ function Dashboard() {
                 <Route path="settings" element={<AdminSettings />} />
                 <Route path="user/profile" element={<UserProfile />} />
                 <Route path="users/:id" element={<User />} />
+                <Route path="users/new" element={<Form selector='user' action='add' />} />
               </Routes>
             </div>
           </main>
