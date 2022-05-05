@@ -11991,4 +11991,18 @@ a.btn-outline-secondary:hover i.bi,
 .btn-outline-secondary:hover i.bi {
   color: white !important;
 }
+
+body,
+header > nav {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+body {
+  background-color: #fff6f6;
+}
+
+#main-dashboard {
+  background-color: white;
+}
 /*# sourceMappingURL=custom.css.map */

@@ -26,7 +26,7 @@ class ServicesLogController extends AbstractController
         $sLog->setBill($bill);
         $sLog->setService($service);
         $sLog->setQuantity($d['quantity']);
-        
+
         $em->persist($sLog);
         $em->flush();
 

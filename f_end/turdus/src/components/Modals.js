@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { addUpdatePatient } from "./api/ApiPatients";
 import { addUpdateVisit } from "./api/ApiVisits";
-import { findProducts } from "./api/ApiProducts";
-import { findServices } from "./api/ApiServices";
+import { getProducts } from "./api/ApiProducts";
+import { getServices } from "./api/ApiServices";
+import { Pagination } from "./TablePagination";
 import { Form } from "./Form"
 
 function AlertModal() {
@@ -173,9 +174,9 @@ function AddProducts({ callback }) {
         const i = e.target;
         if (i.checked == true) {
             cart.push({
-                id: i.dataset.id, 
+                id: i.dataset.id,
                 type: i.dataset.type,
-                name: i.dataset.name, 
+                name: i.dataset.name,
                 price: i.dataset.price,
                 q: 1
             });
@@ -225,15 +226,15 @@ function AddProducts({ callback }) {
             thStock.textContent = 'Stock';
             thRef.textContent = 'Ref.';
 
-            trHead.append( thName, thCat, thSubcat, thStock, thRef, thPrice, thAdd );
+            trHead.append(thName, thCat, thSubcat, thStock, thRef, thPrice, thAdd);
         } else {
-            trHead.append( thName, thCat, thPrice, thAdd);
+            trHead.append(thName, thCat, thPrice, thAdd);
         }
 
         thead.append(trHead);
 
 
-        data.forEach(p => {
+        data.data.forEach(p => {
             // Llenamos la tabla
             const tr = document.createElement('tr');
             const tdName = document.createElement('td');
@@ -275,10 +276,10 @@ function AddProducts({ callback }) {
             }
 
             tbody.append(tr);
-            
+
         });
         listeners();
-        
+
     }
 
     const fillDatalist = (data) => {
@@ -287,21 +288,24 @@ function AddProducts({ callback }) {
         const speSelect = document.querySelector('#species-select');
         catSelect.innerHTML = `<option value="">Categoría</option>`;
         speSelect.innerHTML = `<option value="">Especie</option>`;
-        item == 'services' ? 
+        item == 'services' ?
             speSelect.setAttribute('disabled', 'true') :
             speSelect.removeAttribute('disabled');
+
+        // Paginación
+        Pagination(data, getProducts, fillDatalist, filter);
 
         let arrCat = [];
         let arrSpe = [];
 
-        data.forEach(i => {
+        data.data.forEach(i => {
             // Llenamos un array con categorías y otro con especies para quitar los repetidos.
             if (i.species) {
                 i.species.forEach(sp => {
                     arrSpe.push(sp);
                 });
             }
-            
+
             arrCat.push(i.category);
         });
 
@@ -325,15 +329,15 @@ function AddProducts({ callback }) {
         });
 
         fillItems(data)
-        
+
     }
 
     // Busca productos o servicios según toque
     const findItems = () => {
 
-        item == 'services' ? 
-            findServices(fillItems, filter) :
-            findProducts(fillItems, filter)
+        item == 'services' ?
+            getServices(fillItems, filter) :
+            getProducts(fillItems, filter)
 
     }
 
@@ -346,33 +350,33 @@ function AddProducts({ callback }) {
         }
 
         item = e.target.value;
-        item == 'services' ? 
-            findServices(fillDatalist, filter) :
-            findProducts(fillDatalist, filter)
+        item == 'services' ?
+            getServices(fillDatalist, filter) :
+            getProducts(fillDatalist, filter)
 
     }
 
     // Establecemos filtros
     const capCategory = (e) => {
         e.preventDefault();
-        filter.category = e.target.value;
+        filter.categoryPicker = e.target.value;
         findItems();
     }
 
     const capSpecies = (e) => {
         e.preventDefault();
-        filter.species = e.target.value;
+        filter.speciesPicker = e.target.value;
         findItems();
     }
 
     const capName = (e) => {
         e.preventDefault();
-        filter.name = e.target.value;
+        filter.namePicker = e.target.value;
         findItems();
     }
 
     useEffect(() => {
-        findProducts(fillDatalist, filter);
+        getProducts(fillDatalist, filter);
     }, [])
     return (
         <>
@@ -399,7 +403,7 @@ function AddProducts({ callback }) {
                                     </select>
                                 </div>
                                 <div className="d-flex flex-row mb-3">
-                                    <input className="form-control" type="search" placeholder="Buscar..." onInput={capName}/>
+                                    <input className="form-control" type="search" placeholder="Buscar..." onInput={capName} />
                                 </div>
 
                             </div>
@@ -410,7 +414,12 @@ function AddProducts({ callback }) {
                                     <thead />
                                     <tbody />
                                 </table>
+
                             </div>
+                            <nav aria-label="Table pagination">
+                                <ul className="pagination" id="pagination">
+                                </ul>
+                            </nav>
                         </div>
                         <div className="modal-footer">
                             <button

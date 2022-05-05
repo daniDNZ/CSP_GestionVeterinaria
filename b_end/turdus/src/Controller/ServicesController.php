@@ -21,32 +21,49 @@ class ServicesController extends AbstractController
         ]);
     }
 
+
     /**
-     * @Route("/api/services", name="app_services_find", methods="POST")
+     * @Route("/api/services/{currentPage}/filter", name="app_services_filter", methods="POST")
      */
-    public function find(ServiceRepository $serviceRepository, Request $request): Response
+    public function filter(ServiceRepository $serviceRepository, int $currentPage, Request $request): Response
     {
+        $limit = 10;
+
         $data = $request->toArray();
         $query = [];
 
-        if(array_key_exists('category', $data)) {$query['category'] = $data['category'];} else {$query['category'] = '%';}
-        if(array_key_exists('name', $data))     {$query['name'] = $data['name'];} else {$query['name'] = '%';}
+        if(array_key_exists('namePicker', $data))           {$query['name'] = $data['namePicker'];} else {$query['name'] = '%';}
+        if(array_key_exists('categoryPicker', $data))       {$query['category'] = $data['categoryPicker'];} else {$query['category'] = '%';}
 
         
-        $entities = $serviceRepository->findByQuery($query);
+        $entitiesFound = $serviceRepository->findByQuery($query);
+        $result = $entitiesFound['paginator'];
 
-        $services = [];
+        $maxPages = ceil($entitiesFound['paginator']->count() / $limit);
+        
 
-        foreach ($entities as $entity) {
-            $service = [];
-            $service['id'] = $entity->getId();
-            $service['name'] = $entity->getName();
-            $service['category'] = $entity->getCategory();
-            $service['price'] = $entity->getPrice();
-
-            $services[] = $service;
+        function maker($entities){
+            $services = [];
+            foreach ($entities as $entity) {
+                $service = [];
+                $service['id'] = $entity->getId();
+                $service['name'] = $entity->getName();
+                $service['category'] = $entity->getCategory();
+                $service['price'] = $entity->getPrice();
+    
+                $services[] = $service;
+            }
+            return $services;
         }
 
-        return $this->json($services);
+        $services = maker($result);
+        $allServices = maker($entitiesFound['all']);
+    
+        return $this->json([
+            'data' => $services,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage,
+            'allData' => $allServices
+        ]);
     }
 }

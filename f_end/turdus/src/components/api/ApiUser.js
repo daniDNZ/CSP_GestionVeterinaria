@@ -120,6 +120,31 @@ export const addUpdateUser = (fData, action, id = '') => {
 
 }
 
+export const changePswd = (fData, id) => {
+    
+    const password = bcrypt.hashSync(fData.get('password'));
+    fData.append('pswd', password);
+    fData.append('id', id);
+    fData.delete('password');
+    fData.delete('passwordRepeat');
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: fData
+    }
+    const request = new Request("http://192.168.1.81:8888/api/user/change_pswd", config);
+
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => { alert('Contraseña cambiada') })
+        .catch(e => console.log(e))
+
+}
+
 export const getVets = (callback, id) => {
 
 

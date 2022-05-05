@@ -281,4 +281,24 @@ class UsersController extends AbstractController
 
         return $this->json($data);
     }
+
+    /**
+     * @Route("/api/user/change_pswd", name="app_user_change_pswd", methods="POST")
+     */
+    public function changePswd( UserRepository $userRepository, Request $request, EntityManagerInterface $em ): Response
+    {   
+        $id         = $request->request->get('id');
+        $pswd       = $request->request->get('pswd');
+        
+        $user = $userRepository->find($id);
+        
+        $user->setPassword($pswd);
+        
+        $em->persist($user);
+        $em->flush();
+
+        $data['id'] = $user->getId();
+
+        return $this->json($data);
+    }
 }

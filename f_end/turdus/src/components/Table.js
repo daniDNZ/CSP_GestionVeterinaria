@@ -3,6 +3,8 @@ import { findCustomers } from "./api/ApiCustomers";
 import { findPatients } from "./api/ApiPatients";
 import { findVisits } from "./api/ApiVisits";
 import { getUsers } from "./api/ApiUser";
+import { getProducts } from "./api/ApiProducts";
+import { getServices } from "./api/ApiServices";
 import { getDataDatalist } from "./Datalist";
 import { Pagination } from "./TablePagination";
 import global from "../global";
@@ -295,6 +297,244 @@ export function UsersTable() {
             <nav aria-label="Table pagination">
                 <ul className="pagination" id="pagination">
 
+                </ul>
+            </nav>
+        </>
+    )
+}
+
+export function ProductsTable() {
+    let filter = {};                                        // Filtro con el que realizaremos las peticiones como body.
+
+    // Evento de los inputs
+    const captureData = (e) => {
+        e.preventDefault();
+
+        const id = e.target.id;
+        const value = e.target.value;
+
+        Object.defineProperty(filter, id,                   // Creamos una propiedad del objeto filter con el string a buscar.
+            {
+                value: value,
+                enumerable: true,
+                configurable: true,
+                writable: true
+            }
+        )
+
+        getProducts(handleData, filter)                // Petición al servidor (callback, n página, filtro)
+    }
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'products');                        // Rellena la tabla
+        Pagination(d, getProducts, handleData, filter);   // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+
+        let arrIds = [];
+        const arrInputs = document.querySelectorAll('form .form-control, form .form-select');
+        arrInputs.forEach(i => {                            // Recogemos los campos para almacenar los ids y para añadir el evento.
+            arrIds.push(i.id);
+            i.addEventListener('input', captureData);
+        });
+        getDataDatalist(d, arrIds)                          // Creamos las datalist para facilitar las búsquedas.
+    }
+
+    // Método que limpia los filtros de búsqueda
+    const cleanFilters = (e) => {
+
+        for (const key in filter) {                         // Limpiamos el objeto filter.
+            filter[key] = '';
+        }
+
+        getProducts(handleData, filter);                          // Volvemos a hacer la petición al servidor.
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getProducts(handleData, filter);
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                    <form>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="codePicker" className="form-label">Ref:</label>
+                            <input type="search" id="codePicker" className="form-control" list="codePicker-datalist" placeholder="Buscar..." />
+                            <datalist id="namePicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="namePicker" className="form-label">Nombre:</label>
+                            <input type="search" id="namePicker" className="form-control" list="namePicker-datalist" placeholder="Buscar..." />
+                            <datalist id="namePicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="categoryPicker" className="form-label">Categoría:</label>
+                            <input type="search" id="categoryPicker" className="form-control" list="categoryPicker-datalist" placeholder="Buscar..." />
+                            <datalist id="categoryPicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="subcategoryPicker" className="form-label">Subcategoría:</label>
+                            <input type="search" id="subcategoryPicker" className="form-control" list="subcategoryPicker-datalist" placeholder="Buscar..." />
+                            <datalist id="subcategoryPicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="speciesPicker" className="form-label">Especie:</label>
+                            <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." />
+                            <datalist id="speciesPicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="supplierPicker" className="form-label">Proveedor:</label>
+                            <input type="search" id="supplierPicker" className="form-control" list="supplierPicker-datalist" placeholder="Buscar..." />
+                            <datalist id="supplierPicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto flex-column d-flex justify-content-end">
+                            <input type="reset" id="cleanButton" className="btn btn-secondary text-white" onClick={cleanFilters}></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Ref.</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col">Subcat.</th>
+                            <th scope="col">Especie</th>
+                            <th scope="col">Dosis</th>
+                            <th scope="col">Lote</th>
+                            <th scope="col">Caducidad</th>
+                            <th scope="col">Proveedor</th>
+                            <th scope="col">Stock</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Vista</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+                </ul>
+            </nav>
+        </>
+    )
+}
+
+export function ServicesTable() {
+    let filter = {};                                        // Filtro con el que realizaremos las peticiones como body.
+
+    // Evento de los inputs
+    const captureData = (e) => {
+        e.preventDefault();
+
+        const id = e.target.id;
+        const value = e.target.value;
+
+        Object.defineProperty(filter, id,                   // Creamos una propiedad del objeto filter con el string a buscar.
+            {
+                value: value,
+                enumerable: true,
+                configurable: true,
+                writable: true
+            }
+        )
+
+        getServices(handleData, filter)                // Petición al servidor (callback, n página, filtro)
+    }
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'services');                        // Rellena la tabla
+        Pagination(d, getServices, handleData, filter);   // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+
+        let arrIds = [];
+        const arrInputs = document.querySelectorAll('form .form-control, form .form-select');
+        arrInputs.forEach(i => {                            // Recogemos los campos para almacenar los ids y para añadir el evento.
+            arrIds.push(i.id);
+            i.addEventListener('input', captureData);
+        });
+        getDataDatalist(d, arrIds)                          // Creamos las datalist para facilitar las búsquedas.
+    }
+
+    // Método que limpia los filtros de búsqueda
+    const cleanFilters = (e) => {
+
+        for (const key in filter) {                         // Limpiamos el objeto filter.
+            filter[key] = '';
+        }
+
+        getServices(handleData, filter);                          // Volvemos a hacer la petición al servidor.
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getServices(handleData, filter);
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                    <form>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="namePicker" className="form-label">Nombre:</label>
+                            <input type="search" id="namePicker" className="form-control" list="namePicker-datalist" placeholder="Buscar..." />
+                            <datalist id="namePicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto">
+                            <label htmlFor="categoryPicker" className="form-label">Categoría:</label>
+                            <input type="search" id="categoryPicker" className="form-control" list="categoryPicker-datalist" placeholder="Buscar..." />
+                            <datalist id="categoryPicker-datalist">
+                            </datalist>
+                        </div>
+                        <div className="mb-3 col-auto flex-column d-flex justify-content-end">
+                            <input type="reset" id="cleanButton" className="btn btn-secondary text-white" onClick={cleanFilters}></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Categoría</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Vista</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
                 </ul>
             </nav>
         </>
@@ -594,6 +834,12 @@ function Table({ selector }) {
             break;
         case 'users':
             table = <UsersTable />;
+            break;
+        case 'products':
+            table = <ProductsTable />;
+            break;
+        case 'services':
+        table = <ServicesTable />;
             break;
         default:
             table = <VisitsTable />;

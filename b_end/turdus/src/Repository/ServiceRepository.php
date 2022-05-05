@@ -6,6 +6,7 @@ use App\Entity\Service;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,20 +46,37 @@ class ServiceRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * PAGINATOR
+     */
+    public function paginate($dql, $page = 1, $limit = 10)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
+    }
+
     // /**
     //  * @return Service[] Returns an array of Service objects
     //  */
-    public function findByQuery($q)
+    public function findByQuery($q, $currentPage = 1, $limit = 10)
     {
-        return $this->createQueryBuilder('s')
+        $query = $this->createQueryBuilder('s')
             ->andWhere('s.category LIKE :cat')
             ->andWhere('s.name LIKE :name')
             ->setParameter('cat', '%'.$q['category'].'%')
             ->setParameter('name', '%'.$q['name'].'%')
             ->orderBy('s.name', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult();
+            ->getQuery();
+        
+        $all = $query->getResult();
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all );
     }
     /*
     public function findByExampleField($value)

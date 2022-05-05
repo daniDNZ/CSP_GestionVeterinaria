@@ -13,6 +13,8 @@ function DashboardNavigation() {
   const src = global.apiUri+user.pic;
   const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
 
+  const profileUri = `/turdus/users/${user.id}/profile`;
+  
   let li;
 
   user.roles.includes('ROLE_ADMIN')
@@ -50,7 +52,7 @@ function DashboardNavigation() {
               </a>
               <ul id="dropdownUserUl" className="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser1" >
                 {li}
-                <li><a className="dropdown-item" href="#">Profile</a></li>
+                <li><a className="dropdown-item" href={profileUri}>Profile</a></li>
                 <li>
                   <hr className="dropdown-divider" />
                 </li>

@@ -26,8 +26,10 @@ class ProductsLogController extends AbstractController
         $pLog->setBill($bill);
         $pLog->setProduct($product);
         $pLog->setQuantity($d['quantity']);
+
+        $product->setStock($product->getStock() - $d['quantity']);
         
-        $em->persist($pLog);
+        $em->persist($pLog, $product);
         $em->flush();
 
         return $this->json($pLog);

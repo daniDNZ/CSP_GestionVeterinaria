@@ -8,15 +8,15 @@ function Headline() {
                             <p>CLÍNICA VETERINARIA CON SERVICIO 24H LOS 365 DÍAS DEL AÑO</p>
                             <h1>Clínica Veterinaria TuClínica</h1>
                             <h1>Guadalajara</h1>
-                            <p className="lead">
+                            {/* <p className="lead">
                                 Profesionales con amplia experiencia en las distintas
                                 especialidades para asegurar la salud de los peludos.
+                            </p> */}
+                            <p className="lead">
+                                <a role="button" className="btn btn-lg btn-primary fw-bold border-white" href="#contact">¿Dónde estamos?</a>
                             </p>
                             <p className="lead">
-                                <a className="btn btn-lg btn-secondary fw-bold border-white bg-white" href="#contact">¿Dónde estamos?</a>
-                            </p>
-                            <p className="lead">
-                                <a className="btn btn-lg btn-secondary fw-bold border-white bg-white" href="#contact">Contacto</a>
+                                <a className="btn btn-lg btn-primary fw-bold border-white" href="#contact">Contacto</a>
                             </p>
                         </div>
                         <div>

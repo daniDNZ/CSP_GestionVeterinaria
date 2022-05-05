@@ -80,6 +80,11 @@ class Product
      */
     private $species;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ean;
+
     public function __construct()
     {
         $this->species = new ArrayCollection();
@@ -242,6 +247,18 @@ class Product
     public function removeSpecies(Species $species): self
     {
         $this->species->removeElement($species);
+
+        return $this;
+    }
+
+    public function getEan(): ?string
+    {
+        return $this->ean;
+    }
+
+    public function setEan(?string $ean): self
+    {
+        $this->ean = $ean;
 
         return $this;
     }

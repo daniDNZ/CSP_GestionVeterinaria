@@ -14,6 +14,8 @@ import PayDebt from '../components/PayDebt';
 import UserProfile from '../components/user/UserProfile';
 import AdminSettings from '../components/user/AdminSettings';
 import { Form } from '../components/Form';
+import Products from '../components/Products';
+import Services from '../components/Services';
 import { UserContext } from '../context/context';
 import { useContext, useEffect } from 'react';
 
@@ -31,8 +33,8 @@ function Dashboard() {
       <div className="container-fluid flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
         <div className="row flex-grow-sm-1 flex-grow-0 vw-100">
           <DashboardSidebar />
-          <main id="main-dashboard" className="col overflow-auto">
-            <div className="rounded-3 p-3 h-100">
+          <main id="main-dashboard" className="col overflow-auto px-0">
+            <div className="rounded-3 p-4 h-100">
               <Routes>
                 <Route path="dashboard" element={<Home />} />
                 <Route path="orders" element={<Orders />} />
@@ -47,9 +49,11 @@ function Dashboard() {
                 <Route path="visits/:id/bill" element={<Bill />} />
                 <Route path="customers/:id/pay_debt" element={<PayDebt />} />
                 <Route path="settings" element={<AdminSettings />} />
-                <Route path="user/profile" element={<UserProfile />} />
+                <Route path="users/:id/profile" element={<UserProfile />} />
                 <Route path="users/:id" element={<User />} />
                 <Route path="users/new" element={<Form selector='user' action='add' />} />
+                <Route path="products" element={<Products />} />
+                <Route path="services" element={<Services />} />
               </Routes>
             </div>
           </main>

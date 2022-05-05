@@ -7,6 +7,8 @@ function DashboardNavContent() {
     const { user } = useContext(UserContext);
     const src = global.apiUri+user.pic;
     const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
+   
+    const profileUri = `/turdus/users/${user.id}/profile`;
 
     let li;
 
@@ -55,6 +57,29 @@ function DashboardNavContent() {
                     <span className="d-inline">Añadir</span>
                 </NavLink>
             </li>
+            <li className="mx-0 nav-item">
+                <a href="#" className="nav-link px-2 dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#stock-collapse" aria-controls="#stock-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <i className="bi bi-box2-heart fs-5 me-2"></i>
+                    <span className="d-inline">Stock</span>
+                </a>
+                <div id="stock-collapse" className="collapse navbar-collapse">
+                    <hr className="m-0" />
+                    <ul className="nav navbar-nav flex-column">
+                        <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/products" className="nav-link px-2">
+                                <i className="bi bi-boxes fs-5 me-2"></i>
+                                <span className="d-inline">Productos</span>
+                            </NavLink>
+                        </li>
+                        <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/services" className="nav-link px-2">
+                                <i className="bi bi-heart-pulse fs-5 me-2"></i>
+                                <span className="d-inline">Servicios</span>
+                            </NavLink>
+                        </li>
+                    </ul>
+                </div>
+            </li>
             <li className="mx-0 nav-item d-md-none">
                 <a href="#" className="nav-link px-2 dropdown-toggle collapsed" id="dropdownUser2" data-bs-toggle="collapse" data-bs-target="#user-collapse" aria-controls="#user-collapse" aria-expanded="false">
                     {img}
@@ -63,7 +88,7 @@ function DashboardNavContent() {
                     <hr className="m-0" />
                     <ul id="dropdownUserUl2" className="nav nav-pills flex-column">
                         {li}
-                        <li><a className="dropdown-item" href="#">Profile</a></li>
+                        <li><a className="dropdown-item" href={profileUri}>Profile</a></li>
                         <li>
                             <hr className="dropdown-divider" />
                         </li>
