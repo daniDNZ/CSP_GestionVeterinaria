@@ -179,12 +179,12 @@ class Product
         return $this;
     }
 
-    public function getExpiration(): ?\DateTimeInterface
+    public function getExpiration(): ?\DateTime
     {
         return $this->expiration;
     }
 
-    public function setExpiration(?\DateTimeInterface $expiration): self
+    public function setExpiration(?\DateTime $expiration): self
     {
         $this->expiration = $expiration;
 

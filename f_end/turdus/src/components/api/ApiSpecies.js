@@ -1,6 +1,6 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
 
-export const getSpecies = (callback, id) => {
+export const getSpecies = (callback, id = '') => {
 
 
     const config = {

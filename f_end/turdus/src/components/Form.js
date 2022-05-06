@@ -7,6 +7,9 @@ import { getSpecies } from "./api/ApiSpecies";
 import { getVets, addUpdateUser } from "./api/ApiUser";
 import OpenTime from "./OpenTime";
 import { AlertModal } from "./Modals";
+import { addUpdateProduct } from "./api/ApiProducts";
+import { getSuppliers } from "./api/ApiSuppliers";
+import { addUpdateService } from "./api/ApiServices";
 
 // Listeners
 const addEvents = (callback) => {
@@ -73,11 +76,10 @@ function UserForm({ action, id }) {
         addUpdateUser(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
     }
 
-    if (action === 'add') document.getElementById("userViewPage").textContent = `Nuevo usuario`;
-
-
     useEffect(() => {
         addEvents(handleFData);
+        if (action === 'add') document.getElementById("userViewPage").textContent = `Nuevo usuario`;
+
     }, [])
     return (
         <>
@@ -585,6 +587,162 @@ function VisitForm({ action, id = '' }) {
     )
 }
 
+export function ProductForm({ action, id = '' }) {
+    let species = [];
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+        const fData = new FormData(e.target);
+
+        addUpdateProduct(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+    
+    const handleSpecies = (d) => {
+        const select = document.querySelector('#productSpecies');
+        d.forEach(s => {
+            let op = document.createElement('option');
+            op.value = s.name;
+            op.textContent = s.name;
+            select.append(op);
+        });
+    } 
+
+    const handleSuppliers = (d) => {
+        d.forEach(s => {
+            handleDatalist('suppliers-datalist', s.code);
+        });
+    }
+
+    const handleSelect = (e) => {   // Utilizamos el array 'species' para controlar las seleccionadas
+        const speciesSelected = document.querySelector('#speciesSelected');
+
+        species.includes(e.target.value)
+            ? species = species.filter(element => element !== e.target.value)
+            : species.push(e.target.value);
+
+        speciesSelected.value = species.toString();
+    }
+    
+
+    useEffect(() => {
+        addEvents(handleFData);
+        getSpecies(handleSpecies);
+        getSuppliers(handleSuppliers);
+        if (action === 'add') document.getElementById("productViewPage").textContent = `Nuevo producto`;
+
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                            <h3 className="col-auto" id="productViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productCode" className="form-label">Ref:</label>
+                        <input type="text" id="productCode" name="code" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productName" className="form-label" >Nombre:</label>
+                        <input type="text" id="productName" name="name" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productCategory" className="form-label" >Categoría:</label>
+                        <input type="text" id="productCategory" name="category" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productSubcategory" className="form-label" >Subcategoría:</label>
+                        <input type="text" id="productSubcategory" name="subcategory" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productDose" className="form-label" >Dosis:</label>
+                        <input type="text" id="productDose" name="dose" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productPrice" className="form-label">Precio:</label>
+                        <input type="text" id="productPrice" name="price" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productStock" className="form-label">Cantidad:</label>
+                        <input type="text" id="productStock" name="stock" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productLot" className="form-label">Lote:</label>
+                        <input type="text" id="productLot" name="lot" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productExpiration" className="form-label" >Caducidad:</label>
+                        <input type="date" id="productExpiration" name="expiration" className="form-control" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productSupplier" className="form-label" >Proveedor:</label>
+                        <input type="search" id="productSupplier" name="supplier" list="suppliers-datalist" className="form-control" required/>
+                        <datalist id="suppliers-datalist" />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productSpecies" className="form-label" >Especies:</label>
+                        <input type="text" id="speciesSelected" name="species" className="form-control" readOnly/>
+                        <select id="productSpecies" className="form-select mt-2" multiple aria-label="multiple select" onInput={handleSelect}>
+                        
+                        </select>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="productEan" className="form-label" >EAN:</label>
+                        <input type="text" id="productEan" name="ean" className="form-control" />
+                    </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+        </>
+    )
+}
+
+export function ServiceForm({ action, id = '' }) {
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+        const fData = new FormData(e.target);
+
+        addUpdateService(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+
+    useEffect(() => {
+        addEvents(handleFData);
+        if (action === 'add') document.getElementById("serviceViewPage").textContent = `Nuevo servicio`;
+
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                            <h3 className="col-auto" id="serviceViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="serviceName" className="form-label" >Nombre:</label>
+                        <input type="text" id="serviceName" name="name" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="serviceCategory" className="form-label" >Categoría:</label>
+                        <input type="text" id="serviceCategory" name="category" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="servicePrice" className="form-label">Precio:</label>
+                        <input type="text" id="servicePrice" name="price" className="form-control" required />
+                    </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+        </>
+    )
+}
+
 function Form({ selector, action, id = '' }) {
 
     let form;
@@ -598,6 +756,12 @@ function Form({ selector, action, id = '' }) {
             break;
         case 'user':
             form = <UserForm action={action} id={id} />;
+            break;
+        case 'product':
+            form = <ProductForm action={action} id={id} />;
+            break;
+        case 'service':
+            form = <ServiceForm action={action} id={id} />;
             break;
         default:
             form = <VisitForm action={action} id={id} />;

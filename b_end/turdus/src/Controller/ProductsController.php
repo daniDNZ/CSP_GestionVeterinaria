@@ -6,77 +6,42 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ProductRepository;
+use App\Repository\SpeciesRepository;
+use App\Repository\SupplierRepository;
+use App\Entity\Product;
 
 class ProductsController extends AbstractController
 {
     /**
-     * @Route("/api/products", name="app_products_all", methods="GET")
+     * @Route("/api/products/{id}", name="app_products_one", methods="GET")
      */
-    public function index(): Response
+    public function index(int $id, ProductRepository $productRepository): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/ProductsControlllerController.php',
-        ]);
-    }
+        $entity = $productRepository->find($id);
 
-    /**
-     * @Route("/api/products", name="app_products_find", methods="POST")
-     */
-    public function find(ProductRepository $productRepository, Request $request): Response
-    {
-        $limit = 10;
-        $data = $request->toArray();
-        $query = [];
+        $product = [];
+        $product['id'] = $entity->getId();
+        $product['code'] = $entity->getCode();
+        $product['name'] = $entity->getName();
+        $product['category'] = $entity->getCategory();
+        $product['subcategory'] = $entity->getSubcategory();
 
-        if(array_key_exists('category', $data)) {$query['category'] = $data['category'];} else {$query['category'] = '%';}
-        if(array_key_exists('name', $data))     {$query['name'] = $data['name'];} else {$query['name'] = '%';}
-        if(array_key_exists('species', $data))     {$query['species'] = $data['species'];} else {$query['species'] = '%';}
-
-        
-        $entitiesFound = $productRepository->findByQuery($query);
-        $result = $entitiesFound['paginator'];
-
-        $maxPages = ceil($entitiesFound['paginator']->count() / $limit);
-        
-        function maker($entities){
-            $products = [];
-            foreach ($entities as $entity) {
-                $product = [];
-                $product['id'] = $entity->getId();
-                $product['code'] = $entity->getCode();
-                $product['name'] = $entity->getName();
-                $product['category'] = $entity->getCategory();
-                $product['subcategory'] = $entity->getSubcategory();
-
-                $species = $entity->getSpecies();
-                $arrSpecies = [];
-                foreach ($species as $singleSpecies) {
-                    $arrSpecies[] = $singleSpecies->getName();
-                }
-                $product['species'] = $arrSpecies;
-                $product['dose'] = $entity->getDose();
-                $product['lot'] = $entity->getLot();
-                $product['expiration'] = $entity->getExpiration()->format('d/m/Y');
-                $product['supplier'] = $entity->getSupplier()->getName();
-                $product['stock'] = $entity->getStock();
-                $product['price'] = $entity->getPrice();
-    
-                $products[] = $product;
-            }
-            return $products;
+        $species = $entity->getSpecies();
+        $arrSpecies = [];
+        foreach ($species as $singleSpecies) {
+            $arrSpecies[] = $singleSpecies->getName();
         }
+        $product['species'] = $arrSpecies;
+        $product['dose'] = $entity->getDose();
+        $product['lot'] = $entity->getLot();
+        $product['expiration'] = $entity->getExpiration()->format('Y-m-d');
+        $product['supplier'] = $entity->getSupplier()->getCode();
+        $product['stock'] = $entity->getStock();
+        $product['price'] = $entity->getPrice();
 
-        $products = maker($result);
-        $allProducts = maker($entitiesFound['all']);
-    
-        return $this->json([
-            'data' => $products,
-            'maxPages' => $maxPages,
-            'thisPage' => $currentPage,
-            'allData' => $allProducts
-        ]);
+        return $this->json($product);
     }
 
     /**
@@ -140,5 +105,122 @@ class ProductsController extends AbstractController
             'thisPage' => $currentPage,
             'allData' => $allProducts
         ]);
+    }
+
+    /**
+     * @Route("/api/products/add", name="app_products_add", methods="POST")
+     */
+    public function add( Request $request, SupplierRepository $supplierRepository, SpeciesRepository $speciesRepository, EntityManagerInterface $em ): Response
+    {   
+        $code           = $request->request->get('code');
+        $name           = $request->request->get('name');
+        $category       = $request->request->get('category');
+        $subcategory    = $request->request->get('subcategory');
+        $species        = explode(',', $request->request->get('species'));
+        $dose           = $request->request->get('dose');
+        $lot            = $request->request->get('lot');
+        $expiration     = $request->request->get('expiration');
+        $supplier       = $request->request->get('supplier');
+        $stock          = $request->request->get('stock');
+        $price          = $request->request->get('price');
+        $ean            = $request->request->get('ean');
+
+        $product = New Product();
+        
+        $product->setCode($code);
+        $product->setName($name);
+        $product->setCategory($category);
+        $product->setSubcategory($subcategory);
+        $product->setDose($dose);
+        $product->setLot($lot);
+        $product->setStock($stock);
+        $product->setPrice($price);
+        $product->setEan($ean);
+
+        // Especies
+        foreach ($species as $sp) {
+            $spEntity = $speciesRepository->findOneBy(array('name' => $sp));
+            $product->addSpecies($spEntity);
+        }
+
+        // Fecha de caducidad
+        $dateExpiration = \DateTime::createFromFormat('Y-m-d', $expiration);
+        $product->setExpiration($dateExpiration);
+
+        // Proveedor
+        $supplierEntity = $supplierRepository->findOneBy(array('code' => $supplier));
+        $product->setSupplier($supplierEntity);
+        
+        $em->persist($product);
+        $em->flush();
+
+        $data['id'] = $product->getId();
+
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/api/products/update", name="app_products_update", methods="POST")
+     */
+    public function update( Request $request, ProductRepository $productRepository, SupplierRepository $supplierRepository, SpeciesRepository $speciesRepository, EntityManagerInterface $em ): Response
+    {   
+        $code           = $request->request->get('code');
+        $name           = $request->request->get('name');
+        $category       = $request->request->get('category');
+        $subcategory    = $request->request->get('subcategory');
+        $species        = explode(',', $request->request->get('species'));
+        $dose           = $request->request->get('dose');
+        $lot            = $request->request->get('lot');
+        $expiration     = $request->request->get('expiration');
+        $supplier       = $request->request->get('supplier');
+        $stock          = $request->request->get('stock');
+        $price          = $request->request->get('price');
+        $ean            = $request->request->get('ean');
+
+        $product = $productRepository->findOneBy(array('code' => $code));
+        
+        $product->setCode($code);
+        $product->setName($name);
+        $product->setCategory($category);
+        $product->setSubcategory($subcategory);
+        $product->setDose($dose);
+        $product->setLot($lot);
+        $product->setStock($stock);
+        $product->setPrice($price);
+        $product->setEan($ean);
+
+        // Especies
+        foreach ($species as $sp) {
+            $spEntity = $speciesRepository->findOneBy(array('name' => $sp));
+            $product->addSpecies($spEntity);
+        }
+
+        // Fecha de caducidad
+        $dateExpiration = \DateTime::createFromFormat('Y-m-d', $expiration);
+        $product->setExpiration($dateExpiration);
+
+        // Proveedor
+        $supplierEntity = $supplierRepository->findOneBy(array('code' => $supplier));
+        $product->setSupplier($supplierEntity);
+        
+        $em->persist($product);
+        $em->flush();
+
+        $data['id'] = $product->getId();
+
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/api/products/{id}/remove", name="app_products_remove", methods="GET")
+     */
+    public function removeProduct(int $id, ProductRepository $productRepository, EntityManagerInterface $em): Response
+    {
+        $product = $productRepository->find($id);
+
+        $em->remove($product);
+        $em->flush();
+
+        return $this->json($product);
     }
 }
