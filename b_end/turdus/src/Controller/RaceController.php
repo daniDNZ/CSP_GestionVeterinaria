@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Race;
 use App\Repository\RaceRepository;
 use App\Repository\SpeciesRepository;
 
@@ -55,5 +57,29 @@ class RaceController extends AbstractController
         }
 
         return $this->json($races);
+    }
+
+    /**
+     * @Route("/api/race/add", name="app_race_add", methods="POST")
+     */
+    public function add( SpeciesRepository $speciesRepository, Request $request, EntityManagerInterface $em ): Response
+    {   
+        $name           = $request->request->get('name');
+        $speciesName    = $request->request->get('species');
+
+        $species        = $speciesRepository->findOneBy(array('name' => $speciesName));
+
+        $race = New Race();
+        
+        $race->setName($name);
+        $race->setSpecies($species);
+
+        $em->persist($race);
+        $em->flush();
+
+        $data['id'] = $race->getId();
+        $data['name'] = $race->getName();
+
+        return $this->json($data);
     }
 }

@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { addUpdateCustomer, getCustomers } from "./api/ApiCustomers";
 import { addUpdatePatient, findPatients, getPatients } from "./api/ApiPatients";
 import { addUpdateVisit, findTime } from "./api/ApiVisits";
-import { findRaces, getRaces } from "./api/ApiRaces";
-import { getSpecies } from "./api/ApiSpecies";
+import { findRaces, getRaces, addUpdateRace } from "./api/ApiRaces";
+import { getSpecies, addUpdateSpecies } from "./api/ApiSpecies";
 import { getVets, addUpdateUser } from "./api/ApiUser";
 import OpenTime from "./OpenTime";
-import { AlertModal } from "./Modals";
+import { AlertModal, NewPostalCode, NewRace, NewSpecies, NewSupplier } from "./Modals";
 import { addUpdateProduct } from "./api/ApiProducts";
-import { getSuppliers } from "./api/ApiSuppliers";
+import { addUpdateSupplier, getSuppliers } from "./api/ApiSuppliers";
 import { addUpdateService } from "./api/ApiServices";
+import { addUpdatePostalCode } from "./api/ApiPostalCode";
 
 // Listeners
 const addEvents = (callback) => {
@@ -137,7 +138,7 @@ function UserForm({ action, id }) {
                         <label className="form-label" >Roles:</label>
 
                         <div className="form-check">
-                            <input className="form-check-input" type='checkbox' value='ROLE_VET' id="ROLE_VET"/>
+                            <input className="form-check-input" type='checkbox' value='ROLE_VET' id="ROLE_VET" />
                             <label className="form-check-label" htmlFor="ROLE_VET">Veterinaria/o</label>
                         </div>
                         <div className="form-check">
@@ -170,6 +171,13 @@ function CustomerForm({ action, id }) {
 
         const fData = e.target;
         addUpdateCustomer(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+
+    // MODAL
+    const handleModal = (e) => { // Eliminamos el botón submit que viene por defecto en el Form del modal
+        const modTarget = e.target.dataset.bsTarget;
+        const sendButton = document.querySelector(`${modTarget} button[type=submit]`);
+        sendButton.classList.add('d-none');
     }
 
     useEffect(() => {
@@ -205,8 +213,11 @@ function CustomerForm({ action, id }) {
                         <input type="text" id="customerDni" className="form-control" />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="customerPc" className="form-label">CP:</label>
-                        <input type="text" id="customerPc" className="form-control" />
+                        <label htmlFor="customerPc" className="form-label" >C.P.:</label>
+                        <div className="input-group" >
+                            <input type="text" id="customerPc" name="postalCode" className="form-control" required />
+                            <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-toggle="modal" data-bs-target="#newPostalCodeModal" onClick={handleModal}>Nueva</button>
+                        </div>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerAddress" className="form-label">Dirección:</label>
@@ -222,6 +233,7 @@ function CustomerForm({ action, id }) {
                 {modal}
 
             </form>
+            <NewPostalCode />
         </>
     )
 }
@@ -288,6 +300,13 @@ function PatientForm({ action, id = '' }) {
         getRaces(handleRaces);
     }
 
+    // MODAL
+    const handleModal = (e) => { // Eliminamos el botón submit que viene por defecto en el Form del modal
+        const modTarget = e.target.dataset.bsTarget;
+        const sendButton = document.querySelector(`${modTarget} button[type=submit]`);
+        sendButton.classList.add('d-none');
+    }
+
     useEffect(() => {
         addEvents(handleFData);
         fetchDatalists();
@@ -317,13 +336,19 @@ function PatientForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="speciesPicker" className="form-label">Especie:</label>
-                        <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." onInput={captureSpecies} />
+                        <div className="input-group" >
+                            <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." onInput={captureSpecies} />
+                            <button className="btn btn-outline-secondary" type="button" id="btnSpecies" data-bs-toggle="modal" data-bs-target="#newSpeciesModal" onClick={handleModal}>Nueva</button>
+                        </div>
                         <datalist id="speciesPicker-datalist">
                         </datalist>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="racePicker" className="form-label">Raza:</label>
-                        <input type="search" id="racePicker" className="form-control" list="racePicker-datalist" placeholder="Buscar..." />
+                        <div className="input-group" >
+                            <input type="search" id="racePicker" className="form-control" list="racePicker-datalist" placeholder="Buscar..." />
+                            <button className="btn btn-outline-secondary" type="button" id="btnRace" data-bs-toggle="modal" data-bs-target="#newRaceModal" onClick={handleModal}>Nueva</button>
+                        </div>
                         <datalist id="racePicker-datalist">
                         </datalist>
                     </div>
@@ -375,6 +400,9 @@ function PatientForm({ action, id = '' }) {
                 </div>
                 {modal}
             </form>
+
+            <NewSpecies />
+            <NewRace />
         </>
     )
 }
@@ -597,7 +625,7 @@ export function ProductForm({ action, id = '' }) {
 
         addUpdateProduct(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
     }
-    
+
     const handleSpecies = (d) => {
         const select = document.querySelector('#productSpecies');
         d.forEach(s => {
@@ -606,7 +634,7 @@ export function ProductForm({ action, id = '' }) {
             op.textContent = s.name;
             select.append(op);
         });
-    } 
+    }
 
     const handleSuppliers = (d) => {
         d.forEach(s => {
@@ -623,7 +651,13 @@ export function ProductForm({ action, id = '' }) {
 
         speciesSelected.value = species.toString();
     }
-    
+
+    // MODAL
+    const handleModal = (e) => { // Eliminamos el botón submit que viene por defecto en el Form del modal
+        const modTarget = e.target.dataset.bsTarget;
+        const sendButton = document.querySelector(`${modTarget} button[type=submit]`);
+        sendButton.classList.add('d-none');
+    }
 
     useEffect(() => {
         addEvents(handleFData);
@@ -679,15 +713,24 @@ export function ProductForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="productSupplier" className="form-label" >Proveedor:</label>
-                        <input type="search" id="productSupplier" name="supplier" list="suppliers-datalist" className="form-control" required/>
+                        <div className="input-group" >
+                            <input type="search" id="productSupplier" name="supplier" list="suppliers-datalist" className="form-control" required />
+                            <button className="btn btn-outline-secondary" type="button" id="btnSupplier" data-bs-toggle="modal" data-bs-target="#newSupplierModal" onClick={handleModal}>Nueva</button>
+                        </div>
+
                         <datalist id="suppliers-datalist" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="productSpecies" className="form-label" >Especies:</label>
-                        <input type="text" id="speciesSelected" name="species" className="form-control" readOnly/>
+
+                        <div className="input-group" >
+                            <input type="text" id="speciesSelected" name="species" className="form-control" readOnly />
+                            <button className="btn btn-outline-secondary" type="button" id="btnSpecies" data-bs-toggle="modal" data-bs-target="#newSpeciesModal" onClick={handleModal}>Nueva</button>
+                        </div>
                         <select id="productSpecies" className="form-select mt-2" multiple aria-label="multiple select" onInput={handleSelect}>
-                        
+
                         </select>
+
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="productEan" className="form-label" >EAN:</label>
@@ -696,6 +739,8 @@ export function ProductForm({ action, id = '' }) {
                 </div>
                 <button type="submit" className="btn btn-primary">Guardar</button>
             </form>
+            <NewSpecies />
+            <NewSupplier />
         </>
     )
 }
@@ -743,6 +788,216 @@ export function ServiceForm({ action, id = '' }) {
     )
 }
 
+export function SpeciesForm({ action, id = '' }) {
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+        const fData = new FormData(e.target);
+
+        addUpdateSpecies(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+
+    useEffect(() => {
+        addEvents(handleFData);
+        if (action === 'add') document.getElementById("speciesViewPage").textContent = `Especie: `;
+
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                            <h3 className="col-auto" id="speciesViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="speciesName" className="form-label" >Nombre:</label>
+                        <input type="text" id="speciesName" name="name" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="speciesSciName" className="form-label" >Nombre científico:</label>
+                        <input type="text" id="speciesSciName" name="sciName" className="form-control" required />
+                    </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+        </>
+    )
+}
+
+export function RaceForm({ action, id = '' }) {
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+        const fData = new FormData(e.target);
+
+        addUpdateRace(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+
+    const handleSpecies = (d) => {
+        d.forEach(sp => {
+            handleDatalist('species-datalist', sp.name);
+        });
+    }
+
+    useEffect(() => {
+        addEvents(handleFData);
+        getSpecies(handleSpecies);
+        if (action === 'add') document.getElementById("raceViewPage").textContent = `Raza: `;
+
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                            <h3 className="col-auto" id="raceViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="raceName" className="form-label" >Nombre:</label>
+                        <input type="text" id="raceName" name="name" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="raceSpecies" className="form-label" >Especie:</label>
+                        <input type="search" id="raceSpecies" name="species" list="species-datalist" className="form-control" required />
+                        <datalist id="species-datalist">
+
+                        </datalist>
+
+                    </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+        </>
+    )
+}
+
+export function SupplierForm({ action, id = '' }) {
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+        const fData = new FormData(e.target);
+
+        addUpdateSupplier(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+
+    // MODAL
+    const handleModal = (e) => { // Eliminamos el botón submit que viene por defecto en el Form del modal
+        const modTarget = e.target.dataset.bsTarget;
+        const sendButton = document.querySelector(`${modTarget} button[type=submit]`);
+        sendButton.classList.add('d-none');
+    }
+
+    useEffect(() => {
+        addEvents(handleFData);
+        if (action === 'add') document.getElementById("supplierViewPage").textContent = `Proveedor: `;
+
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                            <h3 className="col-auto" id="supplierViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierCode" className="form-label" >Ref:</label>
+                        <input type="text" id="supplierCode" name="code" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierName" className="form-label" >Nombre:</label>
+                        <input type="text" id="supplierName" name="name" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierCategory" className="form-label" >Categoría:</label>
+                        <input type="text" id="supplierCategory" name="category" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierEmail" className="form-label" >Email:</label>
+                        <input type="text" id="supplierEmail" name="email" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierPhone" className="form-label" >Teléfono:</label>
+                        <input type="text" id="supplierPhone" name="phone" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierPc" className="form-label" >C.P.:</label>
+                        <div className="input-group" >
+                            <input type="text" id="supplierPc" name="postalCode" className="form-control" required />
+                            <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-toggle="modal" data-bs-target="#newPostalCodeModal" onClick={handleModal}>Nueva</button>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierAddress" className="form-label" >Dirección:</label>
+                        <input type="text" id="supplierAddress" name="address" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="supplierInfo" className="form-label" >Info:</label>
+                        <input type="text" id="supplierInfo" name="info" className="form-control" required />
+                    </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+            <NewPostalCode />
+        </>
+    )
+}
+
+export function PostalCodeForm({ action, id = '' }) {
+
+    // Manejador datos del formulario
+    const handleFData = (e) => {
+        e.preventDefault();
+        const fData = new FormData(e.target);
+
+        addUpdatePostalCode(fData, action, id);   // Llamamos a la petición indicando la acción (add | update)
+    }
+
+    useEffect(() => {
+        addEvents(handleFData);
+        if (action === 'add') document.getElementById("postalCodeViewPage").textContent = `Código Postal: `;
+
+    }, [])
+    return (
+        <>
+            <form id="auto-form">
+                <div id="form-row-1" className="row">
+                    <div className="d-flex flex-row justify-content-between" id="form-title">
+                        <div className="d-flex flex-row">
+                            <h3 className="col-auto" id="postalCodeViewPage"> </h3>
+                        </div>
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="postalCodePc" className="form-label" >C.P.:</label>
+                        <input type="text" id="postalCodePc" name="pc" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="postalCodeProvince" className="form-label" >Provincia:</label>
+                        <input type="text" id="postalCodeProvince" name="province" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="postalCodeCity" className="form-label" >Ciudad:</label>
+                        <input type="text" id="postalCodeCity" name="city" className="form-control" required />
+                    </div>
+                    <div className="mb-3 col-auto">
+                        <label htmlFor="postalCodeCountry" className="form-label" >País:</label>
+                        <input type="text" id="postalCodeCountry" name="country" className="form-control" required />
+                    </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+        </>
+    )
+}
+
 function Form({ selector, action, id = '' }) {
 
     let form;
@@ -762,6 +1017,18 @@ function Form({ selector, action, id = '' }) {
             break;
         case 'service':
             form = <ServiceForm action={action} id={id} />;
+            break;
+        case 'species':
+            form = <SpeciesForm action={action} id={id} />;
+            break;
+        case 'race':
+            form = <RaceForm action={action} id={id} />;
+            break;
+        case 'supplier':
+            form = <SupplierForm action={action} id={id} />;
+            break;
+        case 'pc':
+            form = <PostalCodeForm action={action} id={id} />;
             break;
         default:
             form = <VisitForm action={action} id={id} />;

@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Species;
 use App\Repository\SpeciesRepository;
 use App\Repository\PatientRepository;
 use App\Repository\UserRepository;
@@ -91,5 +93,27 @@ class SpeciesController extends AbstractController
 
         
         return $this->json($species);
+    }
+
+    /**
+     * @Route("/api/species/add", name="app_species_add", methods="POST")
+     */
+    public function add( Request $request, EntityManagerInterface $em ): Response
+    {   
+        $name           = $request->request->get('name');
+        $sciName        = $request->request->get('sciName');
+
+        $species = New Species();
+        
+        $species->setName($name);
+        $species->setScientificName($sciName);
+
+        $em->persist($species);
+        $em->flush();
+
+        $data['id'] = $species->getId();
+        $data['name'] = $species->getName();
+
+        return $this->json($data);
     }
 }

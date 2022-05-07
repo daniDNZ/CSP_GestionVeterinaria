@@ -5,6 +5,11 @@ import { getProducts } from "./api/ApiProducts";
 import { getServices } from "./api/ApiServices";
 import { Pagination } from "./TablePagination";
 import { Form } from "./Form"
+import { addUpdateSpecies } from "./api/ApiSpecies";
+import { addUpdateRace } from "./api/ApiRaces";
+import { useNavigate } from "react-router-dom";
+import { addUpdateSupplier } from "./api/ApiSuppliers";
+import { addUpdatePostalCode } from "./api/ApiPostalCode";
 
 function AlertModal() {
     return (
@@ -111,6 +116,137 @@ function NewVisit() {
                         <div className="modal-footer">
                             <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" className="btn btn-primary" onClick={handleData}>Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export function NewSpecies() {
+    const handleData = () => {
+        
+        const form = document.querySelector('#newSpeciesModal .modal-body form');
+        const fData = new FormData(form);
+        addUpdateSpecies(fData, 'add');
+        
+    }
+
+
+    return (
+        <>
+            <div className="modal fade" id="newSpeciesModal" tabIndex="-1" aria-labelledby="newSpeciesModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="newSpeciesModalLabel">Nueva Especie</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <Form selector='species' action='add' />
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-primary" onClick={handleData} data-bs-dismiss="modal">Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export function NewRace() {
+    const handleData = () => {
+
+        const form = document.querySelector('#newRaceModal .modal-body form');
+        const fData = new FormData(form);
+        
+        addUpdateRace(fData, 'add');
+    }
+
+
+    return (
+        <>
+            <div className="modal fade" id="newRaceModal" tabIndex="-1" aria-labelledby="newRaceModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="newRaceModalLabel">Nueva Raza</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <Form selector='race' action='add' />
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export function NewSupplier() {
+    const handleData = () => {
+
+        const form = document.querySelector('#newSupplierModal .modal-body form');
+        const fData = new FormData(form);
+        
+        addUpdateSupplier(fData, 'add');
+    }
+
+    return (
+        <>
+            <div className="modal fade" id="newSupplierModal" tabIndex="-1" aria-labelledby="newSupplierModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="newSupplierModalLabel">Nuevo Proveedor</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <Form selector='supplier' action='add' />
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}
+
+export function NewPostalCode() {
+    const handleData = () => {
+        // QUITAR MODAL SIN QUE SE QUITE EL OTRO EN SUPPLIER
+
+        const form = document.querySelector('#newPostalCodeModal .modal-body form');
+        const fData = new FormData(form);
+        
+        addUpdatePostalCode(fData, 'add');
+    }
+
+    return (
+        <>
+            <div className="modal fade" id="newPostalCodeModal" tabIndex="-1" aria-labelledby="newPostalCodeModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-xl shadow">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="newPostalCodeModalLabel">Nuevo Código Postal</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <Form selector='pc' action='add' />
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
                 </div>
