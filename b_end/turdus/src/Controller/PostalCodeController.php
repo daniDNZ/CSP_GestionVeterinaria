@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\PostalCodeRepository;
 use App\Entity\PostalCode;
 
 
@@ -14,14 +15,18 @@ use App\Entity\PostalCode;
 class PostalCodeController extends AbstractController
 {
     /**
-     * @Route("/postal/code", name="app_postal_code")
+     * @Route("/api/postal_code", name="app_postal_code")
      */
-    public function index(): Response
+    public function index(PostalCodeRepository $postalCodeRepository): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/PostalCodeController.php',
-        ]);
+        $entities = $postalCodeRepository->findAll();
+
+        $postalCodes = [];
+        foreach ($entities as $entity) {
+            $pc['id'] = $entity->getId();
+            $postalCodes[] = $pc;
+        }
+        return $this->json($postalCodes);
     }
 
     /**

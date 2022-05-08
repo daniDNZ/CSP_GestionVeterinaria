@@ -7,7 +7,7 @@ import { findOnePatient, findPatientVisits } from "./api/ApiPatients";
 import { findOneVisit, findTime, addUpdateVisit, closeVisit, updateCart } from "./api/ApiVisits";
 import { findBill } from "./api/ApiBills";
 import { getOneUser } from "./api/ApiUser";
-import { AddProducts, NewPatient, NewVisit } from "./Modals";
+import { AddProducts, NewPatient, NewRace, NewSpecies, NewVisit } from "./Modals";
 import global from "../global";
 
 export function User() {
@@ -74,14 +74,13 @@ function Customer() {
         document.getElementById("responsiblePicker").value = `${data.name} - ${data.email}`;
 
         // Badge
-        console.log(data)
         if (data.debt > 0) {
 
             const debtBadge = document.querySelector('span#cus-debt-badge');
             let aDebt = document.createElement('a');
             let spDebt = document.createElement('span');
 
-            aDebt.setAttribute('href', `/turdus/customers/${id}/pay_debt`); // MODIFICAR PARA QUE LLEVE AL COBRO DE DEUDA
+            aDebt.setAttribute('href', `/turdus/customers/${id}/pay_debt`);
             aDebt.classList.add('nav-link', 'px-2', 'text-truncate', 'mb-auto');
             spDebt.classList.add('badge', 'bg-danger', 'rounded-pill');
             spDebt.textContent = parseFloat(data.debt).toFixed(2)+' '+global.currency;
@@ -107,7 +106,7 @@ function Customer() {
         pButton.setAttribute('data-bs-target', '#offcanvas');
         pButton.setAttribute('aria-controls', 'offcanvas');
         pButton.setAttribute('role', 'button');
-        pButton.classList.add('btn', 'btn-light');
+        pButton.classList.add('btn', 'btn-outline-primary');
         pButton.textContent = 'Pacientes';
 
         formTitle.append(pButton);
@@ -142,7 +141,7 @@ function Customer() {
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
-                    <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas" onClick={handleModal}>Nuevo Paciente</button>
+                    <button className="btn btn-outline-primary w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas" onClick={handleModal}>Nuevo Paciente</button>
                 </div>
             </div>
             
@@ -251,6 +250,11 @@ function Patient() {
 
             {/* MODAL NUEVA VISITA */}
             <NewVisit />
+            
+            <NewSpecies />
+            
+            <NewRace />
+                      
         </>
     )
 }

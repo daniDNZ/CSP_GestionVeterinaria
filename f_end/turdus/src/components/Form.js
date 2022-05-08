@@ -6,11 +6,11 @@ import { findRaces, getRaces, addUpdateRace } from "./api/ApiRaces";
 import { getSpecies, addUpdateSpecies } from "./api/ApiSpecies";
 import { getVets, addUpdateUser } from "./api/ApiUser";
 import OpenTime from "./OpenTime";
-import { AlertModal, NewPostalCode, NewRace, NewSpecies, NewSupplier } from "./Modals";
+import { AlertModal, NewPatient, NewPostalCode, NewRace, NewSpecies, NewSupplier } from "./Modals";
 import { addUpdateProduct } from "./api/ApiProducts";
 import { addUpdateSupplier, getSuppliers } from "./api/ApiSuppliers";
 import { addUpdateService } from "./api/ApiServices";
-import { addUpdatePostalCode } from "./api/ApiPostalCode";
+import { addUpdatePostalCode, getPostalCodes } from "./api/ApiPostalCode";
 
 // Listeners
 const addEvents = (callback) => {
@@ -180,8 +180,17 @@ function CustomerForm({ action, id }) {
         sendButton.classList.add('d-none');
     }
 
+    // Datalist
+    const handlePostalCodes = (d) => {
+        d.forEach(pc => {
+            let id = pc.id;
+            handleDatalist('postalCode-datalist', id);
+        });
+    }
+
     useEffect(() => {
         addEvents(handleFData);
+        getPostalCodes(handlePostalCodes);
     }, [])
     return (
         <>
@@ -215,9 +224,10 @@ function CustomerForm({ action, id }) {
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerPc" className="form-label" >C.P.:</label>
                         <div className="input-group" >
-                            <input type="text" id="customerPc" name="postalCode" className="form-control" required />
+                            <input type="search" list="postalCode-datalist" id="customerPc" name="postalCode" className="form-control" required />
                             <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-toggle="modal" data-bs-target="#newPostalCodeModal" onClick={handleModal}>Nueva</button>
                         </div>
+                        <datalist id="postalCode-datalist"></datalist>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="customerAddress" className="form-label">Dirección:</label>
@@ -338,7 +348,7 @@ function PatientForm({ action, id = '' }) {
                         <label htmlFor="speciesPicker" className="form-label">Especie:</label>
                         <div className="input-group" >
                             <input type="search" id="speciesPicker" className="form-control" list="speciesPicker-datalist" placeholder="Buscar..." onInput={captureSpecies} />
-                            <button className="btn btn-outline-secondary" type="button" id="btnSpecies" data-bs-toggle="modal" data-bs-target="#newSpeciesModal" onClick={handleModal}>Nueva</button>
+                            <button className="btn btn-outline-secondary" type="button" id="btnSpecies" data-bs-toggle="modal" data-bs-target="#newSpeciesModal" data-bs-dismiss="modal" onClick={handleModal}>Nueva</button>
                         </div>
                         <datalist id="speciesPicker-datalist">
                         </datalist>
@@ -347,7 +357,7 @@ function PatientForm({ action, id = '' }) {
                         <label htmlFor="racePicker" className="form-label">Raza:</label>
                         <div className="input-group" >
                             <input type="search" id="racePicker" className="form-control" list="racePicker-datalist" placeholder="Buscar..." />
-                            <button className="btn btn-outline-secondary" type="button" id="btnRace" data-bs-toggle="modal" data-bs-target="#newRaceModal" onClick={handleModal}>Nueva</button>
+                            <button className="btn btn-outline-secondary" type="button" id="btnRace" data-bs-toggle="modal" data-bs-target="#newRaceModal" data-bs-dismiss="modal" onClick={handleModal}>Nueva</button>
                         </div>
                         <datalist id="racePicker-datalist">
                         </datalist>
@@ -401,8 +411,7 @@ function PatientForm({ action, id = '' }) {
                 {modal}
             </form>
 
-            <NewSpecies />
-            <NewRace />
+            
         </>
     )
 }
@@ -739,8 +748,6 @@ export function ProductForm({ action, id = '' }) {
                 </div>
                 <button type="submit" className="btn btn-primary">Guardar</button>
             </form>
-            <NewSpecies />
-            <NewSupplier />
         </>
     )
 }
@@ -894,8 +901,17 @@ export function SupplierForm({ action, id = '' }) {
         sendButton.classList.add('d-none');
     }
 
+    // Datalist
+    const handlePostalCodes = (d) => {
+        d.forEach(pc => {
+            let id = pc.id;
+            handleDatalist('postalCode-datalist', id);
+        });
+    }
+
     useEffect(() => {
         addEvents(handleFData);
+        getPostalCodes(handlePostalCodes);
         if (action === 'add') document.getElementById("supplierViewPage").textContent = `Proveedor: `;
 
     }, [])
@@ -931,9 +947,10 @@ export function SupplierForm({ action, id = '' }) {
                     <div className="mb-3 col-auto">
                         <label htmlFor="supplierPc" className="form-label" >C.P.:</label>
                         <div className="input-group" >
-                            <input type="text" id="supplierPc" name="postalCode" className="form-control" required />
-                            <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-toggle="modal" data-bs-target="#newPostalCodeModal" onClick={handleModal}>Nueva</button>
+                            <input type="search" list="postalCode-datalist" id="supplierPc" name="postalCode" className="form-control" required />
+                            <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-target="#newPostalCodeModal"  data-bs-toggle="modal" data-bs-dismiss="modal" onClick={handleModal}>Nueva</button>
                         </div>
+                        <datalist id="postalCode-datalist"></datalist>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="supplierAddress" className="form-label" >Dirección:</label>
@@ -946,7 +963,6 @@ export function SupplierForm({ action, id = '' }) {
                 </div>
                 <button type="submit" className="btn btn-primary">Guardar</button>
             </form>
-            <NewPostalCode />
         </>
     )
 }

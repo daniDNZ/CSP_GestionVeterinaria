@@ -57,6 +57,25 @@ function NewPatient() {
         addUpdatePatient(fData, 'add');
     }
 
+    const tunningBtnsModals = () => {  // Añade los atributos a los botones de PostalCode para volver a patient
+
+        const addSpecies = document.querySelector('button#addSpecies');
+        const addRace = document.querySelector('button#addRace');
+        const closeSpecies = document.querySelector('button#closeSpecies');
+        const closeRace = document.querySelector('button#closeRace');
+        addSpecies.setAttribute('data-bs-target', '#newPatientModal');
+        addSpecies.setAttribute('data-bs-toggle', 'modal');
+        addRace.setAttribute('data-bs-target', '#newPatientModal');
+        addRace.setAttribute('data-bs-toggle', 'modal');
+        closeSpecies.setAttribute('data-bs-target', '#newPatientModal');
+        closeSpecies.setAttribute('data-bs-toggle', 'modal');
+        closeRace.setAttribute('data-bs-target', '#newPatientModal');
+        closeRace.setAttribute('data-bs-toggle', 'modal');
+    }
+
+    useEffect(() => {
+        tunningBtnsModals();
+    })
 
     return (
         <>
@@ -77,6 +96,8 @@ function NewPatient() {
                     </div>
                 </div>
             </div>
+            <NewSpecies/>
+            <NewRace/>
         </>
     )
 }
@@ -147,8 +168,8 @@ export function NewSpecies() {
                             <Form selector='species' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleData} data-bs-dismiss="modal">Añadir</button>
+                            <button type="button"  id="closeSpecies" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="addSpecies" className="btn btn-primary" onClick={handleData} data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
                 </div>
@@ -180,8 +201,8 @@ export function NewRace() {
                             <Form selector='race' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
+                            <button type="button" id="closeRace" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="addRace" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
                 </div>
@@ -198,6 +219,20 @@ export function NewSupplier() {
         
         addUpdateSupplier(fData, 'add');
     }
+
+    const tunningPostalCodeModal = () => {  // Añade los atributos a los botones de PostalCode para volver a supplier
+
+        const cancelBtnPc = document.querySelector('button#cancelPcModal');
+        const addBtnPc = document.querySelector('button#addPcModal');
+        cancelBtnPc.setAttribute('data-bs-target', '#newSupplierModal');
+        cancelBtnPc.setAttribute('data-bs-toggle', 'modal');
+        addBtnPc.setAttribute('data-bs-target', '#newSupplierModal');
+        addBtnPc.setAttribute('data-bs-toggle', 'modal');
+    }
+
+    useEffect(() => {
+        tunningPostalCodeModal();
+    })
 
     return (
         <>
@@ -218,6 +253,7 @@ export function NewSupplier() {
                     </div>
                 </div>
             </div>
+            <NewPostalCode />
         </>
     )
 }
@@ -245,8 +281,8 @@ export function NewPostalCode() {
                             <Form selector='pc' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
+                            <button type="button" id="cancelPcModal" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="addPcModal" className="btn btn-primary" onClick={handleData} data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
                 </div>

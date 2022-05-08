@@ -1,23 +1,23 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
 
-// export const getSuppliers = (callback) => {
+export const getPostalCodes = (callback) => {
 
 
-//     const config = {
-//         method: 'GET',
-//         mode: 'cors',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//             'Content-Type': 'application/json'
-//         }
-//     }
-//     const request = new Request("http://192.168.1.81:8888/api/suppliers", config);
-//     fetch(request)
-//         .then(response => handleErrors(response))
-//         .then(data => callback(data))
-//         .catch(e => handleAuth(e));
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request("http://192.168.1.81:8888/api/postal_code", config);
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => callback(data))
+        .catch(e => console.log(e));
 
-// }
+}
 
 export const addUpdatePostalCode = (fData, action, id = '') => {
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NewRace, NewSpecies } from "./Modals";
 import Table from "./Table";
 
 function Search() {
@@ -10,8 +11,7 @@ function Search() {
         e.preventDefault();
         setSelector(e.target.value);
     }
-
-
+    
     return (
         <>
             {/* <h3>Buscar:</h3> */}
@@ -27,6 +27,19 @@ function Search() {
             </div>
             <hr />
             <Table selector={selector} />
+            {
+                () => {
+                    if (selector == 'patients') {
+                       return (
+                        <>
+                            <NewSpecies />
+                            <NewRace />
+                        </>
+                       )
+                       
+                    }
+                }
+            }
         </>
     )
 }
