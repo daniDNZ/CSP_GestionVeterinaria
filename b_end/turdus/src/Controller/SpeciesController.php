@@ -35,6 +35,49 @@ class SpeciesController extends AbstractController
     }
 
     /**
+     * @Route("/api/species/{id}", name="app_species_get_one", methods="GET")
+     */
+    public function getOneSpecies(SpeciesRepository $speciesRepository, int $id): Response
+    {
+        $entity = $speciesRepository->find($id);
+
+        $species = [];
+        $species['id'] = $entity->getId();
+        $species['name'] = $entity->getName();
+        $species['sciName'] = $entity->getScientificName();
+        
+
+        return $this->json($species);
+    }
+
+    /**
+     * @Route("/api/species/paginate/{currentPage}", name="app_species_get_paginate", methods="GET")
+     */
+    public function getSpeciesPaginate(SpeciesRepository $speciesRepository, int $currentPage): Response
+    {
+        $limit = 10;
+        $speciesFound = $speciesRepository->findAllPaginate($currentPage);
+        $speciesEntities = $speciesFound['paginator'];
+
+        $maxPages = ceil($speciesFound['paginator']->count() / $limit);
+
+        foreach ($speciesEntities as $speciesEntity) 
+        {
+            $oneSpecies = [];
+            $oneSpecies['id'] = $speciesEntity->getId();
+            $oneSpecies['name'] = $speciesEntity->getName();
+            $oneSpecies['sciName'] = $speciesEntity->getScientificName();
+            $species[] = $oneSpecies;
+        }
+
+        return $this->json([
+            'data' => $species,
+            'maxPages' => $maxPages,
+            'thisPage' => $currentPage
+        ]);
+    }
+
+    /**
      * @Route("/api/species", name="app_species_post", methods="POST")
      */
     public function findSpecies(
@@ -115,5 +158,42 @@ class SpeciesController extends AbstractController
         $data['name'] = $species->getName();
 
         return $this->json($data);
+    }
+
+    /**
+     * @Route("/api/species/update", name="app_species_update", methods="POST")
+     */
+    public function update( SpeciesRepository $speciesRepository, Request $request, EntityManagerInterface $em ): Response
+    {   
+        $id           = $request->request->get('id');
+        $name           = $request->request->get('name');
+        $sciName        = $request->request->get('sciName');
+
+        $species = $speciesRepository->find($id);
+        
+        $species->setName($name);
+        $species->setScientificName($sciName);
+
+        $em->persist($species);
+        $em->flush();
+
+        $data['id'] = $species->getId();
+        $data['name'] = $species->getName();
+        $data['sciName'] = $species->getScientificName();
+        
+        return $this->json($data);
+    }
+
+    /**
+     * @Route("/api/species/{id}/remove", name="app_species_remove", methods="GET")
+     */
+    public function removeSpecies(int $id, SpeciesRepository $speciesRepository, EntityManagerInterface $em): Response
+    {
+        $species = $speciesRepository->find($id);
+
+        $em->remove($species);
+        $em->flush();
+
+        return $this->json($species);
     }
 }

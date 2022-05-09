@@ -19,6 +19,44 @@ export const getSpecies = (callback, id = '') => {
 
 }
 
+export const getPaginateSpecies = (callback, currentPage = 1) => {
+
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/species/paginate/${currentPage}`, config);
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => callback(data))
+        .catch(e => handleAuth(e));
+
+}
+
+export const getOneSpecies = (callback, id) => {
+
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/species/${id}`, config);
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => callback(data))
+        .catch(e => handleAuth(e));
+
+}
+
 export const findSpecies = (callback, bodyData = {}, id) => {
     const config = {
         method: 'POST',
@@ -59,6 +97,25 @@ export const addUpdateSpecies = (fData, action, id = '') => {
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => { window.location.reload(); })
+        .catch(e => console.log(e))
+
+}
+
+export const removeSpecies = (id) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+    }
+    
+    const request = new Request(`http://192.168.1.81:8888/api/species/${id}/remove`, config);
+    
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => { window.location.assign('/turdus/search'); })
         .catch(e => console.log(e))
 
 }

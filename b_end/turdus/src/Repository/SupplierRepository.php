@@ -6,6 +6,7 @@ use App\Entity\Supplier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,9 +46,35 @@ class SupplierRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * PAGINATOR
+     */
+    public function paginate($dql, $page = 1, $limit = 10)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
+    }
+
     // /**
     //  * @return Supplier[] Returns an array of Supplier objects
     //  */
+    public function findAllPaginate($currentPage = 1, $limit = 10)
+    {
+        $query = $this->createQueryBuilder('s')
+            ->orderBy('s.name', 'ASC')
+            ->getQuery();
+
+        $all = $query->getResult();
+
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all );
+    }
     /*
     public function findByExampleField($value)
     {

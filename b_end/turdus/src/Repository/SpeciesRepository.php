@@ -6,6 +6,7 @@ use App\Entity\Species;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,11 +46,36 @@ class SpeciesRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * PAGINATOR
+     */
+    public function paginate($dql, $page = 1, $limit = 10)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
+    }
+
     // /**
     //  * @return Species[] Returns an array of Species objects
     //  */
     
+    public function findAllPaginate($currentPage = 1, $limit = 10)
+    {
+        $query = $this->createQueryBuilder('s')
+            ->orderBy('s.name', 'ASC')
+            ->getQuery();
 
+        $all = $query->getResult();
+
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all );
+    }
     /*
     public function findOneBySomeField($value): ?Species
     {

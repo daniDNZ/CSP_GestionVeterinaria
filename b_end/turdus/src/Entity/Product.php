@@ -55,7 +55,7 @@ class Product
     private $lot;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="string", length=128, nullable=true)
      */
     private $expiration;
 
@@ -179,12 +179,12 @@ class Product
         return $this;
     }
 
-    public function getExpiration(): ?\DateTime
+    public function getExpiration(): ?string
     {
         return $this->expiration;
     }
 
-    public function setExpiration(?\DateTime $expiration): self
+    public function setExpiration(?string $expiration): self
     {
         $this->expiration = $expiration;
 

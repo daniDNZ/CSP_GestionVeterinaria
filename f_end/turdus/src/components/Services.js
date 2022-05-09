@@ -65,7 +65,7 @@ export function ViewService() {
     }, [])
     return (
         <>
-            <Form selector='service' action='update' />
+            <Form selector='service' action='update' id={id} />
         </>
     )
 }

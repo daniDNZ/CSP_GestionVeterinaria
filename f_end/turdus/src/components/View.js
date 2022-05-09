@@ -2,20 +2,41 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../css/visits.css';
 import { Form, handleTime } from "./Form";
-import { findOneCustomer, findCustomerPatients } from "./api/ApiCustomers";
-import { findOnePatient, findPatientVisits } from "./api/ApiPatients";
-import { findOneVisit, findTime, addUpdateVisit, closeVisit, updateCart } from "./api/ApiVisits";
+import { findOneCustomer, findCustomerPatients, removeCustomer } from "./api/ApiCustomers";
+import { findOnePatient, findPatientVisits, removePatient } from "./api/ApiPatients";
+import { findOneVisit, findTime, addUpdateVisit, closeVisit, updateCart, removeVisit } from "./api/ApiVisits";
 import { findBill } from "./api/ApiBills";
-import { getOneUser } from "./api/ApiUser";
+import { getOneUser, removeUser } from "./api/ApiUser";
 import { AddProducts, NewPatient, NewRace, NewSpecies, NewVisit } from "./Modals";
 import global from "../global";
+import { getOneSpecies, removeSpecies } from "./api/ApiSpecies";
+import { getOneRace, removeRace } from "./api/ApiRaces";
+import { getOnePostalCode, removePostalCode } from "./api/ApiPostalCode";
 
 export function User() {
     const { id } = useParams();
 
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removeUser(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar usuario';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
     useEffect(() => {
 
         getOneUser(handleUser, id);
+        setBtn();
 
     }, [])
 
@@ -51,12 +72,29 @@ export function User() {
 function Customer() {
     const { id } = useParams();
 
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removeCustomer(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar cliente';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
     useEffect(() => {
 
         findOneCustomer(handleCustomer, id);
         addButtons();
         findCustomerPatients(addPatients, id)
-
+        setBtn();
     }, [])
 
     const handleCustomer = (data) => {
@@ -156,11 +194,29 @@ function Customer() {
 function Patient() {
     const { id } = useParams();
 
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removePatient(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar Paciente';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
     useEffect(() => {
 
         findOnePatient(handlePatient, id);
         findPatientVisits(addVisits, id)
         addButtons();
+        setBtn();
 
     }, [])
 
@@ -264,10 +320,28 @@ function Visit() {
     let cart = []; // Array del carrito.
     let currency = '€';
 
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removeVisit(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar visita';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
     useEffect(() => {
 
         findOneVisit(handleVisit, id);
         addButtons();
+        setBtn();
 
     }, [])
 
@@ -607,6 +681,139 @@ function Visit() {
             <Form selector='visit' action='update' id={id} />
             <AddProducts callback={addProduct}/>
          
+        </>
+    )
+}
+
+export function Species() {
+    const { id } = useParams();
+
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removeSpecies(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar especie';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
+    useEffect(() => {
+
+        getOneSpecies(handleSpecies, id);
+        setBtn();
+
+    }, [])
+
+    const handleSpecies = (data) => {
+
+        // Title
+        document.getElementById("speciesViewPage").textContent = `${data.name}`;
+
+        document.getElementById("speciesName").value = data.name;
+        document.getElementById("speciesSciName").value = data.sciName;
+
+    }
+
+    return (
+        <>
+            <Form selector='species' action='update' id={id} />
+        </>
+    )
+}
+
+export function Race() {
+    const { id } = useParams();
+
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removeRace(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar raza';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
+    useEffect(() => {
+
+        getOneRace(handleRace, id);
+        setBtn();
+    }, [])
+
+    const handleRace = (data) => {
+
+        // Title
+        document.getElementById("raceViewPage").textContent = `${data.name}`;
+
+        document.getElementById("raceName").value = data.name;
+        document.getElementById("raceSpecies").value = data.species;
+
+    }
+
+    return (
+        <>
+            <Form selector='race' action='update' id={id} />
+        </>
+    )
+}
+
+export function PostalCode() {
+    const { id } = useParams();
+
+    const deleteItem = (e) => {
+        e.preventDefault();
+        removePostalCode(id);
+    
+    }
+
+    const setBtn = () => {
+
+        const form = document.querySelector('form#auto-form');
+        const btnDelete = document.createElement('button');
+        btnDelete.classList.add('btn', 'btn-secondary', 'ms-2');
+        btnDelete.textContent = 'Borrar CP';
+        btnDelete.addEventListener('click', deleteItem);
+        form.append(btnDelete);
+
+    }
+
+    useEffect(() => {
+
+        getOnePostalCode(handlePostalCode, id);
+        setBtn();
+
+    }, [])
+
+    const handlePostalCode = (data) => {
+
+        // Title
+        document.getElementById("postalCodeViewPage").textContent = `C.P. ${data.id}`;
+
+        document.getElementById("postalCodePc").value = data.id;
+        document.getElementById("postalCodeProvince").value = data.province;
+        document.getElementById("postalCodeCity").value = data.city;
+        document.getElementById("postalCodeCountry").value = data.country;
+
+    }
+
+    return (
+        <>
+            <Form selector='pc' action='update' id={id} />
         </>
     )
 }

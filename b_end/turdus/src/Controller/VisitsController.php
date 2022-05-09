@@ -246,6 +246,21 @@ class VisitsController extends AbstractController
     }
 
     /**
+     * @Route("/api/visits/{id}/remove", name="app_visits_remove", methods="GET")
+     */
+    public function removeVisit(int $id, VisitRepository $visitRepository, BillRepository $billRepository, EntityManagerInterface $em): Response
+    {
+        $visit = $visitRepository->find($id);
+        $bill = $billRepository->findOneBy(array('visit' => $visit));
+        $em->remove($bill);
+
+        $em->remove($visit);
+        $em->flush();
+
+        return $this->json($visit);
+    }
+
+    /**
      * @Route("/api/visits/{id}/cart", name="app_visits_cart", methods="POST" )
      */
     public function updateCart(VisitRepository $visitRepository, UserRepository $userRepository, int $id, Request $request, EntityManagerInterface $entityManager): Response

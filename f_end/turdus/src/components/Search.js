@@ -4,8 +4,7 @@ import Table from "./Table";
 
 function Search() {
 
-    const [selector, setSelector] = useState('customers');
-
+    const [selector, setSelector] = useState('customers');;
 
     const changeForm = (e) => {
         e.preventDefault();
@@ -20,26 +19,16 @@ function Search() {
                     <option value="customers">Clientes</option>
                     <option value="patients">Pacientes</option>
                     <option value="visits">Visitas</option>
+                    <option value="species">Species</option>
+                    <option value="races">Razas</option>
+                    <option value="postalCodes">Códigos Postales</option>
                 </select>
-                <button className="btn btn-outline-secondary py-0 px-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
-                    <i className="bi bi-filter-left fs-1 text-secondary"></i>
+                <button className="btn btn-outline-secondary py-0 px-2" id="filterOffcanvasBtn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvas">
+                    <i className="bi bi-filter-left fs-3 text-secondary"></i>
                 </button>
             </div>
             <hr />
             <Table selector={selector} />
-            {
-                () => {
-                    if (selector == 'patients') {
-                       return (
-                        <>
-                            <NewSpecies />
-                            <NewRace />
-                        </>
-                       )
-                       
-                    }
-                }
-            }
         </>
     )
 }

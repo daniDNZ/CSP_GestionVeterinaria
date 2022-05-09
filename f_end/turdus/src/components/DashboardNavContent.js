@@ -72,6 +72,12 @@ function DashboardNavContent() {
                             </NavLink>
                         </li>
                         <li className="mx-0 nav-item">
+                            <NavLink to="/turdus/suppliers" className="nav-link px-2">
+                                <i className="bi bi-shop fs-5 me-2"></i>
+                                <span className="d-inline">Proveedores</span>
+                            </NavLink>
+                        </li>
+                        <li className="mx-0 nav-item">
                             <NavLink to="/turdus/services" className="nav-link px-2">
                                 <i className="bi bi-heart-pulse fs-5 me-2"></i>
                                 <span className="d-inline">Servicios</span>

@@ -6,6 +6,7 @@ use App\Entity\PostalCode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,9 +46,38 @@ class PostalCodeRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * PAGINATOR
+     */
+    public function paginate($dql, $page = 1, $limit = 10)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
+    }
+
     // /**
     //  * @return PostalCode[] Returns an array of PostalCode objects
     //  */
+    // /**
+    //  * @return Race[] Returns an array of Race objects
+    //  */
+    public function findAllPaginate($currentPage = 1, $limit = 10)
+    {
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.id', 'ASC')
+            ->getQuery();
+
+        $all = $query->getResult();
+
+        $paginator = $this->paginate($query, $currentPage, $limit);
+
+        return array('paginator' => $paginator, 'query' => $query, 'all' => $all );
+    }
     /*
     public function findByExampleField($value)
     {

@@ -411,7 +411,7 @@ function PatientForm({ action, id = '' }) {
                 {modal}
             </form>
 
-            
+
         </>
     )
 }
@@ -934,7 +934,7 @@ export function SupplierForm({ action, id = '' }) {
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="supplierCategory" className="form-label" >Categoría:</label>
-                        <input type="text" id="supplierCategory" name="category" className="form-control" required />
+                        <input type="text" id="supplierCategory" name="category" className="form-control" />
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="supplierEmail" className="form-label" >Email:</label>
@@ -947,18 +947,20 @@ export function SupplierForm({ action, id = '' }) {
                     <div className="mb-3 col-auto">
                         <label htmlFor="supplierPc" className="form-label" >C.P.:</label>
                         <div className="input-group" >
-                            <input type="search" list="postalCode-datalist" id="supplierPc" name="postalCode" className="form-control" required />
-                            <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-target="#newPostalCodeModal"  data-bs-toggle="modal" data-bs-dismiss="modal" onClick={handleModal}>Nueva</button>
+                            <input type="search" list="postalCode-datalist" id="supplierPc" name="postalCode" className="form-control"  />
+                            <button className="btn btn-outline-secondary" type="button" id="btnPc" data-bs-target="#newPostalCodeModal" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={handleModal}>Nueva</button>
                         </div>
                         <datalist id="postalCode-datalist"></datalist>
                     </div>
                     <div className="mb-3 col-auto">
                         <label htmlFor="supplierAddress" className="form-label" >Dirección:</label>
-                        <input type="text" id="supplierAddress" name="address" className="form-control" required />
+                        <input type="text" id="supplierAddress" name="address" className="form-control"  />
                     </div>
-                    <div className="mb-3 col-auto">
-                        <label htmlFor="supplierInfo" className="form-label" >Info:</label>
-                        <input type="text" id="supplierInfo" name="info" className="form-control" required />
+                    <div className="row">
+                        <div className="mb-3">
+                            <label htmlFor="supplierInfo" className="form-label" >Info:</label>
+                            <textarea type="text" id="supplierInfo" name="info" className="form-control" rows="5"  />
+                        </div>
                     </div>
                 </div>
                 <button type="submit" className="btn btn-primary">Guardar</button>

@@ -15,7 +15,7 @@ function LandPage() {
                 <SubHeadlines />
                 <ContactForm />
             </main>
-            <footer className="footer-land-page mt-auto py-3 text-white-50 text-center">
+            <footer className="footer-land-page mt-auto py-3 text-white-50 text-center rounded-3">
                 <p className="my-0">
                     Cover template by &nbsp;
                     <a className="text-white" href="https://twitter.com/jodidoda">@jodidogato</a>

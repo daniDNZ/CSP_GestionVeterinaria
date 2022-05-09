@@ -36,7 +36,7 @@ class ProductsController extends AbstractController
         $product['species'] = $arrSpecies;
         $product['dose'] = $entity->getDose();
         $product['lot'] = $entity->getLot();
-        $product['expiration'] = $entity->getExpiration()->format('Y-m-d');
+        $product['expiration'] = $entity->getExpiration();
         $product['supplier'] = $entity->getSupplier()->getCode();
         $product['stock'] = $entity->getStock();
         $product['price'] = $entity->getPrice();
@@ -62,7 +62,7 @@ class ProductsController extends AbstractController
         if(array_key_exists('supplierPicker', $data))       {$query['supplier'] = $data['supplierPicker'];} else {$query['supplier'] = '%';}
 
         
-        $entitiesFound = $productRepository->findByQuery($query);
+        $entitiesFound = $productRepository->findByQuery($query, $currentPage);
         $result = $entitiesFound['paginator'];
 
         $maxPages = ceil($entitiesFound['paginator']->count() / $limit);
@@ -86,7 +86,7 @@ class ProductsController extends AbstractController
                 $product['species'] = $arrSpecies;
                 $product['dose'] = $entity->getDose();
                 $product['lot'] = $entity->getLot();
-                $product['expiration'] = $entity->getExpiration()->format('d/m/Y');
+                $product['expiration'] = $entity->getExpiration();
                 $product['supplier'] = $entity->getSupplier()->getName();
                 $product['stock'] = $entity->getStock();
                 $product['price'] = $entity->getPrice();
@@ -144,8 +144,7 @@ class ProductsController extends AbstractController
         }
 
         // Fecha de caducidad
-        $dateExpiration = \DateTime::createFromFormat('Y-m-d', $expiration);
-        $product->setExpiration($dateExpiration);
+        $product->setExpiration($expiration);
 
         // Proveedor
         $supplierEntity = $supplierRepository->findOneBy(array('code' => $supplier));
@@ -196,8 +195,7 @@ class ProductsController extends AbstractController
         }
 
         // Fecha de caducidad
-        $dateExpiration = \DateTime::createFromFormat('Y-m-d', $expiration);
-        $product->setExpiration($dateExpiration);
+        $product->setExpiration($expiration);
 
         // Proveedor
         $supplierEntity = $supplierRepository->findOneBy(array('code' => $supplier));

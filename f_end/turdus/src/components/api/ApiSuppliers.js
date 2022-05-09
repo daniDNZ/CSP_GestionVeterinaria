@@ -19,6 +19,44 @@ export const getSuppliers = (callback) => {
 
 }
 
+export const getSuppliersPaginate = (callback, currentPage = 1) => {
+
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/suppliers/paginate/${currentPage}`, config);
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => callback(data))
+        .catch(e => handleAuth(e));
+
+}
+
+export const findSupplier = (callback, id) => {
+
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        }
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/suppliers/${id}`, config);
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => callback(data))
+        .catch(e => handleAuth(e));
+
+}
+
 export const addUpdateSupplier = (fData, action, id = '') => {
 
     fData.append('id', id);
@@ -42,6 +80,25 @@ export const addUpdateSupplier = (fData, action, id = '') => {
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => { window.location.reload(); })
+        .catch(e => console.log(e))
+
+}
+
+export const removeSupplier = (id) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+    }
+    
+    const request = new Request(`http://192.168.1.81:8888/api/suppliers/${id}/remove`, config);
+    
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => { window.location.assign('/turdus/suppliers'); })
         .catch(e => console.log(e))
 
 }

@@ -212,3 +212,22 @@ export const updateCart = (id, cart) => {
         .catch(e => handleAuth(e));
 
 }
+
+export const removeVisit = (id) => {
+
+    const config = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+    }
+    
+    const request = new Request(`http://192.168.1.81:8888/api/visits/${id}/remove`, config);
+    
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => { window.location.assign('/turdus/search'); })
+        .catch(e => console.log(e))
+
+}

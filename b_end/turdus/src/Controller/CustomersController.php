@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CustomerRepository;
+use App\Repository\PatientRepository;
 use App\Repository\PostalCodeRepository;
 use App\Repository\BillRepository;
 use App\Entity\Customer;
@@ -233,5 +234,23 @@ class CustomersController extends AbstractController
 
         return $this->json($data);
         
+    }
+
+    /**
+     * @Route("/api/customers/{id}/remove", name="app_customers_remove", methods="GET")
+     */
+    public function removeCustomer(int $id, CustomerRepository $customerRepository, PatientRepository $patientRepository, EntityManagerInterface $em): Response
+    {
+        $customer = $customerRepository->find($id);
+        $patients = $patientRepository->findBy(array('responsible' => $customer));
+        foreach ($patients as $patient) 
+        {
+            $em->remove($patient);
+        }
+
+        $em->remove($customer);
+        $em->flush();
+
+        return $this->json($customer);
     }
 }

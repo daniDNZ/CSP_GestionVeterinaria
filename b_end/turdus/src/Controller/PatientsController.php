@@ -249,5 +249,18 @@ class PatientsController extends AbstractController
         
     }
 
+    /**
+     * @Route("/api/patients/{id}/remove", name="app_patients_remove", methods="GET")
+     */
+    public function removePatient(int $id, PatientRepository $patientRepository, EntityManagerInterface $em): Response
+    {
+        $patient = $patientRepository->find($id);
+
+        $em->remove($patient);
+        $em->flush();
+
+        return $this->json($patient);
+    }
+
 
 }

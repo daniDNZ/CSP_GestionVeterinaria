@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Form } from "./Form";
 import { useEffect } from "react";
 import { findProduct, removeProduct } from "./api/ApiProducts";
+import { NewSpecies, NewSupplier } from "./Modals";
 
 export default function Products() {
     const navigate = useNavigate();
@@ -76,7 +77,9 @@ export function ViewProduct() {
     }, [])
     return (
         <>
-            <Form selector='product' action='update' />
+            <Form selector='product' action='update' id={id}/>
+            <NewSupplier />
+            <NewSpecies />
         </>
     )
 }

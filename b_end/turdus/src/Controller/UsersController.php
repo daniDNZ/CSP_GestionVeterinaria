@@ -283,6 +283,19 @@ class UsersController extends AbstractController
     }
 
     /**
+     * @Route("/api/users/{id}/remove", name="app_users_remove", methods="GET")
+     */
+    public function removeUser(int $id, UserRepository $userRepository, EntityManagerInterface $em): Response
+    {
+        $user = $userRepository->find($id);
+
+        $em->remove($user);
+        $em->flush();
+
+        return $this->json($user);
+    }
+
+    /**
      * @Route("/api/user/change_pswd", name="app_user_change_pswd", methods="POST")
      */
     public function changePswd( UserRepository $userRepository, Request $request, EntityManagerInterface $em ): Response

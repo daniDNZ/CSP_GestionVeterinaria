@@ -8,6 +8,10 @@ import { getServices } from "./api/ApiServices";
 import { getDataDatalist } from "./Datalist";
 import { Pagination } from "./TablePagination";
 import global from "../global";
+import { getPaginateSpecies, getSpecies } from "./api/ApiSpecies";
+import { getPaginateRaces } from "./api/ApiRaces";
+import { getPaginatePostalCodes } from "./api/ApiPostalCode";
+import { getSuppliersPaginate } from "./api/ApiSuppliers";
 
 // Método con el que rellenamos las tablas
 const handleTable = (d, destiny) => {
@@ -820,6 +824,215 @@ function VisitsTable() {
     )
 }
 
+export function SpeciesTable() {
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'species');                        // Rellena la tabla
+        Pagination(d, getPaginateSpecies, handleData);           // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+        
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getPaginateSpecies(handleData);
+
+        const filterBtn = document.querySelector('#filterOffcanvasBtn'); // Deshabilitamos el botón de filter
+        filterBtn.setAttribute('disabled', true);
+
+        return (() => {
+            filterBtn.removeAttribute('disabled');
+        })
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Nombre Científico</th>
+                            <th scope="col">Vista</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+                </ul>
+            </nav>
+        </>
+    )
+}
+
+export function RacesTable() {
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'races');                        // Rellena la tabla
+        Pagination(d, getPaginateRaces, handleData);           // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+        
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getPaginateRaces(handleData);
+
+        const filterBtn = document.querySelector('#filterOffcanvasBtn'); // Deshabilitamos el botón de filter
+        filterBtn.setAttribute('disabled', true);
+
+        return (() => {
+            filterBtn.removeAttribute('disabled');
+        })
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Especie</th>
+                            <th scope="col">Vista</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+                </ul>
+            </nav>
+        </>
+    )
+}
+
+export function PostalCodesTable() {
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'postal_codes');                        // Rellena la tabla
+        Pagination(d, getPaginatePostalCodes, handleData);           // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+        
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getPaginatePostalCodes(handleData);
+
+        const filterBtn = document.querySelector('#filterOffcanvasBtn'); // Deshabilitamos el botón de filter
+        filterBtn.setAttribute('disabled', true);
+
+        return (() => {
+            filterBtn.removeAttribute('disabled');
+        })
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Código Postal</th>
+                            <th scope="col">Ciudad</th>
+                            <th scope="col">Provincia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+                </ul>
+            </nav>
+        </>
+    )
+}
+
+export function SuppliersTable() {
+
+    // Método que maneja los datos de la petición
+    const handleData = (d) => {
+
+        handleTable(d, 'suppliers');                        // Rellena la tabla
+        Pagination(d, getSuppliersPaginate, handleData);   // Crea la paginación y añade los eventos a esta, por eso pasamos los métodos y el filtro.
+
+    }
+
+    // Hacemos la petición al servidor, pasándole el callback.
+    useEffect(() => {
+        getSuppliersPaginate(handleData);
+
+    }, []);
+
+    return (
+        <>
+            
+            <div className="offcanvas offcanvas-end pt-10" data-bs-scroll="false" data-bs-backdrop="true" tabIndex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
+                <div className="offcanvas-header">
+                    <h5 id="offcanvasLabel">Filtrar</h5>
+                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div className="offcanvas-body">
+                </div>
+            </div>
+            <div className="d-flex flex-row table-responsive">
+                <table className="table table-striped table-hover" id="auto-table">
+                    <thead id="auto-table-thead">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Ref.</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auto-table-tbody" />
+                </table>
+            </div>
+            <nav aria-label="Table pagination">
+                <ul className="pagination" id="pagination">
+                </ul>
+            </nav>
+        </>
+    )
+}
 
 function Table({ selector }) {
 
@@ -839,7 +1052,19 @@ function Table({ selector }) {
             table = <ProductsTable />;
             break;
         case 'services':
-        table = <ServicesTable />;
+            table = <ServicesTable />;
+            break;
+        case 'species':
+            table = <SpeciesTable />;
+            break;
+        case 'races':
+            table = <RacesTable />;
+            break;
+        case 'postalCodes':
+            table = <PostalCodesTable />;
+            break;
+        case 'suppliers':
+            table = <SuppliersTable />;
             break;
         default:
             table = <VisitsTable />;

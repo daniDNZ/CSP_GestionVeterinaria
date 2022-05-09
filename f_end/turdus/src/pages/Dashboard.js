@@ -1,11 +1,11 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 import DashboardNavigation from '../components/DashboardNavigation';
 import DashboardSidebar from '../components/DashboardSidebar';
 import Home from '../components/Home';
 import Orders from '../components/Orders';
 import Schedule from '../components/Schedule';
-import { Customer, Patient, User, Visit } from '../components/View';
+import { Customer, Patient, PostalCode, Race, Species, User, Visit } from '../components/View';
 import Registrations from '../components/Registrations';
 import Search from '../components/Search';
 import WaitingRoom from '../components/WaitingRoom';
@@ -16,8 +16,7 @@ import AdminSettings from '../components/user/AdminSettings';
 import { Form } from '../components/Form';
 import Products, { NewProducts, ViewProduct } from '../components/Products';
 import Services, { NewServices, ViewService } from '../components/Services';
-import { UserContext } from '../context/context';
-import { useContext, useEffect } from 'react';
+import Suppliers, { NewSuppliers, ViewSupplier } from '../components/Suppliers';
 
 function Dashboard() {
   document.body.removeAttribute('data-bs-spy');
@@ -58,6 +57,12 @@ function Dashboard() {
                 <Route path="services" element={<Services />} />
                 <Route path="services/new" element={<NewServices />} />
                 <Route path="services/:id" element={<ViewService />} />
+                <Route path="suppliers" element={<Suppliers />} />
+                <Route path="suppliers/new" element={<NewSuppliers />} />
+                <Route path="suppliers/:id" element={<ViewSupplier />} />
+                <Route path="species/:id" element={<Species />} />
+                <Route path="races/:id" element={<Race />} />
+                <Route path="postal_codes/:id" element={<PostalCode />} />
               </Routes>
             </div>
           </main>
