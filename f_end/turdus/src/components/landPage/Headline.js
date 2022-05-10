@@ -2,22 +2,22 @@ function Headline() {
 
     return (
         <>
-            <div id="home" className="headline display-relative overflow-hidden py-3 p-md-5">
-                <div className="d-md-flex flex-md-equal w-100 my-3 ps-md-3">
-                    <div className="me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-md-start text-white overflow-hidden flex-fill flex-grow-1">
-                        <p>CLÍNICA VETERINARIA CON SERVICIO 24H LOS 365 DÍAS DEL AÑO</p>
-                        <h1>Clínica Veterinaria TuClínica</h1>
-                        <h1>Guadalajara</h1>
+            <div id="home" className="headline display-relative overflow-hidden p-5">
+                <div className="d-md-flex flex-md-equal w-100 my-3">
+                    <div className="text-center text-md-start text-primary overflow-hidden flex-fill flex-grow-1">
+                        {/* <p className="text-dark">CLÍNICA VETERINARIA CON SERVICIO 24H LOS 365 DÍAS DEL AÑO</p> */}
+                        <img src="/img/marabu-orange.png" className="w-100" style={{maxWidth: "964px"}}/>
+                        <h3 className="display-6 fw-lighter my-2">Clínica Veterinaria Guadalajara</h3>
                         {/* <p className="lead">
                                 Profesionales con amplia experiencia en las distintas
                                 especialidades para asegurar la salud de los peludos.
                             </p> */}
-                        <p className="lead">
-                            <a role="button" className="btn btn-lg btn-outline-primary fw-bold border-0" href="#contact">¿Dónde estamos?</a>
+                        <p className="m-0">
+                            <a role="button" className="btn btn-lg btn-outline-primary" href="#contact">Ven a vernos</a>
                         </p>
-                        <p className="lead">
-                            <a role="button" className="btn btn-lg btn-outline-primary fw-bold border-0" href="#contact">Contacto</a>
-                        </p>
+                        {/* <p className="m-0">
+                            <a role="button" className="btn btn-lg btn-outline-primary bg-transparent p-0 border-0" href="#contact">Contacto</a>
+                        </p> */}
                     </div>
                     <div className="d-float headline-image">
                             {/* <img src="/img/headline2.jpg" className="img-fluid"/> */}

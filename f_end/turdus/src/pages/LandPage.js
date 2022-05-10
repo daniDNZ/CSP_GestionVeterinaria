@@ -1,6 +1,6 @@
-import NavLandPage from "../components/NavLandPage";
+import NavLandPage from "../components/landPage/NavLandPage";
 import ContactForm from "../components/ContactForm";
-import SubHeadlines from "../components/SubHeadlines";
+import SubHeadlines from "../components/landPage/SubHeadlines";
 import Headline from "../components/landPage/Headline";
 
 function LandPage() {

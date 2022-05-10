@@ -1,4 +1,4 @@
-import Staff from "./Staff";
+import Staff from "../Staff";
 function SubHeadlines() {
     return (
         <>
