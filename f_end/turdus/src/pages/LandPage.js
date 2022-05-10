@@ -1,7 +1,7 @@
 import NavLandPage from "../components/NavLandPage";
 import ContactForm from "../components/ContactForm";
 import SubHeadlines from "../components/SubHeadlines";
-import Headline from "../components/Headline";
+import Headline from "../components/landPage/Headline";
 
 function LandPage() {
     document.body.classList.add("text-sm-center", "text-md-start", "d-flex", "h-100", "text-black", "bg-light");
