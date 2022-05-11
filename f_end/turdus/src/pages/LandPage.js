@@ -1,7 +1,8 @@
 import NavLandPage from "../components/landPage/NavLandPage";
-import ContactForm from "../components/ContactForm";
+import ContactForm from "../components/landPage/ContactForm";
 import SubHeadlines from "../components/landPage/SubHeadlines";
 import Headline from "../components/landPage/Headline";
+import ContactInfo from "../components/landPage/ContactInfo";
 
 function LandPage() {
     document.body.classList.add("text-sm-center", "text-md-start", "d-flex", "h-100", "text-black", "bg-light");
@@ -13,16 +14,18 @@ function LandPage() {
             <main className="d-flex flex-column">
                 <Headline />
                 <SubHeadlines />
-                <ContactForm />
+
             </main>
-            <footer className="footer-land-page mt-auto py-3 text-white-50 text-center rounded-3">
-                <p className="my-0">
-                    Cover template by &nbsp;
+            <footer className="footer-land-page d-flex flex-column mt-auto py-3 text-white-50 text-center">
+                <ContactForm />
+                <ContactInfo />
+                <p className="mt-3 mb-0">
+                    Website by &nbsp;
                     <a className="text-white" href="https://twitter.com/jodidoda">@jodidogato</a>
                     .
                 </p>
             </footer>
-                       
+
         </>
     );
 }

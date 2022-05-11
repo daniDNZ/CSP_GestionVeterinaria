@@ -47,6 +47,9 @@ function NavLandPage() {
                   <a className="nav-link" href="#clinica">La clínica</a>
                 </li>
                 <li className="nav-item">
+                  <a className="nav-link" href="#staff">Staff</a>
+                </li>
+                <li className="nav-item">
                   <a className="nav-link" href="#contact">Contacto</a>
                 </li>
                 <li className="nav-item">
