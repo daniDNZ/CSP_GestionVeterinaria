@@ -292,7 +292,9 @@ class UsersController extends AbstractController
         $em->remove($user);
         $em->flush();
 
-        return $this->json($user);
+        return $this->json([
+            'message' => 'Eliminado con éxito!'
+        ]);
     }
 
     /**
