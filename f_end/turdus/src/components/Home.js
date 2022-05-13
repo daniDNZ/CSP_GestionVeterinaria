@@ -6,6 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import Cards from "./Cards";
 import FastAccessBtns from "./FastAccessBtns";
 import { UserContext } from "../context/context";
+import Messages from "./messages";
 
 function Home() {
 
@@ -33,6 +34,7 @@ function Home() {
                     <div className="d-flex flex-row flex-wrap justify-content-start">
                         <div className="col-auto mx-auto">
                             <Cards/>
+                            <Messages />
                         </div>
                         <div className="col">
                             <div className="d-flex flex-row flex-wrap justify-content-center">

@@ -2,19 +2,18 @@ function ContactForm() {
 
     const handleForm = (e) => {
         e.preventDefault();
-        let fData = new FormData(e.target);
+
+        const fData = new FormData(e.target);
+        const date = new Date();
+        fData.append('date', date.toISOString().split('T', 1))
 
         const config = {
             method: 'POST',
             mode: 'cors',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            },
             body: fData
         }
 
-        const request = new Request("http://192.168.1.81:8888/api/contact/new", config);
+        const request = new Request("http://192.168.1.81:8888/api/contact_form/add", config);
     
         fetch(request)
             .then(response => response.json())
@@ -35,11 +34,11 @@ function ContactForm() {
                     <div className="col-md-10 mx-auto col-lg-5">
                         <form className="p-4 p-md-5 border rounded-3" onSubmit={handleForm}>
                             <div className="form-floating mb-3">
-                                <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" />
+                                <input type="email" className="form-control" id="floatingInput" name="email" placeholder="name@example.com" />
                                     <label htmlFor="floatingInput" className="text-black">Email</label>
                             </div>
                             <div className="form-floating mb-3">
-                                <textarea className="form-control h-100" id="floatingText" placeholder="Mensaje"/>
+                                <textarea className="form-control h-100" id="floatingText" name="message" placeholder="Mensaje"/>
                                     <label htmlFor="floatingText" className="form-label text-black">Mensaje</label>
                             </div>
                             <button className="w-100 btn btn-lg btn-primary" type="submit">Enviar</button>
