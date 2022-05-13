@@ -283,6 +283,57 @@ class UsersController extends AbstractController
     }
 
     /**
+     * @Route("/api/user/{id}/update_profile", name="app_user_update_profile", methods="POST")
+     */
+    public function updateProfile( UserRepository $userRepository, int $id, Request $request, EntityManagerInterface $em ): Response
+    {   
+        $user = $userRepository->find($id);
+
+        $name       = $request->request->get('name');
+        $lastName   = $request->request->get('lastName');
+        $username   = $request->request->get('username');
+        $email      = $request->request->get('email');
+        $phone      = $request->request->get('phone');
+        $dni        = $request->request->get('dni');
+        $collegiate = $request->request->get('collegiate');
+        $photo      = $request->files->get('pic');
+        
+        
+        $user->setName($name);
+        $user->setLastName($lastName);
+        $user->setUsername($username);
+        $user->setEmail($email);
+        $user->setPhone($phone);
+        $user->setDni($dni);
+        $user->setCollegiateN($collegiate);
+        
+        $em->persist($user);
+        $em->flush();
+
+        if ($photo) {
+            $directory = $this->getParameter('pic_directory');
+
+            $oldPicUrl = $user->getPic();   // ELIMINAR LA FOTO ANTERIOR PRIMERO
+            $picName = explode('/', $oldPicUrl)[3];
+            unlink($directory.'/'.$picName);
+
+            $fileName = 'profile_' . $id . '.' . $photo->getClientOriginalExtension();
+            $photo->move($directory, $fileName);
+    
+            $urlPhoto = '/img/users/'.$fileName;
+            $user->setPic($urlPhoto);
+    
+            $em->persist($user);
+            $em->flush();
+        }
+        
+
+        $data['id'] = $user->getId();
+
+        return $this->json($data);
+    }
+
+    /**
      * @Route("/api/users/{id}/remove", name="app_users_remove", methods="GET")
      */
     public function removeUser(int $id, UserRepository $userRepository, EntityManagerInterface $em): Response

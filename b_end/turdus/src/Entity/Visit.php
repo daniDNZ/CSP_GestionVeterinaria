@@ -47,11 +47,6 @@ class Visit
     private $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Diagnosis::class)
-     */
-    private $diagnosis;
-
-    /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $treatment;
@@ -67,14 +62,9 @@ class Visit
     private $done;
 
     /**
-     * @ORM\OneToMany(targetEntity=Document::class, mappedBy="visit")
-     */
-    private $documents;
-
-    /**
      * @ORM\Column(type="integer")
      */
-    private $Duration;
+    private $duration;
 
     /**
      * @ORM\OneToMany(targetEntity=Bill::class, mappedBy="visit")
@@ -88,8 +78,6 @@ class Visit
 
     public function __construct()
     {
-        $this->diagnosis = new ArrayCollection();
-        $this->documents = new ArrayCollection();
         $this->bills = new ArrayCollection();
     }
 
@@ -158,30 +146,6 @@ class Visit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Diagnosis>
-     */
-    public function getDiagnosis(): Collection
-    {
-        return $this->diagnosis;
-    }
-
-    public function addDiagnosi(Diagnosis $diagnosi): self
-    {
-        if (!$this->diagnosis->contains($diagnosi)) {
-            $this->diagnosis[] = $diagnosi;
-        }
-
-        return $this;
-    }
-
-    public function removeDiagnosi(Diagnosis $diagnosi): self
-    {
-        $this->diagnosis->removeElement($diagnosi);
-
-        return $this;
-    }
-
     public function getTreatment(): ?string
     {
         return $this->treatment;
@@ -218,44 +182,14 @@ class Visit
         return $this;
     }
 
-    /**
-     * @return Collection<int, Document>
-     */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    public function addDocument(Document $document): self
-    {
-        if (!$this->documents->contains($document)) {
-            $this->documents[] = $document;
-            $document->setVisit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDocument(Document $document): self
-    {
-        if ($this->documents->removeElement($document)) {
-            // set the owning side to null (unless already changed)
-            if ($document->getVisit() === $this) {
-                $document->setVisit(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getDuration(): ?int
     {
-        return $this->Duration;
+        return $this->duration;
     }
 
-    public function setDuration(int $Duration): self
+    public function setDuration(int $duration): self
     {
-        $this->Duration = $Duration;
+        $this->duration = $duration;
 
         return $this;
     }
