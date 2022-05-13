@@ -175,8 +175,23 @@ class VisitsController extends AbstractController
     public function patientVisits(VisitRepository $visitRepository, int $id): Response
     {
         $entities = $visitRepository->findBy(array('patient' => $id), array('date_time' => 'DESC'));
+        $visits = [];
 
-        $visits = $this->maker($entities);
+        foreach ($entities as $visitEntity) 
+        {
+            $visit = [];
+            $visit['id'] = $visitEntity->getId();
+            $visit['date_time'] = $visitEntity->getDateTime()->format('d/m/Y H:i');
+            $visit['category'] = $visitEntity->getCategory();
+            $visit['vet'] = $visitEntity->getUser()->getName();
+            $visit['customer'] = $visitEntity->getPatient()->getResponsible()->getName();
+            $visit['patient'] = $visitEntity->getPatient()->getName();
+            $visit['species'] = $visitEntity->getPatient()->getSpecies()->getName();
+            $visit['completed'] = $visitEntity->getDone();
+            $visit['description'] = $visitEntity->getDescription();
+
+            $visits[] = $visit;
+        }
             
         return $this->json($visits);
     }
@@ -252,7 +267,10 @@ class VisitsController extends AbstractController
     {
         $visit = $visitRepository->find($id);
         $bill = $billRepository->findOneBy(array('visit' => $visit));
-        $em->remove($bill);
+        if ($bill) 
+        {
+            $em->remove($bill);
+        }
 
         $em->remove($visit);
         $em->flush();
@@ -331,9 +349,9 @@ class VisitsController extends AbstractController
     {
         $visits = [];
         $data = $request->toArray();
-        // Recogermos el usuario
-        $userEntities = $userRepository->findBy(array('username' => $data['username']));
-        $query['user'] = $userEntities[0]->getUsername();
+        // Recogemos el usuario
+        $user = $userRepository->findOneBy(array('username' => $data['username']));
+        $query['user'] = $user->getId();
 
         // Pasamos el String de días de la semana a un Array
         $days = explode (',', $data['week']);

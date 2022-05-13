@@ -109,7 +109,7 @@ class VisitRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('v')
         ->innerJoin('v.user', 'u')
-        ->andWhere('u.username = :usr')
+        ->andWhere('u.id = :usr')
         ->andWhere('v.date_time LIKE :val')
         ->setParameter('usr', $q['user'])
         ->setParameter('val', $q['date'].'%')

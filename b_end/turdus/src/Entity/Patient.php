@@ -70,21 +70,6 @@ class Patient
     private $visits;
 
     /**
-     * @ORM\OneToMany(targetEntity=Document::class, mappedBy="patient", orphanRemoval=true)
-     */
-    private $documents;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Reminder::class, mappedBy="patient", orphanRemoval=true)
-     */
-    private $reminders;
-
-    /**
-     * @ORM\OneToMany(targetEntity=AllergiesLog::class, mappedBy="patient", orphanRemoval=true)
-     */
-    private $AllergiesLogs;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $gender;
@@ -113,9 +98,6 @@ class Patient
     public function __construct()
     {
         $this->visits = new ArrayCollection();
-        $this->documents = new ArrayCollection();
-        $this->reminders = new ArrayCollection();
-        $this->AllergiesLogs = new ArrayCollection();
         $this->servicesLogs = new ArrayCollection();
         $this->productsLogs = new ArrayCollection();
     }
@@ -257,96 +239,6 @@ class Patient
             // set the owning side to null (unless already changed)
             if ($visit->getPatient() === $this) {
                 $visit->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Document>
-     */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    public function addDocument(Document $document): self
-    {
-        if (!$this->documents->contains($document)) {
-            $this->documents[] = $document;
-            $document->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDocument(Document $document): self
-    {
-        if ($this->documents->removeElement($document)) {
-            // set the owning side to null (unless already changed)
-            if ($document->getPatient() === $this) {
-                $document->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Reminder>
-     */
-    public function getReminders(): Collection
-    {
-        return $this->reminders;
-    }
-
-    public function addReminder(Reminder $reminder): self
-    {
-        if (!$this->reminders->contains($reminder)) {
-            $this->reminders[] = $reminder;
-            $reminder->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReminder(Reminder $reminder): self
-    {
-        if ($this->reminders->removeElement($reminder)) {
-            // set the owning side to null (unless already changed)
-            if ($reminder->getPatient() === $this) {
-                $reminder->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, AllergiesLog>
-     */
-    public function getAllergiesLogs(): Collection
-    {
-        return $this->AllergiesLogs;
-    }
-
-    public function addAllergiesLog(AllergiesLog $allergiesLog): self
-    {
-        if (!$this->AllergiesLogs->contains($allergiesLog)) {
-            $this->AllergiesLogs[] = $allergiesLog;
-            $allergiesLog->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAllergiesLog(AllergiesLog $allergiesLog): self
-    {
-        if ($this->AllergiesLog->removeElement($allergiesLog)) {
-            // set the owning side to null (unless already changed)
-            if ($allergiesLog->getPatient() === $this) {
-                $allergiesLog->setPatient(null);
             }
         }
 

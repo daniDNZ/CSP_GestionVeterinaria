@@ -60,11 +60,6 @@ class Supplier
     private $info;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $tax;
-
-    /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="supplier", orphanRemoval=true)
      */
     private $products;
@@ -171,18 +166,6 @@ class Supplier
     public function setInfo(?string $info): self
     {
         $this->info = $info;
-
-        return $this;
-    }
-
-    public function getTax(): ?int
-    {
-        return $this->tax;
-    }
-
-    public function setTax(?int $tax): self
-    {
-        $this->tax = $tax;
 
         return $this;
     }
