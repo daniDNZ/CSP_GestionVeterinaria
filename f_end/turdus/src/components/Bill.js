@@ -89,7 +89,6 @@ function Bill() {
         span_currency.textContent = global.currency;
 
         if (toPay.length > 0) {
-            console.log(toPay)
             toPay.forEach(p => {
                 total += parseFloat(p.price * p.q);
                 listSentences(p, ulToPay)

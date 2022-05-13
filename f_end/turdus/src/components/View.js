@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import '../css/visits.css';
+import { Tooltip } from "bootstrap";
 import { Form, handleTime } from "./Form";
 import { findOneCustomer, findCustomerPatients, removeCustomer } from "./api/ApiCustomers";
 import { findOnePatient, findPatientVisits, removePatient } from "./api/ApiPatients";
@@ -38,7 +38,7 @@ export function User() {
         getOneUser(handleUser, id);
         setBtn();
 
-    }, [])
+    })
 
     const handleUser = (data) => {
 
@@ -95,7 +95,7 @@ function Customer() {
         addButtons();
         findCustomerPatients(addPatients, id)
         setBtn();
-    }, [])
+    })
 
     const handleCustomer = (data) => {
 
@@ -167,8 +167,10 @@ function Customer() {
     }
 
     const handleModal = () => {
-        const sendButton = document.querySelector('.modal-body button[type=submit]');
+
+        const sendButton = document.querySelector('#newPatientModal .modal-body button[type=submit]');
         sendButton.classList.add('d-none');
+
     }
 
     return (
@@ -179,7 +181,7 @@ function Customer() {
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">
-                    <button className="btn btn-outline-primary w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" data-bs-dismiss="offcanvas" onClick={handleModal}>Nuevo Paciente</button>
+                    <button className="btn btn-outline-primary w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newPatientModal" onClick={handleModal}>Nuevo Paciente</button>
                 </div>
             </div>
             
@@ -187,6 +189,8 @@ function Customer() {
 
             {/* MODAL NUEVO PACIENTE */}
             <NewPatient />
+            <NewSpecies />
+            <NewRace />
         </>
     )
 }
@@ -218,7 +222,7 @@ function Patient() {
         addButtons();
         setBtn();
 
-    }, [])
+    })
 
     const handlePatient = (data) => {
 
@@ -255,13 +259,13 @@ function Patient() {
         pButton.setAttribute('data-bs-target', '#offcanvas');
         pButton.setAttribute('aria-controls', 'offcanvas');
         pButton.setAttribute('role', 'button');
-        pButton.classList.add('btn', 'btn-light', 'mx-1');
+        pButton.classList.add('btn', 'btn-outline-primary', 'mx-1');
         pButton.textContent = ' Visitas ';
 
         let custButton = document.createElement("a");
         custButton.setAttribute('id', 'viewCustomerButton');
         custButton.setAttribute('role', 'button');
-        custButton.classList.add('btn', 'btn-light', 'mx-1');
+        custButton.classList.add('btn', 'btn-outline-primary', 'mx-1');
         custButton.textContent = ' Responsable ';
 
         allBContainer.append(custButton);
@@ -279,15 +283,24 @@ function Patient() {
             const a = document.createElement('a');
             a.classList.add('list-group-item', 'list-group-item-action');
             a.setAttribute('href', `/turdus/visits/${p.id}`);
+            a.setAttribute('data-bs-toggle', 'tooltip');
+            a.setAttribute('data-bs-placement', 'left');
+            a.setAttribute('title', p.description)
             a.textContent = `${p.date_time} - ${p.category}`;
             div.append(a);
         });
 
         offCanvas.append(div);
+
+        // Bootstrap Tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new Tooltip(tooltipTriggerEl)
+        })
     }
 
     const handleModal = () => {
-        const sendButton = document.querySelector('.modal-body button[type=submit]');
+        const sendButton = document.querySelector('#newVisitModal .modal-body button[type=submit]');
         sendButton.classList.add('d-none');
     }
 
@@ -299,7 +312,7 @@ function Patient() {
                     <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body">                   
-                    <button className="btn btn-light w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newVisitModal" data-bs-dismiss="offcanvas" onClick={handleModal}>Nueva Visita</button>
+                    <button className="btn btn-outline-secondary w-100 mb-3" type="button" data-bs-toggle="modal" data-bs-target="#newVisitModal" onClick={handleModal}>Nueva Visita</button>
                 </div>
             </div>
             <Form selector='patient' action='update' id={id} />
@@ -343,7 +356,7 @@ function Visit() {
         addButtons();
         setBtn();
 
-    }, [])
+    })
 
     const opVisit = (e) => {
         e.preventDefault();
@@ -468,7 +481,7 @@ function Visit() {
 
         } else {
             const bClose = document.createElement('button');
-            bClose.classList.add('btn', 'btn-light', 'w-100','mb-3');
+            bClose.classList.add('btn', 'btn-outline-primary', 'w-100','mb-3');
             bClose.setAttribute('type', 'button');
             bClose.setAttribute('data-bs-toggle', 'modal');
             bClose.setAttribute('data-bs-target', '#newPatientModal');
@@ -477,7 +490,7 @@ function Visit() {
             bClose.addEventListener('click', clVisit);
 
             const bReceive = document.createElement('button');
-            bReceive.classList.add('btn', 'btn-light', 'w-100','mb-3');
+            bReceive.classList.add('btn', 'btn-outline-secondary', 'w-100','mb-3');
             bReceive.setAttribute('type', 'button');
             bReceive.setAttribute('data-bs-toggle', 'modal');
             bReceive.setAttribute('data-bs-target', '#newPatientModal');
@@ -506,7 +519,6 @@ function Visit() {
             cartChilds.forEach(child => {
                 if (child.id !== 'close-pay-button') {
 
-                    console.log(child)
                     child.classList.add('disabled');
                 }
             });
@@ -672,8 +684,8 @@ function Visit() {
                     <div id="cartTotal" className="text-end my-2 mx-2"></div>
                     <hr />
                     <div className="d-flex flex-row justify-content-between">
-                        <a href="#" id="close-pay-button" role="button" className="btn btn-outline-secondary">Cerrar y cobrar</a>
-                        <button type="button" className="btn btn-outline-primary" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>
+                        <button id="close-pay-button" type="button" className="btn btn-outline-secondary">Cerrar y cobrar</button>
+                        <button type="button" className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addProductsModal">Añadir +</button>
                     </div>
                 </div>
             </div>
@@ -710,7 +722,7 @@ export function Species() {
         getOneSpecies(handleSpecies, id);
         setBtn();
 
-    }, [])
+    })
 
     const handleSpecies = (data) => {
 
@@ -753,7 +765,7 @@ export function Race() {
 
         getOneRace(handleRace, id);
         setBtn();
-    }, [])
+    })
 
     const handleRace = (data) => {
 
@@ -797,7 +809,7 @@ export function PostalCode() {
         getOnePostalCode(handlePostalCode, id);
         setBtn();
 
-    }, [])
+    })
 
     const handlePostalCode = (data) => {
 

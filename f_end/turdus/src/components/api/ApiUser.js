@@ -106,7 +106,7 @@ export const addUpdateUser = (fData, action, id = '') => {
         body: fData
     }
     let request;
-    if (action == 'add') {
+    if (action === 'add') {
         request = new Request("http://192.168.1.81:8888/api/user/add", config);
     } else {
         request = new Request("http://192.168.1.81:8888/api/user/update", config);
@@ -116,6 +116,27 @@ export const addUpdateUser = (fData, action, id = '') => {
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => { window.location = `/turdus/users/${data.id}`; })
+        .catch(e => console.log(e))
+
+}
+
+export const updateProfile = (fData, id) => {
+
+    console.log(fData)
+
+    const config = {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: fData
+    }
+    const request = new Request(`http://192.168.1.81:8888/api/user/${id}/update_profile`, config);
+    
+    fetch(request)
+        .then(response => handleErrors(response))
+        .then(data => { window.location = `/turdus/users/${data.id}/profile`; })
         .catch(e => console.log(e))
 
 }

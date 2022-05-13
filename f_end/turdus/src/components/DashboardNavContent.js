@@ -5,7 +5,10 @@ import global from "../global";
 
 function DashboardNavContent() {
     const { user } = useContext(UserContext);
-    const src = global.apiUri+user.pic;
+    let src = '';
+    user.pic !== undefined
+    ? src = global.apiUri+user.pic
+    : src = '';
     const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
    
     const profileUri = `/turdus/users/${user.id}/profile`;

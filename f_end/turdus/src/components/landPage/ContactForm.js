@@ -7,6 +7,7 @@ function ContactForm() {
         const date = new Date();
         fData.append('date', date.toISOString().split('T', 1))
 
+        e.target.reset();   // Resetea el formulario
         const config = {
             method: 'POST',
             mode: 'cors',

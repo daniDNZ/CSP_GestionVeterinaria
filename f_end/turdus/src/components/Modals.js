@@ -15,7 +15,7 @@ function AlertModal() {
     return (
         <>
             {/* Button trigger modal  */}
-            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Añadir</button>
+            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warningModal">Guardar</button>
             {/* Modal  */}
             <div className="modal fade" id="warningModal" tabIndex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
@@ -28,8 +28,8 @@ function AlertModal() {
                             Esta acción no se puede deshacer
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Añadir</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" className="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -43,9 +43,10 @@ function NewPatient() {
         e.preventDefault();
 
         let fData = {};
-        const form = document.querySelector('.modal-body form');
+        const form = document.querySelector('#newPatientModal .modal-body form');
         for (const e of form) {
-            Object.defineProperty(fData, e.id,                   // Creamos una propiedad del objeto filter con el string a buscar.
+            console.log(e.value)
+            Object.defineProperty(fData, e.id,
                 {
                     value: { value: e.value },
                     enumerable: true,
@@ -90,14 +91,12 @@ function NewPatient() {
                             <Form selector='patient' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" className="btn btn-primary" onClick={handleData}>Añadir</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <NewSpecies/>
-            <NewRace/>
         </>
     )
 }
@@ -135,7 +134,7 @@ function NewVisit() {
                             <Form selector='visit' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" className="btn btn-primary" onClick={handleData}>Añadir</button>
                         </div>
                     </div>
@@ -168,7 +167,7 @@ export function NewSpecies() {
                             <Form selector='species' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button"  id="closeSpecies" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button"  id="closeSpecies" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" id="addSpecies" className="btn btn-primary" onClick={handleData} data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
@@ -201,7 +200,7 @@ export function NewRace() {
                             <Form selector='race' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" id="closeRace" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="closeRace" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" id="addRace" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
@@ -247,7 +246,7 @@ export function NewSupplier() {
                             <Form selector='supplier' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" className="btn btn-primary" onClick={handleData}  data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
@@ -260,7 +259,6 @@ export function NewSupplier() {
 
 export function NewPostalCode() {
     const handleData = () => {
-        // QUITAR MODAL SIN QUE SE QUITE EL OTRO EN SUPPLIER
 
         const form = document.querySelector('#newPostalCodeModal .modal-body form');
         const fData = new FormData(form);
@@ -281,7 +279,7 @@ export function NewPostalCode() {
                             <Form selector='pc' action='add' />
                         </div>
                         <div className="modal-footer">
-                            <button type="button" id="cancelPcModal" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" id="cancelPcModal" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="button" id="addPcModal" className="btn btn-primary" onClick={handleData} data-bs-dismiss="modal">Añadir</button>
                         </div>
                     </div>
@@ -308,9 +306,8 @@ function ViewVisitsList() {
                             <ul className="list-group list-group-horizontal-lg"></ul>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="#" target="_blank" role="button" id="view-visit" type="button" className="btn btn-light" >Ver Ficha</a>
-                            <a href="#" role="button" id="close-visit" type="button" className="btn btn-primary" >Cerrar Visita</a>
+                            <a href="#" target="_blank" role="button" id="view-visit" type="button" className="btn btn-outline-primary" >Ver Ficha</a>
+                            <a href="#" role="button" id="close-visit" type="button" className="btn btn-outline-secondary" >Cerrar Visita</a>
                         </div>
                     </div>
                 </div>
@@ -596,11 +593,8 @@ function AddProducts({ callback }) {
                         <div className="modal-footer">
                             <button
                                 type="button"
-                                className="btn btn-light"
+                                className="btn btn-secondary"
                                 data-bs-dismiss="modal"
-                                aria-controls="offcanvas"
-                                data-bs-target="#offcanvascart"
-                                data-bs-toggle="offcanvas"
                             >
                                 Cancelar
                             </button>
@@ -610,9 +604,6 @@ function AddProducts({ callback }) {
                                 id="add-products"
                                 type="button"
                                 className="btn btn-primary"
-                                aria-controls="offcanvas"
-                                data-bs-target="#offcanvascart"
-                                data-bs-toggle="offcanvas"
                                 data-bs-dismiss="modal"
                                 onClick={handleCartItems}
                             >

@@ -2,7 +2,6 @@ import { handleErrors, handleAuth } from "./ApiFetch";
 
 
 export const findBill = (callback, bData) => {
-    console.log(bData)
     const config = {
         method: 'POST',
         mode: 'cors',

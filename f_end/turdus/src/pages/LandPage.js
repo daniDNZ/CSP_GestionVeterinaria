@@ -21,7 +21,7 @@ function LandPage() {
                 <ContactInfo />
                 <p className="mt-3 mb-0">
                     Website by &nbsp;
-                    <a className="text-white text-decoration-none" href="https://github.com/daniDNZ">Dani Sanz</a>
+                    <a className="text-white text-decoration-none" href="https://www.linkedin.com/in/danielsanzelguer/">Dani Sanz</a>
                     .
                 </p>
             </footer>

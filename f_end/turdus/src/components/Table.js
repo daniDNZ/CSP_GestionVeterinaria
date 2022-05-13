@@ -1021,6 +1021,7 @@ export function SuppliersTable() {
                             <th scope="col">Ref.</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Teléfono</th>
+                            <th scope="col">Vista</th>
                         </tr>
                     </thead>
                     <tbody id="auto-table-tbody" />

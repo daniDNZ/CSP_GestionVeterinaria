@@ -4,7 +4,7 @@ import { UserContext } from "../context/context";
 
 function Cards() {
     const {user} = useContext(UserContext);
-    let date = new Date;
+    let date = new Date();
     date = date.toISOString().split('T')[0]
 
     let total = 0;
@@ -31,7 +31,7 @@ function Cards() {
         <>
             <div className="card m-2" style={{width: '19rem', height: '12rem'}}>
                 <div className="card-body d-flex flex-column">
-                    <span className="fw-lighter">Visitas de hoy</span>
+                    <span className="fw-lighter">Tus visitas de hoy</span>
                     <span id="num-visits" className="fs-1 fw-lighter">{total}</span>
                 </div>
                 <div className="card-footer bg-dark">

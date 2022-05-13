@@ -6,7 +6,7 @@ import { findRaces, getRaces, addUpdateRace } from "./api/ApiRaces";
 import { getSpecies, addUpdateSpecies } from "./api/ApiSpecies";
 import { getVets, addUpdateUser } from "./api/ApiUser";
 import OpenTime from "./OpenTime";
-import { AlertModal, NewPatient, NewPostalCode, NewRace, NewSpecies, NewSupplier } from "./Modals";
+import { AlertModal, NewPostalCode, NewRace, NewSpecies, NewSupplier } from "./Modals";
 import { addUpdateProduct } from "./api/ApiProducts";
 import { addUpdateSupplier, getSuppliers } from "./api/ApiSuppliers";
 import { addUpdateService } from "./api/ApiServices";
@@ -20,7 +20,7 @@ const addEvents = (callback) => {
 
 // Si el formulario es para update utilizamos un modal
 const setModal = (action) => {
-    if (action == 'update') return <AlertModal />
+    if (action === 'update') return <AlertModal />
     else return <button type="submit" className="btn btn-primary">Guardar</button>
 }
 
@@ -29,7 +29,7 @@ const handleDatalist = (id, name, identifier = '') => {
     const datalist = document.getElementById(id);
     const option = document.createElement('option');
 
-    identifier == '' ? option.value = name : option.value = `${name} - ${identifier}`;
+    identifier === '' ? option.value = name : option.value = `${name} - ${identifier}`;
 
     datalist.append(option);
 }
@@ -81,7 +81,7 @@ function UserForm({ action, id }) {
         addEvents(handleFData);
         if (action === 'add') document.getElementById("userViewPage").textContent = `Nuevo usuario`;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -191,7 +191,7 @@ function CustomerForm({ action, id }) {
     useEffect(() => {
         addEvents(handleFData);
         getPostalCodes(handlePostalCodes);
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -320,7 +320,7 @@ function PatientForm({ action, id = '' }) {
     useEffect(() => {
         addEvents(handleFData);
         fetchDatalists();
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -411,7 +411,6 @@ function PatientForm({ action, id = '' }) {
                 {modal}
             </form>
 
-
         </>
     )
 }
@@ -475,7 +474,6 @@ function VisitForm({ action, id = '' }) {
     }
 
     const handleCustomersFromPatients = (data) => {
-        console.log(data)
         if (data['allData'].length > 0) {
             data['allData'].forEach(e => {
                 const name = e.customer;
@@ -547,7 +545,7 @@ function VisitForm({ action, id = '' }) {
         addEvents(handleFData);
         fetchDatalists();
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -674,7 +672,7 @@ export function ProductForm({ action, id = '' }) {
         getSuppliers(handleSuppliers);
         if (action === 'add') document.getElementById("productViewPage").textContent = `Nuevo producto`;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -748,6 +746,8 @@ export function ProductForm({ action, id = '' }) {
                 </div>
                 <button type="submit" className="btn btn-primary">Guardar</button>
             </form>
+            <NewSupplier />
+            <NewSpecies />
         </>
     )
 }
@@ -766,7 +766,7 @@ export function ServiceForm({ action, id = '' }) {
         addEvents(handleFData);
         if (action === 'add') document.getElementById("serviceViewPage").textContent = `Nuevo servicio`;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -809,7 +809,7 @@ export function SpeciesForm({ action, id = '' }) {
         addEvents(handleFData);
         if (action === 'add') document.getElementById("speciesViewPage").textContent = `Especie: `;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -855,7 +855,7 @@ export function RaceForm({ action, id = '' }) {
         getSpecies(handleSpecies);
         if (action === 'add') document.getElementById("raceViewPage").textContent = `Raza: `;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -914,7 +914,7 @@ export function SupplierForm({ action, id = '' }) {
         getPostalCodes(handlePostalCodes);
         if (action === 'add') document.getElementById("supplierViewPage").textContent = `Proveedor: `;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">
@@ -983,7 +983,7 @@ export function PostalCodeForm({ action, id = '' }) {
         addEvents(handleFData);
         if (action === 'add') document.getElementById("postalCodeViewPage").textContent = `Código Postal: `;
 
-    }, [])
+    })
     return (
         <>
             <form id="auto-form">

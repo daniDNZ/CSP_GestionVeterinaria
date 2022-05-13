@@ -28,6 +28,7 @@ export function NewSuppliers() {
     return (
         <>
             <Form selector='supplier' action='add' />
+            <NewPostalCode />
         </>
     )
 }
@@ -67,7 +68,7 @@ export function ViewSupplier() {
     useEffect(() => {
         findSupplier(fillForm, id);
         setBtn();
-    }, [])
+    })
     return (
         <>
             <Form selector='supplier' action='update' id={id}/>

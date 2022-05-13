@@ -7,7 +7,6 @@ function WaitingRoom() {
     date = date.toISOString().split('T')[0];
 
     const fillModal = (v) => {
-        console.log(v)
 
         const mTitle = document.querySelector('.modal-title');
         const mList = document.querySelector('.modal-body ul');

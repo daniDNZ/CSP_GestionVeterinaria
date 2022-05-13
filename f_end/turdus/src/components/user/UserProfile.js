@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { addUpdateUser, getOneUser, changePswd } from "../api/ApiUser";
+import { getOneUser, changePswd, updateProfile } from "../api/ApiUser";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../../context/context";
 
@@ -7,21 +7,20 @@ function UserProfile() {
     const { user } = useContext(UserContext);
 
     const { id } = useParams();
-    let name, lastName;
 
     // Manejador datos del formulario
     const handleFData = (e) => {
         e.preventDefault();
 
         const fData = new FormData(e.target);
-        addUpdateUser(fData, 'update', id);   // Llamamos a la petición indicando la acción (add | update)
+        updateProfile(fData, id); 
     }
 
     const handlePswd = (e) => {
         e.preventDefault();
 
         const fData = new FormData(e.target);
-
+        e.target.reset();
         if(fData.get('password') === fData.get('passwordRepeat')) {
             changePswd(fData, id);
         }
@@ -29,16 +28,13 @@ function UserProfile() {
 
     const handleUser = (data) => {
 
-        name = data.name;
-        lastName = data.lastName;
-
-        document.getElementById("userName").value = data.name;
-        document.getElementById("userLastname").value = data.lastName;
-        document.getElementById("userCollegiate").value = data.collegiate;
-        document.getElementById("userUsername").value = data.username;
-        document.getElementById("userPhone").value = data.phone;
-        document.getElementById("userEmail").value = data.email;
-        document.getElementById("userDni").value = data.dni;
+        document.getElementById("name").value = data.name;
+        document.getElementById("lastName").value = data.lastName;
+        document.getElementById("collegiate").value = data.collegiate;
+        document.getElementById("username").value = data.username;
+        document.getElementById("phone").value = data.phone;
+        document.getElementById("email").value = data.email;
+        document.getElementById("dni").value = data.dni;
 
     }
 
@@ -53,14 +49,14 @@ function UserProfile() {
     useEffect(() => {
 
         getOneUser(handleUser, id);
-        addEvents(handleFData);
+        addEvents();
 
-    }, [])
+    })
 
     return (
         <>
         <h3>Perfil de {user.name}</h3>
-            <form id="auto-form">
+            <form id="auto-form" onSubmit={handleFData}>
                 <div id="form-row-1" className="row">
                     <div className="d-flex flex-row justify-content-between" id="form-title">
                         <div className="d-flex flex-row">
@@ -68,38 +64,38 @@ function UserProfile() {
                         </div>
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userName" className="form-label">Nombre:</label>
-                        <input type="text" id="userName" name="name" className="form-control" required />
+                        <label htmlFor="name" className="form-label">Nombre:</label>
+                        <input type="text" id="name" name="name" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userLastname" className="form-label" >Apellidos:</label>
-                        <input type="text" id="userLastname" name="last_name" className="form-control" required />
+                        <label htmlFor="lastName" className="form-label" >Apellidos:</label>
+                        <input type="text" id="lastName" name="lastName" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userCollegiate" className="form-label" >Colegiado Nº:</label>
-                        <input type="text" id="userCollegiate" name="collegiate" className="form-control" />
+                        <label htmlFor="collegiate" className="form-label" >Colegiado Nº:</label>
+                        <input type="text" id="collegiate" name="collegiate" className="form-control" />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userUsername" className="form-label" >Usuario:</label>
-                        <input type="text" id="userUsername" name="username" className="form-control" required />
+                        <label htmlFor="username" className="form-label" >Usuario:</label>
+                        <input type="text" id="username" name="username" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userPhone" className="form-label">Teléfono:</label>
-                        <input type="text" id="userPhone" name="phone" className="form-control" required />
+                        <label htmlFor="phone" className="form-label">Teléfono:</label>
+                        <input type="text" id="phone" name="phone" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userEmail" className="form-label">Email:</label>
-                        <input type="email" id="userEmail" name="email" className="form-control" required />
+                        <label htmlFor="email" className="form-label">Email:</label>
+                        <input type="email" id="email" name="email" className="form-control" required />
                     </div>
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userDni" className="form-label">DNI:</label>
-                        <input type="text" id="userDni" name="dni" className="form-control" />
+                        <label htmlFor="dni" className="form-label">DNI:</label>
+                        <input type="text" id="dni" name="dni" className="form-control" />
                     </div>
                 </div>
                 <div id="form-row-2" className="row">
                     <div className="mb-3 col-auto">
-                        <label htmlFor="userPic" className="form-label" >Foto:</label>
-                        <input type="file" id="userPic" name="pic" className="form-control" />
+                        <label htmlFor="pic" className="form-label" >Foto:</label>
+                        <input type="file" id="pic" name="pic" className="form-control" />
                     </div>
                 </div>
 

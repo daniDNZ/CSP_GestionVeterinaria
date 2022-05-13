@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Form } from "./Form";
+import { NewRace, NewSpecies } from "./Modals";
 
 function Registrations() {
     const { name } = useParams();
@@ -12,6 +13,16 @@ function Registrations() {
         setSelector(e.target.value);
     }
 
+    let modalSpecies;
+    let modalRace;
+
+    if (selector === 'patient') {
+
+        modalSpecies = <NewSpecies />;
+        modalRace = <NewRace />;
+    }
+
+
     return (
         <>
             <h3>Añadir:</h3>
@@ -22,6 +33,8 @@ function Registrations() {
             </select>
             <hr />
             <Form selector={ selector } action={ 'add' } />
+            {modalSpecies}
+            {modalRace}
         </>
     )
 }

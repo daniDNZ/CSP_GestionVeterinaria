@@ -1,23 +1,18 @@
 import Clock from "./Clock";
 import WaitingRoom from "./WaitingRoom";
-import jwt_decode from "jwt-decode";
-import { getCurUser } from "./api/ApiUser";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import Cards from "./Cards";
 import FastAccessBtns from "./FastAccessBtns";
 import { UserContext } from "../context/context";
-import Messages from "./messages";
+import Messages from "./Messages";
 
 function Home() {
 
     const {user} = useContext(UserContext);
-    const handleUser = () => {
-        document.querySelector('#say-hi').textContent = `Hola, ${user.name}!`;
-    }
 
     useEffect(() => {
         if(user.roles.includes('ROLE_STAFF')){
-            handleUser()
+            document.querySelector('#say-hi').textContent = `Hola, ${user.name}!`;
         }
 
     }, [user])
@@ -28,7 +23,7 @@ function Home() {
             <div className="d-flex flex-row flex-wrap flex-md-nowrap h-100 overflow-hidden">
                 <div className="d-flex flex-column flex-wrap pe-sm-4 mb-4 flex-fill">
                     <div className="d-flex flex-row justify-content-between mx-2">
-                        <h3 id="say-hi"></h3>
+                        <h3 id="say-hi">Hola</h3>
                         <Clock />
                     </div>
                     <div className="d-flex flex-row flex-wrap justify-content-start">

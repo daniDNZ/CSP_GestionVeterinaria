@@ -5,7 +5,7 @@ function Schedule() {
     useEffect(() => {
 
         dataFetch(0)
-    }, [])
+    })
     let moveWeek = 0;
     function dataFetch(targetDay) {
         moveWeek += targetDay;
@@ -184,7 +184,7 @@ function Schedule() {
 
     // Obtenemos los días de la semana actual para los títulos de las columnas y para mandarlos en el fetch
     function getWeek(moveWeek) {
-        let curr = new Date
+        let curr = new Date()
         let week = []
 
 
@@ -204,7 +204,6 @@ function Schedule() {
         <div className="py-2 px-4">
             <div className="d-flex flex-row justify-content-between">
                 <div id="monthName" className="d-flex align-items-center">
-                    <h3 className="fw-light"></h3>
                 </div>
                 <div className="d-flex flex-row justify-content-end">
                     <button className="btn btn-outline-primary m-1" onClick={() => dataFetch(-7)}>Prev</button>

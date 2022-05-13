@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { NewRace, NewSpecies } from "./Modals";
 import Table from "./Table";
 
 function Search() {
@@ -19,7 +18,7 @@ function Search() {
                     <option value="customers">Clientes</option>
                     <option value="patients">Pacientes</option>
                     <option value="visits">Visitas</option>
-                    <option value="species">Species</option>
+                    <option value="species">Especies</option>
                     <option value="races">Razas</option>
                     <option value="postalCodes">Códigos Postales</option>
                 </select>

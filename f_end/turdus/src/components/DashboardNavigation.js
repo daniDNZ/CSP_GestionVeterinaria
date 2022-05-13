@@ -1,8 +1,7 @@
 import { NavLink } from "react-router-dom";
 import React from "react";
-import ReactDOM from "react-dom";
 import DashboardNavContent from "./DashboardNavContent";
-import { createElement, useContext, useEffect } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/context";
 import global from "../global";
 
@@ -10,7 +9,11 @@ function DashboardNavigation() {
 
   const { user } = useContext(UserContext);
 
-  const src = global.apiUri+user.pic;
+  let src = '';
+  user.pic !== undefined
+  ? src = global.apiUri+user.pic
+  : src = '';
+
   const img = <img src={src} alt="user" width="32" height="32" className="rounded-circle me-2"/>;
 
   const profileUri = `/turdus/users/${user.id}/profile`;
@@ -34,9 +37,9 @@ function DashboardNavigation() {
         <div className="container-fluid">
 
           <div className="flex-shrink-1">
-            <a href="#" className="d-flex align-items-center col-lg-4 mb-0 mb-lg-0 link-dark text-decoration-none">
-              <i className="bi bi-bootstrap fs-2 text-dark"></i>
-              <span className="d-none d-sm-inline"><h3 className="my-0 mx-1">TuClínica.Turdus</h3></span>
+            <a href="/turdus/dashboard" className="d-flex align-items-center col-lg-4 mb-0 mb-lg-0 link-dark text-decoration-none">
+              <img alt="Foto de perfil" src="/favicon.ico" height="30em"></img>
+              <span className="d-none d-sm-inline"><h3 className="my-0 mx-1">arabú.Turdus</h3></span>
             </a>
           </div>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">

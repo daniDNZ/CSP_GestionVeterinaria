@@ -79,7 +79,7 @@ export const addUpdateSupplier = (fData, action, id = '') => {
 
     fetch(request)
         .then(response => handleErrors(response))
-        .then(data => { window.location.reload(); })
+        .then(data => { })
         .catch(e => console.log(e))
 
 }

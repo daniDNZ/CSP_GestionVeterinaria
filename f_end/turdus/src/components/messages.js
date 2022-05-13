@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Pagination } from "./TablePagination";
+import { Tooltip } from "bootstrap";
 
 export default function Messages() {
 
@@ -22,24 +23,28 @@ export default function Messages() {
                 ? smallPrint = 'Hoy'
                 : smallPrint = `${toDays} días`;
 
-            const li = <li key={m.id} className="list-group-item list-group-item-action">
-                <div className="d-flex w-100 justify-content-between">
-                    <h5 className="mb-1">
-                        <a href={`mailto:${m.email}`} className="text-decoration-none">{m.email}</a>
-                    </h5>
+            const div = <div className="toast d-block shadow-none" key={m.id}>
+                <div className="toast-header">
+                    <strong className="me-auto">
+                        <a href={`mailto:${m.email}`} className="text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="top" title="Mandar email">{m.email}</a>
+                    </strong>
                     <small>
                         {smallPrint}
                     </small>
+                    <button type="button" className="btn-close" aria-label="Close" data-id={`${m.id}`} onClick={removeMsg} />
                 </div>
-                <div className="d-flex w-100 justify-content-between">
-                    <p className="mb-1 text-truncate" style={{maxHeight: '2rem'}}>{m.message}</p>
-                    <a role="button" data-id={`${m.id}`} onClick={removeMsg}>
-                        <i className="bi bi-x-lg text-danger"></i>
-                    </a>
+                <div className="toast-body text-truncate" data-bs-toggle="tooltip" data-bs-placement="top" title={`${m.message}`}>
+                    {m.message}
                 </div>
-            </li>;
+            </div>;
 
-            setJsxElements(current => [...current, li])
+            setJsxElements(current => [...current, div])
+
+            // Bootstrap Tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new Tooltip(tooltipTriggerEl)
+            })
         });
     }
 
@@ -88,9 +93,9 @@ export default function Messages() {
         <>
             <div className="my-4 mx-2 fw-light" style={{ width: "19rem" }}>
                 <h3 className="">Últimos mensajes</h3>
-                <ul id="messagesList" className="list-group">
+                <div id="messagesList" className="toast-container">
                     {jsxElements}
-                </ul>
+                </div>
                 <nav className="mt-2" aria-label="Table pagination">
                     <ul className="pagination" id="pagination">
 
