@@ -11,8 +11,8 @@ Identificándote desde la LandPage con un usuario del STAFF, accederás automát
 # Usuario Administrador
 El usuario administrador puede crear y borrar usuarios miembros del STAFF. 
 
-Email/Username: Admin
-Pass:           Admin
+Email/Username: "Admin" ;
+Pass:           "Admin" ;
 
 # Frameworks y lenguajes utilizados
 - ReactJS
