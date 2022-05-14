@@ -19,8 +19,9 @@ Pass:           "Admin" ;
 - Symfony
 - HTML5
 - CSS3
-- JS
+- JavaScript
 - PHP
 - MySQL
+- Bootstrap 5
 
 
