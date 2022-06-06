@@ -1,25 +1,6 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
 import bcrypt from "bcryptjs/dist/bcrypt";
-
-// export const getCurUser = (callback, username) => {
-//     const bodyData = {
-//         username: username,
-//     }
-//     const config = {
-//         method: 'POST',
-//         mode: 'cors',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(bodyData)
-//     }
-//     const request = new Request(`http://192.168.1.81:8888/api/users/get_current`, config);
-//     fetch(request)
-//         .then(response => handleErrors(response))
-//         .then(data => callback(data))
-//         .catch(e => handleAuth(e));
-// }
+import global from "../../global";
 
 export async function getCurUser(callback, username) {
     const bodyData = {
@@ -34,7 +15,7 @@ export async function getCurUser(callback, username) {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/users/get_current`, config);
+    const request = new Request(`${global.apiUri}/api/users/get_current`, config);
     const response = await fetch(request);
     const data = await response.json();
     
@@ -55,7 +36,7 @@ export const getOneUser = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/user/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/user/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -73,7 +54,7 @@ export const getUsers = (callback, filter = {}, currentPage = 1) => {
         },
         body: JSON.stringify(filter)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/users`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/users`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -107,9 +88,9 @@ export const addUpdateUser = (fData, action, id = '') => {
     }
     let request;
     if (action === 'add') {
-        request = new Request("http://192.168.1.81:8888/api/user/add", config);
+        request = new Request(`${global.apiUri}/api/user/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/user/update", config);
+        request = new Request(`${global.apiUri}/api/user/update`, config);
     }
 
 
@@ -132,7 +113,7 @@ export const updateProfile = (fData, id) => {
         },
         body: fData
     }
-    const request = new Request(`http://192.168.1.81:8888/api/user/${id}/update_profile`, config);
+    const request = new Request(`${global.apiUri}/api/user/${id}/update_profile`, config);
     
     fetch(request)
         .then(response => handleErrors(response))
@@ -157,7 +138,7 @@ export const changePswd = (fData, id) => {
         },
         body: fData
     }
-    const request = new Request("http://192.168.1.81:8888/api/user/change_pswd", config);
+    const request = new Request(`${global.apiUri}/api/user/change_pswd`, config);
 
     fetch(request)
         .then(response => handleErrors(response))
@@ -177,7 +158,7 @@ export const getVets = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/vets", config);
+    const request = new Request(`${global.apiUri}/api/vets`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, id))
@@ -196,7 +177,7 @@ export const findVets = (callback, bodyData = {}) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/vets`, config);
+    const request = new Request(`${global.apiUri}/api/vets`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -214,7 +195,7 @@ export const removeUser = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/users/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/users/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

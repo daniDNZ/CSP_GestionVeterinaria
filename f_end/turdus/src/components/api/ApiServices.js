@@ -1,4 +1,5 @@
-import { handleErrors, handleAuth } from "./ApiFetch";
+import { handleErrors } from "./ApiFetch";
+import global from "../../global";
 
 export const getServices = (callback, filter, currentPage = 1) => {
     const bodyData = filter;
@@ -11,7 +12,7 @@ export const getServices = (callback, filter, currentPage = 1) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/services/${currentPage}/filter`, config);
+    const request = new Request(`${global.apiUri}/api/services/${currentPage}/filter`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -27,7 +28,7 @@ export const findService = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/services/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/services/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -48,9 +49,9 @@ export const addUpdateService = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/services/add", config);
+        request = new Request(`${global.apiUri}/api/services/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/services/update", config);
+        request = new Request(`${global.apiUri}/api/services/update`, config);
     }
 
 
@@ -71,7 +72,7 @@ export const removeService = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/services/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/services/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

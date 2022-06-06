@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const getSuppliers = (callback) => {
 
@@ -11,7 +12,7 @@ export const getSuppliers = (callback) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/suppliers", config);
+    const request = new Request(`${global.apiUri}/api/suppliers`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -30,7 +31,7 @@ export const getSuppliersPaginate = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/suppliers/paginate/${currentPage}`, config);
+    const request = new Request(`${global.apiUri}/api/suppliers/paginate/${currentPage}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -49,7 +50,7 @@ export const findSupplier = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/suppliers/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/suppliers/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -71,9 +72,9 @@ export const addUpdateSupplier = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/supplier/add", config);
+        request = new Request(`${global.apiUri}/api/supplier/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/supplier/update", config);
+        request = new Request(`${global.apiUri}/api/supplier/update`, config);
     }
 
 
@@ -94,7 +95,7 @@ export const removeSupplier = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/suppliers/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/suppliers/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

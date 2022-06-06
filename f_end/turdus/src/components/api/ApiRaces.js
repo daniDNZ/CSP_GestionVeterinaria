@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const getRaces = (callback, id) => {
 
@@ -10,7 +11,7 @@ export const getRaces = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/races", config);
+    const request = new Request(`${global.apiUri}/api/races`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, id))
@@ -29,7 +30,7 @@ export const getOneRace = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/races/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/races/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -48,7 +49,7 @@ export const getPaginateRaces = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/races/paginate/${currentPage}`, config);
+    const request = new Request(`${global.apiUri}/api/races/paginate/${currentPage}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -69,7 +70,7 @@ export const findRaces = (callback, value, id = '') => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request("http://192.168.1.81:8888/api/races", config);
+    const request = new Request(`${global.apiUri}/api/races`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, id))
@@ -90,9 +91,9 @@ export const addUpdateRace = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/race/add", config);
+        request = new Request(`${global.apiUri}/api/race/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/race/update", config);
+        request = new Request(`${global.apiUri}/api/race/update`, config);
     }
 
 
@@ -113,7 +114,7 @@ export const removeRace = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/reaces/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/reaces/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

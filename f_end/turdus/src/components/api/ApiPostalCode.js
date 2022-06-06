@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const getPostalCodes = (callback) => {
 
@@ -11,7 +12,7 @@ export const getPostalCodes = (callback) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/postal_code", config);
+    const request = new Request(`${global.apiUri}/api/postal_code`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -30,7 +31,7 @@ export const getPaginatePostalCodes = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/postal_codes/paginate/${currentPage}`, config);
+    const request = new Request(`${global.apiUri}/api/postal_codes/paginate/${currentPage}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -49,7 +50,7 @@ export const getOnePostalCode = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/postal_code/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/postal_code/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -71,9 +72,9 @@ export const addUpdatePostalCode = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/postal_code/add", config);
+        request = new Request(`${global.apiUri}/api/postal_code/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/postal_code/update", config);
+        request = new Request(`${global.apiUri}/api/postal_code/update`, config);
     }
 
 
@@ -94,7 +95,7 @@ export const removePostalCode = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/postal_codes/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/postal_codes/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

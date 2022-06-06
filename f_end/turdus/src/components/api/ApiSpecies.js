@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const getSpecies = (callback, id = '') => {
 
@@ -11,7 +12,7 @@ export const getSpecies = (callback, id = '') => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request("http://192.168.1.81:8888/api/species", config);
+    const request = new Request(`${global.apiUri}/api/species`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, id))
@@ -30,7 +31,7 @@ export const getPaginateSpecies = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/species/paginate/${currentPage}`, config);
+    const request = new Request(`${global.apiUri}/api/species/paginate/${currentPage}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -49,7 +50,7 @@ export const getOneSpecies = (callback, id) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/species/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/species/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -67,7 +68,7 @@ export const findSpecies = (callback, bodyData = {}, id) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request("http://192.168.1.81:8888/api/species", config);
+    const request = new Request(`${global.apiUri}/api/species`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, id))
@@ -88,9 +89,9 @@ export const addUpdateSpecies = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/species/add", config);
+        request = new Request(`${global.apiUri}/api/species/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/species/update", config);
+        request = new Request(`${global.apiUri}/api/species/update`, config);
     }
 
 
@@ -111,7 +112,7 @@ export const removeSpecies = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/species/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/species/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

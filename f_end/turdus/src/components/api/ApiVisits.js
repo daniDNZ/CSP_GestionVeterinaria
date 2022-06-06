@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const getVisits = (callback, currentPage = 1) => {
 
@@ -10,7 +11,7 @@ export const getVisits = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/visits`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/visits`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, getVisits))
@@ -29,7 +30,7 @@ export const findVisits = (callback, currentPage = 1, bodyData = {}) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/visits`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/visits`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, findVisits))
@@ -48,7 +49,7 @@ export const findTime = (callback, filter) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request("http://192.168.1.81:8888/api/visits/time", config);
+    const request = new Request(`${global.apiUri}/api/visits/time`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -65,7 +66,7 @@ export const findOneVisit = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/visits/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/visits/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -88,7 +89,7 @@ export const findTodayVisits = (callback, date, uId = '') => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/visits/today`, config);
+    const request = new Request(`${global.apiUri}/api/visits/today`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -122,9 +123,9 @@ export const addUpdateVisit = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/visits/add", config);
+        request = new Request(`${global.apiUri}/api/visits/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/visits/update", config);
+        request = new Request(`${global.apiUri}/api/visits/update`, config);
     }
 
 
@@ -160,7 +161,7 @@ export const closeVisit = (fData, id, location) => {
         },
         body: JSON.stringify(bodyData)
     }
-    let request = new Request("http://192.168.1.81:8888/api/visits/update", config);
+    let request = new Request(`${global.apiUri}/api/visits/update`, config);
 
     fetch(request)
         .then(response => handleErrors(response))
@@ -180,7 +181,7 @@ export const closeVisitFast = (id, location) => {
         }
     }
 
-    let request = new Request(`http://192.168.1.81:8888/api/visits/${id}/close`, config);
+    let request = new Request(`${global.apiUri}/api/visits/${id}/close`, config);
 
     fetch(request)
         .then(response => handleErrors(response))
@@ -205,7 +206,7 @@ export const updateCart = (id, cart) => {
         body: JSON.stringify(bodyData)
     }
 
-    let request = new Request(`http://192.168.1.81:8888/api/visits/${id}/cart`, config);
+    let request = new Request(`${global.apiUri}/api/visits/${id}/cart`, config);
 
     fetch(request)
         .then(response => handleErrors(response))
@@ -223,7 +224,7 @@ export const removeVisit = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/visits/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/visits/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

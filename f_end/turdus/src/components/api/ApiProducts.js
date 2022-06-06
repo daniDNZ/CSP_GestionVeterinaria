@@ -1,4 +1,5 @@
 import { handleErrors } from "./ApiFetch";
+import global from "../../global";
 
 export const getProducts = (callback, filter, currentPage = 1) => {
     const bodyData = filter;
@@ -11,7 +12,7 @@ export const getProducts = (callback, filter, currentPage = 1) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/products/${currentPage}/filter`, config);
+    const request = new Request(`${global.apiUri}/api/products/${currentPage}/filter`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -27,7 +28,7 @@ export const findProduct = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/products/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/products/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -48,9 +49,9 @@ export const addUpdateProduct = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/products/add", config);
+        request = new Request(`${global.apiUri}/api/products/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/products/update", config);
+        request = new Request(`${global.apiUri}/api/products/update`, config);
     }
 
 
@@ -71,7 +72,7 @@ export const removeProduct = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/products/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/products/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

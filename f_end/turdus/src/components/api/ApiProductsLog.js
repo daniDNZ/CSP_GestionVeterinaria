@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const addProductsLog = (bodyData) => {
     const config = {
@@ -12,7 +13,7 @@ export const addProductsLog = (bodyData) => {
     }
     let request;
 
-    request = new Request("http://192.168.1.81:8888/api/products_log/add", config);
+    request = new Request(`${global.apiUri}/api/products_log/add`, config);
 
     fetch(request)
         .then(response => handleErrors(response))

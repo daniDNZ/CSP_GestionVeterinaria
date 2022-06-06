@@ -1,5 +1,6 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
 import bcrypt from "bcryptjs/dist/bcrypt";
+import global from "../../global";
 
 export const getCurCustomer = (callback, email) => {
     const bodyData = {
@@ -14,7 +15,7 @@ export const getCurCustomer = (callback, email) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/customers/get_current`, config);
+    const request = new Request(`${global.apiUri}/api/customers/get_current`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -31,7 +32,7 @@ export const getCustomers = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/customers`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, getCustomers))
@@ -48,7 +49,7 @@ export const getAllCustomers = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/1/customers`, config);
+    const request = new Request(`${global.apiUri}/api/1/customers`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data.allData, id))
@@ -67,7 +68,7 @@ export const findCustomers = (callback, currentPage = 1, bodyData = {}) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/customers`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/customers`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, findCustomers))
@@ -85,7 +86,7 @@ export const findOneCustomer = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/customers/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/customers/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -103,7 +104,7 @@ export const findCustomerPatients = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/customers/${id}/patients`, config);
+    const request = new Request(`${global.apiUri}/api/customers/${id}/patients`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -121,7 +122,7 @@ export const getDebt = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/customer/${id}/debt`, config);
+    const request = new Request(`${global.apiUri}/api/customer/${id}/debt`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -140,7 +141,7 @@ export const payDebt = (callback, id, bodyData) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/customer/${id}/debt/pay`, config);
+    const request = new Request(`${global.apiUri}/api/customer/${id}/debt/pay`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -174,9 +175,9 @@ export const addUpdateCustomer = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/customer/add", config);
+        request = new Request(`${global.apiUri}/api/customer/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/customer/update", config);
+        request = new Request(`${global.apiUri}/api/customer/update`, config);
     }
 
 
@@ -197,7 +198,7 @@ export const removeCustomer = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/customers/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/customers/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))

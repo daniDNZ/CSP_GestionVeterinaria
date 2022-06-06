@@ -1,5 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
-
+import global from "../../global";
 
 export const findBill = (callback, bData) => {
     const config = {
@@ -11,7 +11,7 @@ export const findBill = (callback, bData) => {
         },
         body: JSON.stringify(bData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/bill/find`, config);
+    const request = new Request(`${global.apiUri}/api/bill/find`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -31,7 +31,7 @@ export const addBill = (callback, data) => {
     }
     let request;
 
-    request = new Request("http://192.168.1.81:8888/api/bill/add", config);
+    request = new Request(`${global.apiUri}/api/bill/add`, config);
 
     fetch(request)
         .then(response => handleErrors(response))
@@ -52,7 +52,7 @@ export const payBill = (data, location) => {
     }
     let request;
 
-    request = new Request("http://192.168.1.81:8888/api/bill/update", config);
+    request = new Request(`${global.apiUri}/api/bill/update`, config);
 
     fetch(request)
         .then(response => handleErrors(response))

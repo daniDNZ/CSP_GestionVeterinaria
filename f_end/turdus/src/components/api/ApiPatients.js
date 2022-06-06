@@ -1,4 +1,5 @@
 import { handleErrors, handleAuth } from "./ApiFetch";
+import global from "../../global";
 
 export const getPatients = (callback, currentPage = 1) => {
 
@@ -10,7 +11,7 @@ export const getPatients = (callback, currentPage = 1) => {
             'Content-Type': 'application/json'
         }
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/patients`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/patients`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, getPatients))
@@ -29,7 +30,7 @@ export const findPatients = (callback, currentPage = 1, bodyData = {}) => {
         },
         body: JSON.stringify(bodyData)
     }
-    const request = new Request(`http://192.168.1.81:8888/api/${currentPage}/patients`, config);
+    const request = new Request(`${global.apiUri}/api/${currentPage}/patients`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data, findPatients))
@@ -47,7 +48,7 @@ export const findOnePatient = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/patients/${id}`, config);
+    const request = new Request(`${global.apiUri}/api/patients/${id}`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -65,7 +66,7 @@ export const findPatientVisits = (callback, id) => {
             'Content-Type': 'application/json'
         },
     }
-    const request = new Request(`http://192.168.1.81:8888/api/patients/${id}/visits`, config);
+    const request = new Request(`${global.apiUri}/api/patients/${id}/visits`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(data => callback(data))
@@ -106,9 +107,9 @@ export const addUpdatePatient = (fData, action, id = '') => {
     }
     let request;
     if (action == 'add') {
-        request = new Request("http://192.168.1.81:8888/api/patient/add", config);
+        request = new Request(`${global.apiUri}/api/patient/add`, config);
     } else {
-        request = new Request("http://192.168.1.81:8888/api/patient/update", config);
+        request = new Request(`${global.apiUri}/api/patient/update`, config);
     }
 
 
@@ -129,7 +130,7 @@ export const removePatient = (id) => {
         },
     }
     
-    const request = new Request(`http://192.168.1.81:8888/api/patients/${id}/remove`, config);
+    const request = new Request(`${global.apiUri}/api/patients/${id}/remove`, config);
     
     fetch(request)
         .then(response => handleErrors(response))
