@@ -4,6 +4,7 @@ import "../css/login.css";
 import { useContext } from "react";
 import { UserContext } from "../context/context";
 import { handleErrors } from "./api/ApiFetch";
+import global from "../global";
 
 
 function Logout() {
@@ -38,7 +39,7 @@ const HandleLogin = (e, updateUser) => {
         body: JSON.stringify(data)
     }
 
-    const request = new Request("http://192.168.1.81:8888/api/login_check", config);
+    const request = new Request(`${global.apiUri}/api/login_check`, config);
     fetch(request)
         .then(response => handleErrors(response))
         .then(response => {

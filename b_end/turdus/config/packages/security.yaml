@@ -60,12 +60,12 @@ security:
         - { path: ^/api/login,                  roles: PUBLIC_ACCESS }
         - { path: ^/api/contact_form/add,       roles: PUBLIC_ACCESS }
         - { path: ^/api/customers/get_current,  roles: ROLE_USER }
-        - { path: ^/api/*,                      roles: ROLE_STAFF }
+        #- { path: ^/api/*,                      roles: ROLE_STAFF }
         # - { path: ^/api/customers,              roles: ROLE_STAFF }
         # - { path: ^/api/week_schedule,          roles: ROLE_STAFF }
         # - { path: ^/api/bill,                   roles: ROLE_STAFF }
         # - { path: ^/api/products_log,           roles: ROLE_STAFF }
-        - { path: ^/api/*/users,                  roles: ROLE_ADMIN }
+        #- { path: ^/api/*/users,                  roles: ROLE_ADMIN }
 
 when@test:
     security:
