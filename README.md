@@ -1,6 +1,19 @@
 # CSP_GestionVeterinaria
 Proyecto final bootcamp CodeSpace.
 
+# Instalación
+- React: 
+  - Puedes utilizar 'npm install' para instalar las dependencias desde f_end/turdus.
+  - En src/global.js puedes cambiar la url de las peticiones (por defecto está localhost).
+
+- Symfony:
+  - Puedes utilizar 'composer install' desde b_end/turdus.
+  - Después puedes abrir el servidor con el comando 'php -S localhost:8888 -t public/'.
+  - Puedes modificar la conexión a la base de datos en .env.
+
+- MySQL:
+  - Puedes importar la base de datos creando una nueva ('turdus') e importando el archivo b_end/turdus.sql.
+
 # Aclaraciones
 El proyecto se compone de un front con un LandPage y la plataforma "turdus", y de una API creada en symfony en el back.
 
