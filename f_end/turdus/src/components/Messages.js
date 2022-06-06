@@ -10,6 +10,7 @@ export default function Messages() {
         setJsxElements([])     // Limpiamos la lista para los re-renderizados
 
         Pagination(d, getMessages, handleData);
+         
 
         const dateObj = new Date();
 
