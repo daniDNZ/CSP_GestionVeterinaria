@@ -243,7 +243,7 @@ El Token será necesario para todas las peticiones que se hagan en el CRM, ya qu
 
 </details>
 
-# Frameworks y lenguajes utilizados
+## Frameworks y lenguajes utilizados
 - ReactJS
 - Symfony
 - HTML5
