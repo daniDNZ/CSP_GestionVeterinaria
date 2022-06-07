@@ -281,7 +281,7 @@ class VisitsController extends AbstractController
     /**
      * @Route("/api/visits/{id}/cart", name="app_visits_cart", methods="POST" )
      */
-    public function updateCart(VisitRepository $visitRepository, UserRepository $userRepository, int $id, Request $request, EntityManagerInterface $entityManager): Response
+    public function updateCart(VisitRepository $visitRepository, int $id, Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = $request->toArray();
         $visit = $visitRepository->find($id);

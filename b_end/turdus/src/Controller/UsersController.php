@@ -61,7 +61,6 @@ class UsersController extends AbstractController
     public function getCurUser(UserRepository $userRepository, Request $request): Response
     {   
         $data = $request->toArray();
-        $users = [];
         $userEntity = $userRepository->findOneBy(array('username' => $data['username']));
 
         $user = [];
