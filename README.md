@@ -15,6 +15,7 @@ Con estas instrucciones puedes hacer funcionar tanto el frontend como el backend
   - Node + npm.
 - Backend: 
   - Servidor con PHP + MySQL (p.e. XAMPP).
+  - Composer.
 
 ### Instalación
 - React: 
@@ -27,6 +28,7 @@ Con estas instrucciones puedes hacer funcionar tanto el frontend como el backend
 
 - Symfony:
   - Puedes utilizar `composer install` desde `b_end/turdus`.
+    - Si diese un error de caché, puedes eliminar la línea `"cache:clear":"symfony-cmd"` situada en `"scripts": { "auto-scripts": {` en `composer.json`, después utilizar `composer install` y luego volver a añadir la línea de `cache:clear` en su sitio.
   - En el directorio `/.env`tendrás que conectar tu base de datos añadiendo el usuario, la contraseña, dirección del servidor y la versión del servidor.
     - `DATABASE_URL="mysql://db_user:db_password@db_host:db_port/db_name?serverVersion=db_version&charset=utf8mb4"`.
     - Ejemplo: `DATABASE_URL="mysql://admin:admin@localhost:3306/turdus?serverVersion=10.4&charset=utf8mb4"`.
