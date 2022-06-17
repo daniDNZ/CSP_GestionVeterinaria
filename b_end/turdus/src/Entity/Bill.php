@@ -41,7 +41,7 @@ class Bill
     private $productsLogs;
 
     /**
-     * @ORM\ManyToOne(targetEntity=visit::class, inversedBy="bills")
+     * @ORM\ManyToOne(targetEntity=Visit::class, inversedBy="bills")
      */
     private $visit;
 
